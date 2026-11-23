@@ -44,4 +44,4 @@ python3 scripts/export_to_vault.py
 | `:::figure` cap/title/hint | figure caption, h3, hint only |
 | `00 Home` hero/footer | header + footer |
 
-`Glossary.md` is a reference list of tip blurbs; chapter tip text in the `:::prose` blocks is what apply writes to the site.
+`Glossary.md` can be edited in bulk; ask to sync Glossary → inline `[term]{tip: …}` in chapters/`00 Home`, then run `apply_vault.py`. The site uses the inline tips.

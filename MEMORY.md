@@ -11,7 +11,7 @@ Standalone browser explainer for arXiv:2610.07152 (Kiato, Lipschultz, Kalogera e
 
 - Vault path: `vault/` (open that folder in Obsidian).
 - Chapters: `vault/chapters/*.md`; hero/footer: `vault/00 Home.md`; how-to: `vault/00 Workflow.md`.
-- `Glossary.md`: site tip blurbs only (reference; chapter tips in `:::prose` are what apply uses).
+- `Glossary.md`: tip blurbs. Prefer editing here in bulk, then sync into inline `[term]{tip: …}` in chapters/`00 Home` before `apply_vault.py`. (Inline tips are still what the site reads.)
 - Obsidian hotkeys/plugins/themes/snippets synced from `~/notes/obsidianNotes` (plugin `data.json` gitignored; `semantic-auto-linker` not committed — bundled API key).
 - Tips syntax: `[term]{tip: definition goes here}`
 - Nested tips: site builds a glossary from all `.tip[data-tip]` terms and linkifies matches inside open tip bubbles (hover MESA inside POSYDON).

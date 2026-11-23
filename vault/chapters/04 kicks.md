@@ -11,13 +11,13 @@ title: "A kick decides who stays together"
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-When a star goes boom, two things mess with the orbit. Symmetric mass loss shifts the center of mass (the [Blaauw effect]{tip: Even without an asymmetric kick, dumping mass suddenly can unbind or widen a binary. Named after Adriaan Blaauw.}). Asymmetries can also give the remnant an extra [natal kick]{tip: An extra velocity shove a newborn neutron star or black hole can get from an asymmetric supernova.}. Add those up and you get the post-supernova orbital energy. If that energy is positive, the binary is done. Everyone flies free.
+When a star goes boom, two things mess with the orbit. Symmetric mass loss shifts the center of mass (the [Blaauw effect]{tip: Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw.}). Asymmetries can also give the remnant an extra [natal kick]{tip: An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.}. Add those up and you get the post-supernova orbital energy. If that energy is positive, the binary is done. Everyone flies free.
 
 Neutron star kicks are somewhat pinned down by pulsar motions. The fiducial model draws from the Disberg et al. log-normal (peak around 150 to 200 km/s). Black hole kicks? Much mushier. The paper's default assumes the same kick *momentum* as for neutron stars, so heavier remnants get slower kicks:
 :::
 
 :::eq
-*v<sub>BH</sub> = v<sub>NS</sub> · M<sub>NS</sub> / M<sub>BH</sub>* · [fallback]{tip: Material that falls back onto the newborn compact object. More fallback usually means a weaker kick in these models.}: *v<sub>kick</sub> = (1 − f<sub>fb</sub>) · v<sub>NS</sub>*
+*v<sub>BH</sub> = v<sub>NS</sub> · M<sub>NS</sub> / M<sub>BH</sub>* · [fallback]{tip: Material that falls back onto the newborn compact object. More fallback means a weaker kick.}: *v<sub>kick</sub> = (1 − f<sub>fb</sub>) · v<sub>NS</sub>*
 :::
 
 :::prose
