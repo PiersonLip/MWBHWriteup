@@ -16,7 +16,7 @@ python3 scripts/export_to_vault.py
 
 - [[00 Home]] — hero + footer
 - [[00 Workflow]] — how sync works
-- [[Glossary]] — site tip terms; matching entries also include longer notes from the layman writeup vault
+- [[Glossary]] — site tip terms
 
 ## Site chapters
 

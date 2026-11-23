@@ -6,11 +6,6 @@ Interactive bits (canvases, sliders, JS) live only in `index.html`. You edit wor
 
 Obsidian hotkeys, community plugins, themes, and snippets were copied from `~/notes/obsidianNotes`. Plugin `data.json` files are gitignored (machine-local / secrets).
 
-## Glossary vs chapters
-
-- `chapters/` + `00 Home.md` feed the live site via apply/export.
-- `Glossary.md` holds tip definitions. Where a matching note existed in `laymanPaperWriteup` (e.g. Roman, Gaia, natal kick), that longer draft was **appended** under `### From layman writeup` — the short site tip above it was kept. Cherry-pick when rewriting chapters.
-
 ## Day to day
 
 1. Open this `vault/` folder as a vault in Obsidian.
@@ -35,7 +30,7 @@ If the HTML was edited directly and you want the vault chapters to match again:
 python3 scripts/export_to_vault.py
 ```
 
-**Warning:** export overwrites vault chapter text and regenerates the short tip lines in Glossary (layman append sections may need re-merge).
+**Warning:** export overwrites vault chapter text and regenerates Glossary tip lines from the site.
 
 ## What syncs to the site
 
@@ -49,4 +44,4 @@ python3 scripts/export_to_vault.py
 | `:::figure` cap/title/hint | figure caption, h3, hint only |
 | `00 Home` hero/footer | header + footer |
 
-Glossary / layman appendices do **not** auto-apply to `index.html` — fold chosen wording into chapter tips/prose yourself (or ask the agent to).
+`Glossary.md` is a reference list of tip blurbs; chapter tip text in the `:::prose` blocks is what apply writes to the site.
