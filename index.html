@@ -433,6 +433,19 @@
       color: #c9daf7;
       border-bottom-color: #8eb6ef;
     }
+    /* Invisible hover bridge so the cursor can travel tip → bubble without a gap kill */
+    .tip-bubble::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 16px;
+      top: -16px;
+    }
+    .tip-bubble.tip-above::after {
+      top: auto;
+      bottom: -16px;
+    }
     .tip-bubble::before {
       content: "";
       position: absolute;
@@ -442,6 +455,7 @@
       border: 6px solid transparent;
       border-bottom-color: var(--ink);
       border-top-width: 0;
+      pointer-events: none;
     }
     .tip-bubble.tip-above::before {
       top: auto;
@@ -883,9 +897,9 @@
       layer.id = "tip-layer";
       document.body.appendChild(layer);
 
-      const open = []; // { bubble, depth }
+      const open = []; // { bubble, anchor, depth }
       let hideTimer = null;
-      let activeAnchor = null;
+      const pointer = { x: 0, y: 0 };
 
       const escHtml = (s) =>
         String(s)
@@ -893,6 +907,20 @@
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;");
+
+      function isTipUi(node) {
+        if (!node || !node.closest) return false;
+        return !!(node.closest(".tip-bubble") || node.closest(".tip[data-tip]"));
+      }
+
+      function tipUiUnderPointer() {
+        const stack = document.elementsFromPoint(pointer.x, pointer.y) || [];
+        return stack.some(
+          (n) =>
+            (n.classList && n.classList.contains("tip-bubble")) ||
+            (n.classList && n.classList.contains("tip") && n.getAttribute("data-tip"))
+        );
+      }
 
       function linkify(text, skipKey) {
         const terms = [...glossary.keys()]
@@ -921,7 +949,6 @@
         while (open.length && open[open.length - 1].depth >= depth) {
           open.pop().bubble.remove();
         }
-        if (!open.length) activeAnchor = null;
       }
 
       function clearHide() {
@@ -933,7 +960,11 @@
 
       function scheduleHide(fromDepth) {
         clearHide();
-        hideTimer = setTimeout(() => clearFrom(fromDepth), 180);
+        hideTimer = setTimeout(() => {
+          // Cursor may still be bridging into a bubble / nested tip
+          if (tipUiUnderPointer()) return;
+          clearFrom(fromDepth);
+        }, 420);
       }
 
       function placeBubble(bubble, anchor, depth) {
@@ -949,14 +980,17 @@
           pad + window.scrollX,
           Math.min(left, window.scrollX + window.innerWidth - bw - pad)
         );
-        let top = ar.bottom + 10 + window.scrollY;
+        let top = ar.bottom + 8 + window.scrollY;
         let above = false;
         if (top + bh > window.scrollY + window.innerHeight - pad && ar.top > bh + 20) {
-          top = ar.top + window.scrollY - bh - 10;
+          top = ar.top + window.scrollY - bh - 8;
           above = true;
         }
-        // Nested tips: nudge right so both stay readable
-        if (depth > 0) left = Math.min(left + 18, window.scrollX + window.innerWidth - bw - pad);
+        // Nested tips: offset so the child doesn't cover the parent term
+        if (depth > 0) {
+          left = Math.min(left + 28, window.scrollX + window.innerWidth - bw - pad);
+          top += above ? -6 : 6;
+        }
         bubble.style.left = `${left}px`;
         bubble.style.top = `${top}px`;
         bubble.classList.toggle("tip-above", above);
@@ -977,7 +1011,6 @@
         const depth = depthOf(anchor);
         const skipKey = anchor.textContent.replace(/\s+/g, " ").trim().toLowerCase();
         clearHide();
-        // Already showing this exact tip
         if (open.length && open[open.length - 1].anchor === anchor) return;
         clearFrom(depth);
         const bubble = document.createElement("div");
@@ -987,15 +1020,23 @@
         layer.appendChild(bubble);
         placeBubble(bubble, anchor, depth);
         open.push({ bubble, anchor, depth });
-        activeAnchor = anchor;
       }
 
       document.addEventListener(
-        "mouseover",
+        "pointermove",
         (e) => {
-          const t = e.target.closest(".tip[data-tip]");
+          pointer.x = e.clientX;
+          pointer.y = e.clientY;
+        },
+        { passive: true }
+      );
+
+      document.addEventListener(
+        "pointerover",
+        (e) => {
+          if (e.target.closest && e.target.closest(".tip-bubble")) clearHide();
+          const t = e.target.closest && e.target.closest(".tip[data-tip]");
           if (!t) return;
-          // Ignore moving between children of the same tip
           const from = e.relatedTarget && e.relatedTarget.closest
             ? e.relatedTarget.closest(".tip[data-tip]")
             : null;
@@ -1006,21 +1047,18 @@
       );
 
       document.addEventListener(
-        "mouseout",
+        "pointerout",
         (e) => {
-          const t = e.target.closest(".tip[data-tip], .tip-bubble");
-          if (!t) return;
+          const leaving = e.target.closest && e.target.closest(".tip[data-tip], .tip-bubble");
+          if (!leaving) return;
           const to = e.relatedTarget;
-          if (to && (t.contains(to) || (to.closest && (to.closest(".tip-bubble") || to.closest(".tip[data-tip]"))))) {
-            // Moving into bubble or nested tip — keep open
-            if (to.closest(".tip-bubble") || to.closest(".tip[data-tip]")) {
-              clearHide();
-              return;
-            }
+          if (isTipUi(to)) {
+            clearHide();
+            return;
           }
-          const depth = t.classList.contains("tip-bubble")
-            ? Number(t.dataset.depth || 0)
-            : depthOf(t);
+          const depth = leaving.classList.contains("tip-bubble")
+            ? Number(leaving.dataset.depth || 0)
+            : depthOf(leaving);
           scheduleHide(depth);
         },
         true
@@ -1032,7 +1070,10 @@
       });
       document.addEventListener("focusout", (e) => {
         const t = e.target.closest && e.target.closest(".tip[data-tip]");
-        if (t) scheduleHide(depthOf(t));
+        if (!t) return;
+        const to = e.relatedTarget;
+        if (isTipUi(to)) return;
+        scheduleHide(depthOf(t));
       });
     })();
 
