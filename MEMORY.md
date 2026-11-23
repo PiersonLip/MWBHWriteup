@@ -7,6 +7,16 @@ Standalone browser explainer for arXiv:2610.07152 (Kiato, Lipschultz, Kalogera e
 - Single self-contained file: `index.html` (HTML + CSS + canvas JS, no build step).
 - Serve locally (e.g. `python3 -m http.server 8765`) and open `/` or `/#galaxy`.
 
+## Content editing (Obsidian vault)
+
+- Vault path: `vault/` (open that folder in Obsidian).
+- Chapters: `vault/chapters/*.md`; hero/footer: `vault/00 Home.md`; how-to: `vault/00 Workflow.md`.
+- Tips syntax: `[term]{tip: definition goes here}`
+- Figure blocks only sync **cap / title / hint** — do not add/remove `:::figure` blocks.
+- Apply vault → site: `python3 scripts/apply_vault.py`
+- Resync site → vault (overwrites vault text): `python3 scripts/export_to_vault.py`
+- Shared logic: `scripts/content_lib.py`
+
 ## Paper concepts covered
 
 - Natal kicks / Blaauw mass loss / bound vs disrupted binaries (kick orbit interactive).

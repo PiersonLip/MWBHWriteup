@@ -7,6 +7,10 @@ alwaysApply: true
 
 Read and update `MEMORY.md` when changing the page, galaxy viz, physics constants, controls, or shortcuts.
 
+## Content source of truth while writing
+
+Prose/captions are edited in the Obsidian `vault/`. After content edits, run `python3 scripts/apply_vault.py` before considering the site done. Prefer not to hand-edit chapter prose in `index.html` unless also re-exporting the vault.
+
 ## Done means committed
 
 When a user-facing change is finished (not mid-debug):

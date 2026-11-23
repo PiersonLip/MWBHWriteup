@@ -7,6 +7,13 @@ verify/
 .idea/
 .vscode/
 
+# Obsidian runtime (keep vault/.obsidian/app.json etc. tracked)
+vault/.obsidian/workspace.json
+vault/.obsidian/workspace-mobile.json
+vault/.obsidian/cache/
+vault/.obsidian/plugins/
+vault/attachments/
+
 # Env / secrets
 .env
 .env.*

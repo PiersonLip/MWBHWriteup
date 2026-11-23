@@ -9,4 +9,18 @@ python3 -m http.server 8765
 # → http://127.0.0.1:8765/
 ```
 
-See `MEMORY.md` for controls, physics notes, and project conventions.
+### Edit copy in Obsidian
+
+Open the `vault/` folder as an Obsidian vault. When prose is ready:
+
+```bash
+python3 scripts/apply_vault.py   # vault → index.html
+```
+
+To rebuild the vault from the current site (overwrites vault text):
+
+```bash
+python3 scripts/export_to_vault.py
+```
+
+See `vault/00 Workflow.md` and `MEMORY.md` for conventions.
