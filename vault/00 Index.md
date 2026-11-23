@@ -16,7 +16,7 @@ python3 scripts/export_to_vault.py
 
 - [[00 Home]] — hero + footer
 - [[00 Workflow]] — how sync works
-- [[Glossary]] — site tip terms
+- [[Glossary]] — index of tip notes in `Glossary/` (link as `[[POSYDON]]`, `[[XrB]]`, …)
 
 ## Site chapters
 

@@ -13,11 +13,132 @@ ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 VAULT = ROOT / "vault"
 CHAPTERS_DIR = VAULT / "chapters"
+GLOSSARY_DIR = VAULT / "Glossary"
 
 TIP_HTML_RE = re.compile(
     r'<span class="tip" tabindex="0" data-tip="([^"]*)">(.*?)</span>',
     re.S,
 )
+WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]")
+
+# Optional short Obsidian aliases → note stem
+GLOSSARY_ALIASES = {
+    "xrb": "X-ray binaries",
+    "xrbs": "X-ray binaries",
+    "ce": "common envelope",
+    "rlo": "Roche-lobe overflow",
+    "rlof": "Roche-lobe overflow",
+    "smt": "stable mass transfer",
+    "wr": "Wolf-Rayet",
+}
+
+
+def glossary_note_stem(term: str) -> str:
+    """Safe note filename stem (no path separators)."""
+    stem = term.strip().replace("/", "-").replace(":", " -")
+    stem = re.sub(r"\s+", " ", stem).strip()
+    return stem
+
+
+def parse_glossary_note(path: Path) -> dict:
+    raw = path.read_text(encoding="utf-8")
+    aliases: List[str] = []
+    body = raw
+    title = path.stem
+    if raw.startswith("---"):
+        end = raw.find("\n---", 3)
+        if end != -1:
+            fm = raw[3:end]
+            body = raw[end + 4 :]
+            in_aliases = False
+            for line in fm.splitlines():
+                if line.strip().startswith("title:"):
+                    title = line.split(":", 1)[1].strip().strip("'\"") or title
+                    continue
+                if line.strip().startswith("aliases:"):
+                    in_aliases = True
+                    inline = line.split(":", 1)[1].strip()
+                    if inline.startswith("["):
+                        aliases = [a.strip().strip("'\"") for a in inline.strip("[]").split(",") if a.strip()]
+                        in_aliases = False
+                    continue
+                if in_aliases:
+                    if line.strip().startswith("- "):
+                        aliases.append(line.strip()[2:].strip().strip("'\""))
+                    elif line.strip() and not line.startswith(" ") and not line.startswith("\t"):
+                        in_aliases = False
+
+    # strip leading heading
+    body = re.sub(r"^\s*#\s+.+\n+", "", body.lstrip())
+    tip = re.sub(r"\s+", " ", body).strip()
+    return {"path": path, "title": title, "tip": tip, "aliases": aliases}
+
+
+_GLOSSARY_CACHE: Optional[dict] = None
+
+
+def load_glossary(force: bool = False) -> dict:
+    """Map lookup key (lower) → {title, tip, stem}."""
+    global _GLOSSARY_CACHE
+    if _GLOSSARY_CACHE is not None and not force:
+        return _GLOSSARY_CACHE
+    by_key: dict = {}
+    if GLOSSARY_DIR.is_dir():
+        for path in sorted(GLOSSARY_DIR.glob("*.md")):
+            if path.name.startswith("."):
+                continue
+            note = parse_glossary_note(path)
+            if not note["tip"]:
+                continue
+            entry = {"title": note["title"], "tip": note["tip"], "stem": path.stem}
+            keys = {path.stem.lower(), note["title"].lower()}
+            for a in note["aliases"]:
+                keys.add(a.lower())
+            # built-in short aliases pointing at this stem
+            for short, target in GLOSSARY_ALIASES.items():
+                if target.lower() == path.stem.lower() or target.lower() == note["title"].lower():
+                    keys.add(short)
+            for k in keys:
+                by_key[k] = entry
+    _GLOSSARY_CACHE = by_key
+    return by_key
+
+
+def write_glossary_note(term: str, tip: str, aliases: Optional[List[str]] = None) -> Path:
+    GLOSSARY_DIR.mkdir(parents=True, exist_ok=True)
+    stem = glossary_note_stem(term)
+    path = GLOSSARY_DIR / f"{stem}.md"
+    alias_list = list(aliases or [])
+    # ensure built-in reverse aliases
+    for short, target in GLOSSARY_ALIASES.items():
+        if target.lower() == term.lower() and short not in [a.lower() for a in alias_list]:
+            # prefer canonical casing for known shorts
+            pretty = {"xrb": "XrB", "xrbs": "XRBs", "ce": "CE", "rlo": "RLO", "rlof": "RLOF", "smt": "SMT", "wr": "WR"}.get(short, short)
+            if pretty not in alias_list:
+                alias_list.append(pretty)
+    lines = ["---", f'title: "{term}"']
+    if alias_list:
+        lines.append("aliases:")
+        for a in alias_list:
+            lines.append(f"  - {a}")
+    lines += ["---", "", f"# {term}", "", tip.strip(), ""]
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
+def tip_wikilink(display: str, tip_text: str = "") -> str:
+    """Prefer [[Note]] / [[Note|display]] using glossary notes when possible."""
+    gloss = load_glossary()
+    entry = gloss.get(display.lower())
+    if entry:
+        stem = entry["stem"]
+        if display == stem or display.lower() == stem.lower():
+            return f"[[{stem}]]"
+        return f"[[{stem}|{display}]]"
+    # fall back to old inline tip syntax if no note yet
+    if tip_text:
+        return f"[{display}]{{tip: {tip_text}}}"
+    return f"[[{display}]]"
 ARTICLE_RE = re.compile(
     r'(<article class="chapter" id=")([^"]+)(">)(.*?)(</article>)',
     re.S,
@@ -42,10 +163,12 @@ def unescape(s: str) -> str:
 
 def html_inline_to_md(s: str) -> str:
     """Convert a fragment with tips/strong/em/sub to vault markdown inline."""
-    s = TIP_HTML_RE.sub(
-        lambda m: f'[{_flatten_inline(m.group(2))}]{{tip: {unescape(m.group(1))}}}',
-        s,
-    )
+    def tip_to_wiki(m: re.Match) -> str:
+        tip = unescape(m.group(1))
+        display = _flatten_inline(m.group(2))
+        return tip_wikilink(display, tip)
+
+    s = TIP_HTML_RE.sub(tip_to_wiki, s)
     s = re.sub(r"<strong>(.*?)</strong>", r"**\1**", s, flags=re.S)
     s = re.sub(r"<em>(.*?)</em>", r"*\1*", s, flags=re.S)
     s = re.sub(r"<a href=\"([^\"]+)\"[^>]*>(.*?)</a>", r"[\2](\1)", s, flags=re.S)
@@ -67,7 +190,24 @@ LINK_MD_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
 def md_inline_to_html(s: str) -> str:
     """Convert vault inline markdown back to site HTML fragment."""
-    # tips first (before generic links)
+    gloss = load_glossary()
+
+    # Obsidian wikilinks → hover tips when the target is a glossary note
+    def wiki_sub(m: re.Match) -> str:
+        target = m.group(1).strip()
+        # allow Glossary/Term or just Term
+        if target.lower().startswith("glossary/"):
+            target = target.split("/", 1)[1]
+        display = (m.group(2) or target).strip()
+        entry = gloss.get(target.lower()) or gloss.get(display.lower())
+        if entry and entry["tip"]:
+            return f'<span class="tip" tabindex="0" data-tip="{esc(entry["tip"])}">{display}</span>'
+        # unresolved wikilink: leave readable plain text
+        return display
+
+    s = WIKILINK_RE.sub(wiki_sub, s)
+
+    # Legacy inline tip syntax still supported
     def tip_sub(m: re.Match) -> str:
         term = m.group(1)
         tip = esc(m.group(2).strip())

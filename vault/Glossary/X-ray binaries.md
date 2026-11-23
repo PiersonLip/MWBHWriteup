@@ -1,0 +1,10 @@
+---
+title: "X-ray binaries"
+aliases:
+  - XrB
+  - XRBs
+---
+
+# X-ray binaries
+
+A binary where a black hole (or neutron star) steals gas from a companion. This in-falling gas heats up and shines in X-rays.

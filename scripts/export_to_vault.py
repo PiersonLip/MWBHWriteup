@@ -11,12 +11,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from content_lib import (  # noqa: E402
     ARTICLE_RE,
     CHAPTERS_DIR,
+    GLOSSARY_DIR,
     INDEX,
     VAULT,
     chapter_to_markdown,
     hero_to_markdown,
+    load_glossary,
     parse_article_html,
     parse_hero_footer_from_html,
+    write_glossary_note,
 )
 
 ORDER = [
@@ -77,31 +80,47 @@ def main() -> None:
         path = CHAPTERS_DIR / fname
         path.write_text(chapter_to_markdown(ch), encoding="utf-8")
         index_lines.append(f"- [[chapters/{fname[:-3]}|{ch.label} — {ch.title}]]")
-        # collect tips for glossary
+        # collect tips for glossary notes
         for b in ch.blocks:
             blob = " ".join(b.paragraphs) + " " + b.text + " " + " ".join(x for pair in b.items for x in pair)
+            for tm in re.finditer(r"\[\[([^\]|]+)(?:\|([^\]]+))?\]\]", blob):
+                tips.append((tm.group(1).strip(), ""))  # wikilink; tip lives in note
             for tm in re.finditer(r"\[([^\]]+)\]\{tip:\s*([^}]*)\}", blob):
                 tips.append((tm.group(1), tm.group(2).strip()))
 
+    index_lines += ["", "## Glossary", "", "- [[Glossary]] — index of tip notes", ""]
     (VAULT / "00 Index.md").write_text("\n".join(index_lines) + "\n", encoding="utf-8")
 
-    # Glossary (unique by term)
-    seen = {}
+    # Upsert glossary notes from any legacy inline tips found during export;
+    # existing note bodies are preserved unless missing.
+    load_glossary(force=True)
+    existing = load_glossary()
+    GLOSSARY_DIR.mkdir(parents=True, exist_ok=True)
     for term, tip in tips:
-        seen.setdefault(term, tip)
-    gloss = ["# Glossary", "", "Hover tips used on the site. Edit carefully — re-export may reshuffle.", ""]
-    for term in sorted(seen, key=str.lower):
-        gloss.append(f"## {term}")
-        gloss.append(seen[term])
-        gloss.append("")
-    (VAULT / "Glossary.md").write_text("\n".join(gloss), encoding="utf-8")
+        key = term.lower()
+        if key.startswith("glossary/"):
+            continue
+        if key in existing:
+            continue
+        if tip:
+            write_glossary_note(term, tip)
+    load_glossary(force=True)
 
-    workflow = Path(__file__).resolve().parents[1] / "vault" / "00 Workflow.md"
-    if not workflow.exists():
-        pass  # written separately
+    notes = sorted(GLOSSARY_DIR.glob("*.md"), key=lambda p: p.stem.lower())
+    gloss_idx = [
+        "# Glossary",
+        "",
+        "Each entry is a note in `Glossary/`. Link from chapters with `[[Term]]` or an alias like `[[XrB]]`.",
+        "",
+    ]
+    for n in notes:
+        gloss_idx.append(f"- [[{n.stem}]]")
+    gloss_idx.append("")
+    (VAULT / "Glossary.md").write_text("\n".join(gloss_idx), encoding="utf-8")
 
     print(f"Exported {len(found)} chapters → {CHAPTERS_DIR}")
     print(f"Home → {VAULT / '00 Home.md'}")
+    print(f"Glossary notes → {GLOSSARY_DIR} ({len(notes)} notes)")
 
 
 if __name__ == "__main__":

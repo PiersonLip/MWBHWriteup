@@ -15,9 +15,9 @@ Detached BH-BH binaries are the most common surviving setup, and they still reme
 
 **Stable mass transfer** strips the primary, smears final BH masses over a wide range, and likes making lower-mass black holes. It's also the main path to the low-mass bumps you see in disrupted systems and a lot of BH+"other" binaries.
 
-**Wind-driven, non-interacting evolution** takes over for very massive primaries (≳80 M☉) at solar metallicity. Strong winds keep the star from puffing up too much, so [Roche-lobe overflow]{tip: When a star expands past the potential which fill without dumping mass onto its companion. This causes gas to to be transferred from one star to the other.} never happens. Then [Wolf-Rayet]{tip: Hot, helium-rich stars that have already lost their hydrogen envelopes. These stars have incredibly strong winds} winds shove a wide range of ZAMS masses toward a narrow final mass, and you get black holes clustered near **~13 M☉**. That plateau is especially sharp among detached BH-BH systems.
+**Wind-driven, non-interacting evolution** takes over for very massive primaries (≳80 M☉) at solar metallicity. Strong winds keep the star from puffing up too much, so [[Roche-lobe overflow]] never happens. Then [[Wolf-Rayet]] winds shove a wide range of ZAMS masses toward a narrow final mass, and you get black holes clustered near **~13 M☉**. That plateau is especially sharp among detached BH-BH systems.
 
-Metallicity is the soft underbelly of that fingerprint. Lower Z weakens winds, washes out the plateau, makes BHs heavier, and lets stable mass transfer own the high-mass end. At 0.01 Z☉ a few systems even poke past the [pair-instability gap]{tip: A predicted range of BH masses where the star blows itself apart before it can make a remnant.}.
+Metallicity is the soft underbelly of that fingerprint. Lower Z weakens winds, washes out the plateau, makes BHs heavier, and lets stable mass transfer own the high-mass end. At 0.01 Z☉ a few systems even poke past the [[pair-instability gap]].
 :::
 
 :::figure

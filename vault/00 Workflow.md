@@ -10,10 +10,11 @@ Obsidian hotkeys, community plugins, themes, and snippets were copied from `~/no
 
 1. Open this `vault/` folder as a vault in Obsidian.
 2. Edit chapter notes under `chapters/`, plus [[00 Home]] for the hero/footer.
-3. Tips use this syntax (keeps hover glossary on the site):
+3. Glossary tips are real notes in `Glossary/`. In chapters, link them:
 
-   `[Gaia]{tip: ESA's space observatory that measures precise positions of stars.}`
+   `[[POSYDON]]` · `[[XrB]]` · `[[common envelope|common envelopes]]`
 
+   The note body (under the title) is the hover text on the site. Short aliases like `XrB` / `CE` live in each note’s frontmatter.
 4. When a chunk of writing feels right, from the project root:
 
 ```bash
@@ -30,7 +31,7 @@ If the HTML was edited directly and you want the vault chapters to match again:
 python3 scripts/export_to_vault.py
 ```
 
-**Warning:** export overwrites vault chapter text and regenerates Glossary tip lines from the site.
+**Warning:** export overwrites vault chapter text. Existing `Glossary/*.md` bodies are kept; new tip terms may get new notes.
 
 ## What syncs to the site
 
@@ -43,5 +44,4 @@ python3 scripts/export_to_vault.py
 | `:::eq` | equation line |
 | `:::figure` cap/title/hint | figure caption, h3, hint only |
 | `00 Home` hero/footer | header + footer |
-
-`Glossary.md` can be edited in bulk; ask to sync Glossary → inline `[term]{tip: …}` in chapters/`00 Home`, then run `apply_vault.py`. The site uses the inline tips.
+| `[[Glossary note]]` | hover tip from that note’s body |
