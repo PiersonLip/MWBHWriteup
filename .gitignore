@@ -1,5 +1,8 @@
 # Local verification screenshots / Playwright captures
 verify/
+scripts/__pycache__/
+**/__pycache__/
+*.pyc
 
 # Editor / OS
 .DS_Store
