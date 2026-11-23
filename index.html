@@ -408,8 +408,10 @@
     }
     .tip-bubble {
       position: absolute;
-      width: max(12rem, min(18rem, 70vw));
-      padding: 0.55rem 0.7rem;
+      width: max-content;
+      max-width: min(17rem, 70vw);
+      min-width: 0;
+      padding: 0.5rem 0.7rem;
       background: var(--ink);
       color: #f3f5f8;
       font-family: "Schibsted Grotesk", system-ui, sans-serif;
@@ -419,11 +421,12 @@
       border-radius: 8px;
       box-shadow: 0 8px 24px rgba(20,24,32,0.25);
       pointer-events: auto;
-      text-align: left;
+      text-align: center;
       white-space: normal;
       opacity: 0;
       transform: translateY(-4px);
       transition: opacity 0.12s ease, transform 0.12s ease;
+      box-sizing: border-box;
     }
     .tip-bubble.is-open {
       opacity: 1;
@@ -969,13 +972,18 @@
 
       function placeBubble(bubble, anchor, depth) {
         const ar = anchor.getBoundingClientRect();
-        const pad = 8;
-        const bw = Math.min(288, Math.max(192, window.innerWidth * 0.7));
-        bubble.style.width = `${bw}px`;
+        const pad = 10;
+        const maxW = Math.min(272, window.innerWidth * 0.72);
+        bubble.style.maxWidth = `${maxW}px`;
+        bubble.style.width = "max-content";
         bubble.style.visibility = "hidden";
+        bubble.style.left = "0px";
+        bubble.style.top = "0px";
         bubble.classList.add("is-open");
-        const bh = bubble.offsetHeight;
-        let left = ar.left + ar.width / 2 - bw / 2 + window.scrollX;
+        const bw = Math.ceil(bubble.getBoundingClientRect().width);
+        const bh = Math.ceil(bubble.getBoundingClientRect().height);
+        const anchorCx = ar.left + ar.width / 2 + window.scrollX;
+        let left = anchorCx - bw / 2;
         left = Math.max(
           pad + window.scrollX,
           Math.min(left, window.scrollX + window.innerWidth - bw - pad)
@@ -986,16 +994,13 @@
           top = ar.top + window.scrollY - bh - 8;
           above = true;
         }
-        // Nested tips: offset so the child doesn't cover the parent term
-        if (depth > 0) {
-          left = Math.min(left + 28, window.scrollX + window.innerWidth - bw - pad);
-          top += above ? -6 : 6;
-        }
+        // Nested: keep centered on the nested term; slight vertical stagger only
+        if (depth > 0) top += above ? -4 : 4;
         bubble.style.left = `${left}px`;
         bubble.style.top = `${top}px`;
         bubble.classList.toggle("tip-above", above);
-        const arrowX = ar.left + ar.width / 2 + window.scrollX - left;
-        bubble.style.setProperty("--arrow-x", `${clamp(arrowX, 14, bw - 14)}px`);
+        const arrowX = anchorCx - left;
+        bubble.style.setProperty("--arrow-x", `${clamp(arrowX, 12, Math.max(12, bw - 12))}px`);
         bubble.style.visibility = "";
         bubble.style.zIndex = String(1000 + depth);
       }
