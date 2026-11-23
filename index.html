@@ -392,20 +392,22 @@
       height: 100%;
     }
 
-    /* hover glossary tips */
+    /* hover glossary tips (DOM bubbles — supports nested tips inside tips) */
     .tip {
       border-bottom: 1px dotted var(--accent);
       cursor: help;
-      position: relative;
       color: inherit;
     }
     .tip:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .tip::after {
-      content: attr(data-tip);
+    #tip-layer {
       position: absolute;
-      left: 50%;
-      top: calc(100% + 8px);
-      transform: translateX(-50%) translateY(-4px);
+      left: 0; top: 0;
+      width: 0; height: 0;
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .tip-bubble {
+      position: absolute;
       width: max(12rem, min(18rem, 70vw));
       padding: 0.55rem 0.7rem;
       background: var(--ink);
@@ -416,31 +418,38 @@
       line-height: 1.4;
       border-radius: 8px;
       box-shadow: 0 8px 24px rgba(20,24,32,0.25);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.15s ease, transform 0.15s ease;
-      z-index: 40;
+      pointer-events: auto;
       text-align: left;
       white-space: normal;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
     }
-    .tip::before {
+    .tip-bubble.is-open {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .tip-bubble .tip {
+      color: #c9daf7;
+      border-bottom-color: #8eb6ef;
+    }
+    .tip-bubble::before {
       content: "";
       position: absolute;
-      left: 50%;
-      top: calc(100% + 2px);
+      left: var(--arrow-x, 50%);
+      top: -6px;
       transform: translateX(-50%);
       border: 6px solid transparent;
       border-bottom-color: var(--ink);
-      opacity: 0;
-      transition: opacity 0.15s ease;
-      z-index: 41;
+      border-top-width: 0;
     }
-    .tip:hover::after,
-    .tip:focus::after,
-    .tip:hover::before,
-    .tip:focus::before {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+    .tip-bubble.tip-above::before {
+      top: auto;
+      bottom: -6px;
+      border-bottom-width: 0;
+      border-top-width: 6px;
+      border-top-color: var(--ink);
+      border-bottom-color: transparent;
     }
   </style>
 </head>
@@ -853,6 +862,179 @@
     const KMS_TO_AUYR = YR_S / AU_KM;
     const MNS = 1.4;
     const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+    // ═══════════════════════════════════════════
+    // Nested glossary tips (tips inside tips)
+    // ═══════════════════════════════════════════
+    (function initNestedTips() {
+      const glossary = new Map(); // lower -> tip text
+      document.querySelectorAll(".tip[data-tip]").forEach((el) => {
+        const label = el.textContent.replace(/\s+/g, " ").trim();
+        const tip = el.getAttribute("data-tip") || "";
+        if (!label || !tip) return;
+        const key = label.toLowerCase();
+        if (!glossary.has(key) || tip.length > glossary.get(key).length) {
+          glossary.set(key, tip);
+        }
+      });
+      if (!glossary.size) return;
+
+      const layer = document.createElement("div");
+      layer.id = "tip-layer";
+      document.body.appendChild(layer);
+
+      const open = []; // { bubble, depth }
+      let hideTimer = null;
+      let activeAnchor = null;
+
+      const escHtml = (s) =>
+        String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+
+      function linkify(text, skipKey) {
+        const terms = [...glossary.keys()]
+          .filter((k) => k !== skipKey)
+          .sort((a, b) => b.length - a.length);
+        if (!terms.length) return escHtml(text);
+        const re = new RegExp(
+          `\\b(${terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`,
+          "gi"
+        );
+        let out = "";
+        let last = 0;
+        let m;
+        while ((m = re.exec(text)) !== null) {
+          out += escHtml(text.slice(last, m.index));
+          const hit = m[1];
+          const tipAttr = escHtml(glossary.get(hit.toLowerCase()));
+          out += `<span class="tip" tabindex="0" data-tip="${tipAttr}">${escHtml(hit)}</span>`;
+          last = m.index + hit.length;
+        }
+        out += escHtml(text.slice(last));
+        return out;
+      }
+
+      function clearFrom(depth) {
+        while (open.length && open[open.length - 1].depth >= depth) {
+          open.pop().bubble.remove();
+        }
+        if (!open.length) activeAnchor = null;
+      }
+
+      function clearHide() {
+        if (hideTimer) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+      }
+
+      function scheduleHide(fromDepth) {
+        clearHide();
+        hideTimer = setTimeout(() => clearFrom(fromDepth), 180);
+      }
+
+      function placeBubble(bubble, anchor, depth) {
+        const ar = anchor.getBoundingClientRect();
+        const pad = 8;
+        const bw = Math.min(288, Math.max(192, window.innerWidth * 0.7));
+        bubble.style.width = `${bw}px`;
+        bubble.style.visibility = "hidden";
+        bubble.classList.add("is-open");
+        const bh = bubble.offsetHeight;
+        let left = ar.left + ar.width / 2 - bw / 2 + window.scrollX;
+        left = Math.max(
+          pad + window.scrollX,
+          Math.min(left, window.scrollX + window.innerWidth - bw - pad)
+        );
+        let top = ar.bottom + 10 + window.scrollY;
+        let above = false;
+        if (top + bh > window.scrollY + window.innerHeight - pad && ar.top > bh + 20) {
+          top = ar.top + window.scrollY - bh - 10;
+          above = true;
+        }
+        // Nested tips: nudge right so both stay readable
+        if (depth > 0) left = Math.min(left + 18, window.scrollX + window.innerWidth - bw - pad);
+        bubble.style.left = `${left}px`;
+        bubble.style.top = `${top}px`;
+        bubble.classList.toggle("tip-above", above);
+        const arrowX = ar.left + ar.width / 2 + window.scrollX - left;
+        bubble.style.setProperty("--arrow-x", `${clamp(arrowX, 14, bw - 14)}px`);
+        bubble.style.visibility = "";
+        bubble.style.zIndex = String(1000 + depth);
+      }
+
+      function depthOf(node) {
+        const b = node.closest(".tip-bubble");
+        return b ? Number(b.dataset.depth || 0) + 1 : 0;
+      }
+
+      function showTip(anchor) {
+        const tipText = anchor.getAttribute("data-tip");
+        if (!tipText) return;
+        const depth = depthOf(anchor);
+        const skipKey = anchor.textContent.replace(/\s+/g, " ").trim().toLowerCase();
+        clearHide();
+        // Already showing this exact tip
+        if (open.length && open[open.length - 1].anchor === anchor) return;
+        clearFrom(depth);
+        const bubble = document.createElement("div");
+        bubble.className = "tip-bubble";
+        bubble.dataset.depth = String(depth);
+        bubble.innerHTML = linkify(tipText, skipKey);
+        layer.appendChild(bubble);
+        placeBubble(bubble, anchor, depth);
+        open.push({ bubble, anchor, depth });
+        activeAnchor = anchor;
+      }
+
+      document.addEventListener(
+        "mouseover",
+        (e) => {
+          const t = e.target.closest(".tip[data-tip]");
+          if (!t) return;
+          // Ignore moving between children of the same tip
+          const from = e.relatedTarget && e.relatedTarget.closest
+            ? e.relatedTarget.closest(".tip[data-tip]")
+            : null;
+          if (from === t) return;
+          showTip(t);
+        },
+        true
+      );
+
+      document.addEventListener(
+        "mouseout",
+        (e) => {
+          const t = e.target.closest(".tip[data-tip], .tip-bubble");
+          if (!t) return;
+          const to = e.relatedTarget;
+          if (to && (t.contains(to) || (to.closest && (to.closest(".tip-bubble") || to.closest(".tip[data-tip]"))))) {
+            // Moving into bubble or nested tip — keep open
+            if (to.closest(".tip-bubble") || to.closest(".tip[data-tip]")) {
+              clearHide();
+              return;
+            }
+          }
+          const depth = t.classList.contains("tip-bubble")
+            ? Number(t.dataset.depth || 0)
+            : depthOf(t);
+          scheduleHide(depth);
+        },
+        true
+      );
+
+      document.addEventListener("focusin", (e) => {
+        const t = e.target.closest && e.target.closest(".tip[data-tip]");
+        if (t) showTip(t);
+      });
+      document.addEventListener("focusout", (e) => {
+        const t = e.target.closest && e.target.closest(".tip[data-tip]");
+        if (t) scheduleHide(depthOf(t));
+      });
+    })();
 
     // ═══════════════════════════════════════════
     // Natal kicks - numerical 2-body post-SN orbit
