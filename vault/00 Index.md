@@ -6,7 +6,7 @@ Edit these notes in Obsidian. When you're happy, run:
 python3 scripts/apply_vault.py
 ```
 
-To refresh the vault from the live site (overwrites vault text):
+To refresh the **site chapters** from the live site (overwrites `chapters/` + `00 Home` only):
 
 ```bash
 python3 scripts/export_to_vault.py
@@ -15,8 +15,10 @@ python3 scripts/export_to_vault.py
 ## Pages
 
 - [[00 Home]] — hero + footer
+- [[00 Workflow]] — how sync works
+- [[Glossary]] — site tip terms; matching entries also include longer notes from the layman writeup vault
 
-## Chapters
+## Site chapters
 
 - [[chapters/01 why|01 · Motivation — We're about to find a lot more black holes]]
 - [[chapters/02 how|02 · Methods — Fancy binaries, simple Galaxy]]

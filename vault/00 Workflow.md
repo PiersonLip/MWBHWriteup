@@ -4,6 +4,13 @@ This folder is an **Obsidian vault** that mirrors the *writable* content of the 
 
 Interactive bits (canvases, sliders, JS) live only in `index.html`. You edit words, captions, callouts, timelines, and stats here.
 
+Obsidian hotkeys, community plugins, themes, and snippets were copied from `~/notes/obsidianNotes`. Plugin `data.json` files are gitignored (machine-local / secrets).
+
+## Glossary vs chapters
+
+- `chapters/` + `00 Home.md` feed the live site via apply/export.
+- `Glossary.md` holds tip definitions. Where a matching note existed in `laymanPaperWriteup` (e.g. Roman, Gaia, natal kick), that longer draft was **appended** under `### From layman writeup` — the short site tip above it was kept. Cherry-pick when rewriting chapters.
+
 ## Day to day
 
 1. Open this `vault/` folder as a vault in Obsidian.
@@ -22,15 +29,15 @@ python3 scripts/apply_vault.py
 
 ## Pull site → vault (reset / resync)
 
-If the HTML was edited directly and you want the vault to match again:
+If the HTML was edited directly and you want the vault chapters to match again:
 
 ```bash
 python3 scripts/export_to_vault.py
 ```
 
-**Warning:** export overwrites vault chapter text.
+**Warning:** export overwrites vault chapter text and regenerates the short tip lines in Glossary (layman append sections may need re-merge).
 
-## What syncs
+## What syncs to the site
 
 | Vault block | Site |
 |-------------|------|
@@ -42,10 +49,4 @@ python3 scripts/export_to_vault.py
 | `:::figure` cap/title/hint | figure caption, h3, hint only |
 | `00 Home` hero/footer | header + footer |
 
-## What does **not** sync from the vault
-
-- Canvas / SVG / slider markup inside figures
-- CSS, JS, galaxy physics, kick simulator
-- TOC link list (kept automatically on the site)
-
-Don't add or remove `:::figure` blocks — same count and order as the site.
+Glossary / layman appendices do **not** auto-apply to `index.html` — fold chosen wording into chapter tips/prose yourself (or ask the agent to).

@@ -1,0 +1,58 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "tag:#astro-notes/research  ",
+      "color": {
+        "a": 1,
+        "rgb": 5260
+      }
+    },
+    {
+      "query": "tag:#astro210  ",
+      "color": {
+        "a": 1,
+        "rgb": 16429394
+      }
+    },
+    {
+      "query": "[\"book\":physics-of-binary-star-evolution]",
+      "color": {
+        "a": 1,
+        "rgb": 16384082
+      }
+    },
+    {
+      "query": "tag:#excalidraw  ",
+      "color": {
+        "a": 1,
+        "rgb": 5431413
+      }
+    },
+    {
+      "query": "tag:#astro-notes",
+      "color": {
+        "a": 1,
+        "rgb": 0
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.22766941966673995,
+  "close": true
+}

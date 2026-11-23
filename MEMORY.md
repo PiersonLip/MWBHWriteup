@@ -11,10 +11,12 @@ Standalone browser explainer for arXiv:2610.07152 (Kiato, Lipschultz, Kalogera e
 
 - Vault path: `vault/` (open that folder in Obsidian).
 - Chapters: `vault/chapters/*.md`; hero/footer: `vault/00 Home.md`; how-to: `vault/00 Workflow.md`.
+- `Glossary.md`: site tip blurbs; matching terms also have appended `### From layman writeup` drafts from `~/research/laymanPaperWriteup` (Roman, Gaia, natal kick, etc.) — does not auto-apply to HTML.
+- Obsidian hotkeys/plugins/themes/snippets synced from `~/notes/obsidianNotes` (plugin `data.json` gitignored; `semantic-auto-linker` not committed — bundled API key).
 - Tips syntax: `[term]{tip: definition goes here}`
 - Figure blocks only sync **cap / title / hint** — do not add/remove `:::figure` blocks.
 - Apply vault → site: `python3 scripts/apply_vault.py`
-- Resync site → vault (overwrites vault text): `python3 scripts/export_to_vault.py`
+- Resync site → vault (overwrites `chapters/` + Home; re-export may wipe Glossary layman sections): `python3 scripts/export_to_vault.py`
 - Shared logic: `scripts/content_lib.py`
 
 ## Paper concepts covered

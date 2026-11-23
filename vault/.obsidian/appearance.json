@@ -1,4 +1,10 @@
 {
+  "enabledCssSnippets": [
+    "equationSnip",
+    "dashboard",
+    "image-inversion"
+  ],
+  "cssTheme": "Minimal",
   "baseFontSize": 16,
-  "theme": "moonstone"
+  "showRibbon": true
 }

@@ -10,11 +10,14 @@ scripts/__pycache__/
 .idea/
 .vscode/
 
-# Obsidian runtime (keep vault/.obsidian/app.json etc. tracked)
+# Obsidian runtime / secrets
 vault/.obsidian/workspace.json
 vault/.obsidian/workspace-mobile.json
 vault/.obsidian/cache/
-vault/.obsidian/plugins/
+vault/.obsidian/plugins/**/data.json
+vault/.obsidian/plugins/**/pdfannots2json*
+# Bundled third-party key inside plugin main.js (GitHub push protection)
+vault/.obsidian/plugins/semantic-auto-linker/
 vault/attachments/
 
 # Env / secrets

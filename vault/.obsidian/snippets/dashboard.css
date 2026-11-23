@@ -1,0 +1,489 @@
+/* Obsidian dashboard boxes — enable via Settings → Appearance → CSS snippets */
+
+/* Override Minimal (and similar themes) readable line width on the homepage */
+.dashboard-home {
+  --line-width: 100%;
+  --max-width: 100%;
+  --content-line-width: 100%;
+  --container-dataview-table-width: 100%;
+}
+
+.dashboard-home .markdown-preview-view,
+.dashboard-home .markdown-preview-view .markdown-preview-sizer,
+.dashboard-home .markdown-source-view.mod-cm6 .cm-content,
+.dashboard-home .markdown-source-view.mod-cm6 .cm-sizer,
+.dashboard-home .markdown-preview-view.is-readable-line-width .markdown-preview-sizer > div,
+.dashboard-home .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer > .cm-content > div,
+.dashboard-home .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer > .inline-title,
+.dashboard-home .block-language-dataviewjs,
+.dashboard-home .markdown-preview-view.is-readable-line-width .markdown-preview-sizer .block-language-dataviewjs {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.dashboard-home .markdown-preview-view,
+.dashboard-home .markdown-source-view.mod-cm6 .cm-content {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+/* Hide Properties block on the dashboard note */
+.dashboard-home .metadata-container,
+.dashboard-home .metadata-properties-heading {
+  display: none !important;
+}
+
+.dash-root {
+  margin: 0.5rem auto 2rem;
+  width: 100%;
+  max-width: 1180px;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+.dash-header {
+  margin-bottom: 1rem;
+}
+
+.dash-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  width: 100%;
+}
+
+.dash-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .dash-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-box {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l);
+  background: var(--background-secondary);
+  padding: 0.85rem 1rem 1rem;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+.dash-box-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: 0.45rem;
+}
+
+.dash-box-title h3 {
+  margin: 0;
+  font-size: var(--font-ui-medium);
+}
+
+.dash-box-body {
+  font-size: var(--font-ui-small);
+}
+
+.dash-muted {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.dash-summary-note {
+  margin-left: 0.35rem;
+}
+
+.dash-error {
+  color: var(--text-error);
+}
+
+.dash-section {
+  margin-top: 0.75rem;
+}
+
+.dash-section-compact {
+  margin-top: 0.5rem;
+}
+
+.dash-section h4,
+.dash-ticktick-form h4 {
+  margin: 0 0 0.35rem;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dash-subtitle {
+  font-weight: 600;
+  margin: 0.35rem 0 0.15rem;
+}
+
+.dash-list {
+  margin: 0.2rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.dash-list-compact li {
+  margin: 0.1rem 0;
+}
+
+.dash-broken-links code {
+  font-size: 0.92em;
+}
+
+.dash-broken-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-family: var(--font-monospace);
+  font-size: 0.92em;
+  color: var(--text-accent);
+  cursor: pointer;
+  text-align: left;
+}
+
+.dash-broken-link:hover {
+  text-decoration: underline;
+}
+
+.dash-link-sources {
+  margin: 0.1rem 0 0.35rem 1.6rem;
+}
+
+.dash-pill {
+  display: inline-block;
+  border-radius: var(--radius-s);
+  background: var(--background-modifier-border);
+  padding: 0.05rem 0.45rem;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.dash-pill-urgent {
+  background: rgba(var(--color-red-rgb), 0.18);
+  color: var(--text-error);
+}
+
+.dash-ticktick-summary {
+  margin-bottom: 0.35rem;
+}
+
+.dash-form-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.35rem 0;
+}
+
+.dash-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  padding: 0.35rem 0.5rem;
+}
+
+.dash-btn {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+  font-size: var(--font-ui-small);
+}
+
+.dash-btn:hover {
+  filter: brightness(1.05);
+}
+
+.dash-btn-small {
+  padding: 0.2rem 0.5rem;
+}
+
+.dash-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.dash-form-status {
+  min-height: 1.2em;
+}
+
+.dash-apod-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-m);
+  margin: 0.5rem 0;
+}
+
+.dash-apod-caption,
+.dash-wiki-caption {
+  margin: 0.35rem 0 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.dash-feed-links {
+  margin-top: 0.5rem;
+}
+
+.dash-wiki-article-title {
+  margin: 0 0 0.5rem;
+  font-size: var(--font-ui-medium);
+  line-height: 1.35;
+}
+
+.dash-wiki-article-title a {
+  color: var(--text-normal);
+  text-decoration: none;
+}
+
+.dash-wiki-article-title a:hover {
+  color: var(--text-accent);
+  text-decoration: underline;
+}
+
+.dash-wiki-media {
+  display: flex;
+  justify-content: center;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.dash-wiki-image {
+  display: block;
+  max-width: 100%;
+  max-height: 160px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-m);
+}
+
+.dash-wiki-read {
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.dash-apod-title h4 {
+  margin: 0;
+  display: inline;
+}
+
+.dash-daily-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.dash-daily-date {
+  font-weight: 600;
+}
+
+.dash-checkin-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.dash-checkin-list li {
+  margin: 0.25rem 0;
+}
+
+/* ── Keep the Rhythm widget ───────────────────────────────────────── */
+
+.ktr-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ktr-slot {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  padding: 0.5rem 0.65rem;
+  background: var(--background-primary);
+}
+
+.ktr-slot-label {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.15rem;
+}
+
+.ktr-slot-value {
+  line-height: 1.2;
+}
+
+.ktr-slot-number {
+  font-size: 1.35em;
+  font-weight: 700;
+  color: var(--text-normal);
+}
+
+.ktr-slot-unit {
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.ktr-bar-track {
+  margin-top: 0.35rem;
+  height: 4px;
+  background: var(--background-modifier-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ktr-bar-fill {
+  height: 100%;
+  background: var(--interactive-accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.ktr-streak-row {
+  margin-bottom: 0.6rem;
+  font-size: var(--font-ui-small);
+}
+
+.ktr-streak {
+  font-weight: 600;
+}
+
+.ktr-entries {
+  margin-bottom: 0.75rem;
+}
+
+.ktr-entries-label {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.ktr-entry-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+  font-size: var(--font-ui-small);
+}
+
+.ktr-entry-name {
+  color: var(--text-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ktr-entry-count {
+  color: var(--text-accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* heatmap */
+.ktr-heatmap {
+  margin-top: 0.75rem;
+  overflow-x: auto;
+}
+
+.ktr-month-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+.ktr-weekday-spacer {
+  width: 2.5rem;
+  flex-shrink: 0;
+}
+
+.ktr-month-label {
+  width: 12px;
+  font-size: 9px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.ktr-grid-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ktr-grid-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ktr-weekday-label {
+  width: 2.5rem;
+  flex-shrink: 0;
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: right;
+  padding-right: 4px;
+}
+
+.ktr-cell {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  background: #ebedf015;
+  cursor: default;
+}
+
+.ktr-cell-round {
+  border-radius: 2px;
+}
+
+.ktr-cell-today {
+  outline: 1px solid var(--interactive-accent);
+  outline-offset: 1px;
+}
+
+/* Embedded Bases inside dashboard widgets */
+.dashboard-home .dash-base-embed {
+  overflow: auto;
+  max-height: 22rem;
+}
+
+.dashboard-home .dash-base-embed .internal-embed,
+.dashboard-home .dash-base-embed .markdown-embed {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.dashboard-home .dash-base-embed .markdown-embed-title {
+  display: none;
+}
