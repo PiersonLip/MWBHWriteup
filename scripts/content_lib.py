@@ -375,7 +375,7 @@ def render_block_html(block: Block) -> str:
         return "\n".join(lines)
     if block.kind == "eq":
         return (
-            '      <p class="eq" style="max-width: var(--measure); margin: 0.75rem 0 1.1rem;">\n'
+            '      <p class="eq">\n'
             f"        {md_inline_to_html(block.text)}\n"
             "      </p>"
         )

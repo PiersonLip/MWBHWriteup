@@ -24,7 +24,8 @@
       --disrupt-bg: #f7e9e9;
       --star: #b8941f;
       --shadow: 0 1px 0 rgba(20,24,32,0.04), 0 12px 32px rgba(20,24,32,0.06);
-      --measure: 38rem;
+      --measure: 40rem;
+      --figure-measure: 58rem;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,7 +37,29 @@
       line-height: 1.6;
     }
 
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 2.25rem 1.15rem 4rem; }
+    .wrap { max-width: var(--figure-measure); margin: 0 auto; padding: 2.25rem 1.15rem 4rem; }
+
+    /* Shared reading column — keeps titles/prose centered in the viewport */
+    .measure,
+    header.hero .eyebrow,
+    header.hero h1,
+    header.hero .lede,
+    header.hero .byline,
+    header.hero .meta-row,
+    header.hero nav.toc,
+    .ch-label,
+    article.chapter > h2,
+    .prose,
+    .callout,
+    .stat-row,
+    .timeline,
+    p.eq,
+    footer.site {
+      width: 100%;
+      max-width: var(--measure);
+      margin-left: auto;
+      margin-right: auto;
+    }
 
     /* Hero */
     header.hero {
@@ -51,16 +74,17 @@
     }
     h1 {
       font-family: "Newsreader", Georgia, serif;
-      font-weight: 650; font-size: clamp(2rem, 5vw, 3.2rem);
-      line-height: 1.1; letter-spacing: -0.025em; max-width: 16ch; margin-bottom: 1rem;
+      font-weight: 650; font-size: clamp(2rem, 5vw, 3.05rem);
+      line-height: 1.12; letter-spacing: -0.025em;
+      max-width: var(--measure); margin-bottom: 1rem;
     }
     .lede {
       font-family: "Newsreader", Georgia, serif;
       font-size: 1.2rem; font-weight: 500; color: var(--ink-soft);
-      max-width: 36rem; line-height: 1.45; margin-bottom: 1.25rem;
+      line-height: 1.45; margin-bottom: 1.25rem;
     }
     .byline {
-      font-size: 0.88rem; color: var(--muted); max-width: 40rem; margin-bottom: 0.5rem;
+      font-size: 0.88rem; color: var(--muted); margin-bottom: 0.5rem;
     }
     .byline a { color: var(--accent); }
     .meta-row {
@@ -95,14 +119,15 @@
     h2 {
       font-family: "Newsreader", Georgia, serif;
       font-size: clamp(1.45rem, 3vw, 1.85rem); font-weight: 650;
-      letter-spacing: -0.015em; margin-bottom: 0.85rem; max-width: 22ch;
+      letter-spacing: -0.015em; margin-bottom: 0.85rem;
+      max-width: var(--measure);
     }
     h3 {
       font-family: "Newsreader", Georgia, serif;
       font-size: 1.15rem; font-weight: 650; margin: 1.6rem 0 0.55rem;
     }
     .prose {
-      font-size: 1.02rem; color: var(--ink-soft); max-width: var(--measure);
+      font-size: 1.02rem; color: var(--ink-soft);
     }
     .prose p { margin-bottom: 0.95rem; }
     .prose p:last-child { margin-bottom: 0; }
@@ -111,8 +136,7 @@
     .prose a { color: var(--accent); }
 
     .callout {
-      max-width: var(--measure);
-      margin: 1.25rem 0;
+      margin: 1.25rem auto;
       padding: 0.9rem 1rem;
       background: var(--accent-soft);
       border-left: 3px solid var(--accent);
@@ -125,8 +149,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.75rem;
-      margin: 1.4rem 0 1.6rem;
-      max-width: 40rem;
+      margin: 1.4rem auto 1.6rem;
     }
     @media (max-width: 600px) { .stat-row { grid-template-columns: 1fr; } }
     .stat {
@@ -141,11 +164,13 @@
       font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem;
     }
 
-    /* Interactive figure cards */
+    /* Interactive figure cards — slightly wider than the reading column, still centered */
     .figure {
       background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
       box-shadow: var(--shadow); padding: 1.25rem 1.15rem 1.35rem;
-      margin: 1.5rem 0 1.75rem;
+      margin: 1.5rem auto 1.75rem;
+      width: 100%;
+      max-width: var(--figure-measure);
     }
     .figure-cap {
       font-family: "IBM Plex Mono", monospace;
@@ -203,6 +228,7 @@
     .eq {
       font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; background: #f6f7f9;
       border: 1px solid var(--line); border-radius: 8px; padding: 0.58rem 0.68rem; color: var(--ink-soft); line-height: 1.45;
+      margin-top: 0.75rem; margin-bottom: 1.1rem;
     }
     .eq em { color: var(--accent); font-style: normal; font-weight: 500; }
 
@@ -273,8 +299,8 @@
     .ce-stats b { color: var(--ink); font-weight: 500; }
 
     .timeline {
-      max-width: var(--measure);
-      margin: 1.2rem 0 1.5rem;
+      margin-top: 1.2rem;
+      margin-bottom: 1.5rem;
       display: flex; flex-direction: column; gap: 0;
       border-left: 2px solid var(--line);
       padding-left: 1.1rem;
@@ -296,7 +322,7 @@
 
     footer.site {
       margin-top: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line);
-      font-size: 0.8rem; color: var(--muted); max-width: 42rem;
+      font-size: 0.8rem; color: var(--muted);
     }
     footer.site a { color: var(--accent); }
 
@@ -614,7 +640,7 @@
         </p>
       </div>
 
-      <p class="eq" style="max-width: var(--measure); margin: 0.75rem 0 1.1rem;">
+      <p class="eq" style="margin-top: 0.75rem; margin-bottom: 1.1rem;">
         <em>v<sub>BH</sub> = v<sub>NS</sub> · M<sub>NS</sub> / M<sub>BH</sub></em> · <span class="tip" tabindex="0" data-tip="Material that falls back onto the newborn compact object. More fallback usually means a weaker kick in these models.">fallback</span>: <em>v<sub>kick</sub> = (1 − f<sub>fb</sub>) · v<sub>NS</sub></em>
       </p>
 
