@@ -1139,10 +1139,10 @@
       ctx.fillRect(0, 0, w, h);
       if (!sim) return;
 
-      // Timeline
-      const cycle = 8.0;
+      // Timeline — flash beat holds so kick direction/strength can be read
+      const cycle = 8.8;
       const tau = animT % cycle;
-      const tPre = 2.4, tFlash = 2.65;
+      const tPre = 2.4, tFlash = 3.6; // ~1.2s kick arrow hold
       let phase, tPhys;
       if (tau < tPre) {
         phase = "pre";
@@ -1245,8 +1245,16 @@
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
 
-      // Kick arrow only during flash
+      // Kick arrow held through the flash beat so direction/strength can be read
       if (phase === "flash") {
+        const flashDur = tFlash - tPre;
+        const f = (tau - tPre) / flashDur;
+        // Brief SN bloom at the start of the hold
+        if (f < 0.35) {
+          const g = f / 0.35;
+          ctx.fillStyle = `rgba(255,210,150,${0.55 * (1 - g)})`;
+          ctx.beginPath(); ctx.arc(p1.x, p1.y, 16 + g * 42, 0, Math.PI * 2); ctx.fill();
+        }
         const sn = prePositions(0);
         const s1 = S(sn.x1, sn.y1);
         const mag = Math.hypot(sim.kx, sim.ky) || 1;
@@ -1263,14 +1271,8 @@
         ctx.lineTo(ax - ux * 8 + uy * 4, ay + uy * 8 + ux * 4);
         ctx.lineTo(ax - ux * 8 - uy * 4, ay + uy * 8 - ux * 4);
         ctx.closePath(); ctx.fill();
-        ctx.font = "500 11px IBM Plex Mono";
-        ctx.fillText("v_kick", ax + 5, ay - 4);
-      }
-
-      if (phase === "flash") {
-        const f = (tau - tPre) / (tFlash - tPre);
-        ctx.fillStyle = `rgba(255,210,150,${0.5 * (1 - f)})`;
-        ctx.beginPath(); ctx.arc(p1.x, p1.y, 16 + f * 42, 0, Math.PI * 2); ctx.fill();
+        ctx.font = "600 12px IBM Plex Mono";
+        ctx.fillText(`v_kick ${sim.vkick_kms.toFixed(0)} km/s`, ax + 6, ay - 4);
       }
 
       // Companion

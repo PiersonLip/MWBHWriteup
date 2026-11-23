@@ -10,6 +10,7 @@ Standalone browser explainer for arXiv:2610.07152 (Kiato, Lipschultz, Kalogera e
 ## Paper concepts covered
 
 - Natal kicks / Blaauw mass loss / bound vs disrupted binaries (kick orbit interactive).
+  - Kick canvas timeline: pre ≈2.4s → **flash hold ≈1.2s** (kick arrow + `v_kick` label) → post; full cycle ≈8.8s.
 - Channel demographics (~4e8 BHs; mostly isolated today).
 - Wind-driven vs stable MT (~13 M☉ feature), CE efficiency.
 - Galactic seeding (§II.3): POSYDON survivors → MW components → gala-style orbit integration → kick in Galactocentric frame → present-day catalog (Gaia/Roman hooks).
