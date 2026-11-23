@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Uncovering Galactic Black Holes: An Interactive Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,650;1,6..72,500&family=Schibsted+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #141820;
+      --ink-soft: #3c4454;
+      --muted: #6a7384;
+      --paper: #eceef2;
+      --panel: #ffffff;
+      --line: #d5dae3;
+      --accent: #1f4f9c;
+      --accent-soft: #e7eef9;
+      --kick: #c2472a;
+      --bound: #1b6b48;
+      --bound-bg: #e6f3ec;
+      --disrupt: #a12c2c;
+      --disrupt-bg: #f7e9e9;
+      --star: #b8941f;
+      --shadow: 0 1px 0 rgba(20,24,32,0.04), 0 12px 32px rgba(20,24,32,0.06);
+      --measure: 38rem;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Schibsted Grotesk", system-ui, sans-serif;
+      background: linear-gradient(180deg, #e5e8ee 0%, var(--paper) 18%, #eef0f3 100%);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 2.25rem 1.15rem 4rem; }
+
+    /* Hero */
+    header.hero {
+      padding: 1rem 0 2.5rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 2.5rem;
+    }
+    .eyebrow {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 650; font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.1; letter-spacing: -0.025em; max-width: 16ch; margin-bottom: 1rem;
+    }
+    .lede {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.2rem; font-weight: 500; color: var(--ink-soft);
+      max-width: 36rem; line-height: 1.45; margin-bottom: 1.25rem;
+    }
+    .byline {
+      font-size: 0.88rem; color: var(--muted); max-width: 40rem; margin-bottom: 0.5rem;
+    }
+    .byline a { color: var(--accent); }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem;
+      font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--muted);
+      margin-top: 1.25rem;
+    }
+
+    nav.toc {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+    }
+    nav.toc a {
+      font-size: 0.76rem; font-weight: 500; text-decoration: none; color: var(--ink-soft);
+      background: var(--panel); border: 1px solid var(--line); padding: 0.36rem 0.7rem; border-radius: 999px;
+    }
+    nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Article prose */
+    article.chapter {
+      margin-bottom: 3rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+    article.chapter:last-of-type { border-bottom: none; }
+
+    .ch-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.45rem;
+    }
+    h2 {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(1.45rem, 3vw, 1.85rem); font-weight: 650;
+      letter-spacing: -0.015em; margin-bottom: 0.85rem; max-width: 22ch;
+    }
+    h3 {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.15rem; font-weight: 650; margin: 1.6rem 0 0.55rem;
+    }
+    .prose {
+      font-size: 1.02rem; color: var(--ink-soft); max-width: var(--measure);
+    }
+    .prose p { margin-bottom: 0.95rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose strong { color: var(--ink); font-weight: 600; }
+    .prose em { font-family: "Newsreader", Georgia, serif; font-style: italic; }
+    .prose a { color: var(--accent); }
+
+    .callout {
+      max-width: var(--measure);
+      margin: 1.25rem 0;
+      padding: 0.9rem 1rem;
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.94rem; color: var(--ink-soft);
+    }
+    .callout strong { color: var(--ink); }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin: 1.4rem 0 1.6rem;
+      max-width: 40rem;
+    }
+    @media (max-width: 600px) { .stat-row { grid-template-columns: 1fr; } }
+    .stat {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+      padding: 0.9rem 1rem; box-shadow: var(--shadow);
+    }
+    .stat .n {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.55rem; font-weight: 650; line-height: 1; color: var(--ink);
+    }
+    .stat .l {
+      font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem;
+    }
+
+    /* Interactive figure cards */
+    .figure {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); padding: 1.25rem 1.15rem 1.35rem;
+      margin: 1.5rem 0 1.75rem;
+    }
+    .figure-cap {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.35rem;
+    }
+    .figure h3 {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.15rem; font-weight: 650; margin: 0 0 0.45rem;
+    }
+    .figure .hint {
+      font-size: 0.88rem; color: var(--ink-soft); margin-bottom: 1rem; max-width: 52ch;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: minmax(240px, 0.92fr) 1.18fr; gap: 1.1rem; align-items: start; }
+    @media (max-width: 820px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .controls { display: flex; flex-direction: column; gap: 0.75rem; }
+    .control { display: flex; flex-direction: column; gap: 0.28rem; }
+    .control label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); }
+    .control label .val { font-family: "IBM Plex Mono", monospace; color: var(--ink); font-size: 0.74rem; }
+
+    input[type="range"] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 5px;
+      border-radius: 999px; background: #e1e5ec; outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; border: 2px solid var(--accent); cursor: pointer;
+    }
+
+    .seg { display: flex; flex-wrap: wrap; gap: 0.28rem; }
+    .seg button {
+      font-family: inherit; font-size: 0.72rem; font-weight: 500; padding: 0.36rem 0.55rem;
+      border-radius: 7px; border: 1px solid var(--line); background: #f6f7f9; color: var(--ink-soft); cursor: pointer;
+    }
+    .seg button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .seg button:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+    .canvas-wrap {
+      background: #f4f6f9; border: 1px solid var(--line); border-radius: 10px;
+      overflow: hidden; aspect-ratio: 1 / 1; min-height: 300px;
+    }
+    canvas { display: block; width: 100%; height: 100%; }
+
+    .status {
+      padding: 0.68rem 0.78rem; border-radius: 9px; font-size: 0.86rem;
+      border: 1px solid transparent; display: flex; flex-direction: column; gap: 0.18rem;
+    }
+    .status.bound { background: var(--bound-bg); border-color: #c3dfd0; color: var(--bound); }
+    .status.disrupted { background: var(--disrupt-bg); border-color: #e3c3c3; color: var(--disrupt); }
+    .status strong { font-family: "Newsreader", Georgia, serif; font-size: 1.02rem; font-weight: 650; }
+    .status .meta { font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; color: var(--ink-soft); line-height: 1.4; }
+
+    .eq {
+      font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; background: #f6f7f9;
+      border: 1px solid var(--line); border-radius: 8px; padding: 0.58rem 0.68rem; color: var(--ink-soft); line-height: 1.45;
+    }
+    .eq em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+    .pop-stack {
+      display: flex; height: 44px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line);
+    }
+    .pop-seg {
+      border: none; color: #fff; cursor: pointer; font: inherit; padding: 0 0.65rem;
+      display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+      min-width: 0; transition: filter 0.15s; outline: 2px solid transparent; outline-offset: -2px;
+    }
+    .pop-seg:hover { filter: brightness(1.08); }
+    .pop-seg.active { outline-color: #fff; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.9); }
+    .pop-seg .pct { font-family: "Newsreader", Georgia, serif; font-weight: 650; font-size: 1.05rem; line-height: 1; }
+    .pop-seg .lbl { font-size: 0.66rem; opacity: 0.92; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+    .pop-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .pop-row {
+      display: grid; grid-template-columns: 168px minmax(0, 1fr) 44px; gap: 0.7rem; align-items: center;
+      width: 100%; border: 1px solid transparent; background: transparent; border-radius: 8px;
+      padding: 0.4rem 0.5rem; cursor: pointer; font: inherit; text-align: left; color: inherit;
+    }
+    .pop-row:hover { background: #f6f7f9; }
+    .pop-row.active { background: var(--accent-soft); border-color: #c5d4ec; }
+    .pop-row .name { font-size: 0.84rem; font-weight: 500; color: var(--ink-soft); }
+    .pop-row.active .name { color: var(--ink); }
+    .pop-row .track {
+      display: block; width: 100%; height: 14px; background: #e8ebf0;
+      border-radius: 4px; overflow: hidden; min-width: 0;
+    }
+    .pop-row .fill { display: block; height: 14px; border-radius: 4px; }
+    .pop-row .num { font-family: "IBM Plex Mono", monospace; font-size: 0.75rem; color: var(--muted); text-align: right; }
+    @media (max-width: 560px) {
+      .pop-row { grid-template-columns: 1fr 44px; }
+      .pop-row .name { grid-column: 1 / -1; }
+    }
+
+    .detail-box {
+      margin-top: 0.9rem; padding: 0.85rem 0.95rem; background: #f6f7f9;
+      border: 1px solid var(--line); border-radius: 9px; min-height: 5rem;
+    }
+    .detail-box h3 { font-family: "Newsreader", Georgia, serif; font-size: 1.02rem; margin: 0 0 0.28rem; }
+    .detail-box p { font-size: 0.86rem; color: var(--ink-soft); }
+
+    .channel-stage {
+      background: #f4f6f9; border: 1px solid var(--line); border-radius: 10px; padding: 0.7rem; min-height: 320px;
+    }
+    .channel-svg { width: 100%; height: auto; display: block; background: #fff; border-radius: 8px; }
+    .channel-note {
+      margin-top: 0.8rem; font-size: 0.85rem; color: var(--ink-soft); padding: 0.68rem 0.8rem;
+      background: var(--accent-soft); border-radius: 8px; border-left: 3px solid var(--accent);
+    }
+
+    .ce-viz { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    @media (max-width: 700px) { .ce-viz { grid-template-columns: 1fr; } }
+    .ce-card {
+      background: #f4f6f9; border: 1px solid var(--line); border-radius: 10px;
+      padding: 0.9rem; display: flex; flex-direction: column; gap: 0.65rem;
+    }
+    .ce-card h3 { font-family: "Newsreader", Georgia, serif; font-size: 1rem; margin: 0; }
+    .ce-meter { height: 9px; border-radius: 999px; background: var(--line); overflow: hidden; display: flex; }
+    .ce-meter .survive { background: var(--bound); transition: flex 0.3s; }
+    .ce-meter .merge { background: var(--disrupt); transition: flex 0.3s; }
+    .ce-stats {
+      display: flex; justify-content: space-between; font-family: "IBM Plex Mono", monospace;
+      font-size: 0.7rem; color: var(--muted);
+    }
+    .ce-stats b { color: var(--ink); font-weight: 500; }
+
+    .timeline {
+      max-width: var(--measure);
+      margin: 1.2rem 0 1.5rem;
+      display: flex; flex-direction: column; gap: 0;
+      border-left: 2px solid var(--line);
+      padding-left: 1.1rem;
+    }
+    .timeline .step {
+      position: relative;
+      padding: 0.55rem 0 1rem;
+    }
+    .timeline .step::before {
+      content: "";
+      position: absolute; left: -1.3rem; top: 0.85rem;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); border: 2px solid var(--paper);
+    }
+    .timeline .step strong {
+      display: block; font-size: 0.9rem; color: var(--ink); margin-bottom: 0.15rem;
+    }
+    .timeline .step span { font-size: 0.86rem; color: var(--ink-soft); }
+
+    footer.site {
+      margin-top: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line);
+      font-size: 0.8rem; color: var(--muted); max-width: 42rem;
+    }
+    footer.site a { color: var(--accent); }
+
+    .gal-layout {
+      display: grid;
+      grid-template-columns: 1.4fr minmax(220px, 0.75fr);
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .gal-layout { grid-template-columns: 1fr; }
+    }
+    .gal-stage {
+      position: relative;
+      background: #0f141c;
+      border: 1px solid #2a3342;
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 360px;
+      aspect-ratio: 1.55 / 1;
+      cursor: grab;
+    }
+    .gal-stage:active { cursor: grabbing; }
+    .gal-stage canvas { width: 100%; height: 100%; display: block; }
+    .gal-fs-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      z-index: 2;
+      border: 1px solid rgba(180,190,210,0.35);
+      background: rgba(15,20,28,0.78);
+      color: #d7dde8;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.02em;
+      padding: 0.35rem 0.55rem;
+      border-radius: 6px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .gal-fs-btn:hover { background: rgba(30,38,52,0.92); color: #fff; }
+    .gal-legend {
+      position: absolute;
+      left: 12px; bottom: 12px;
+      display: flex; flex-wrap: wrap; gap: 0.45rem 0.75rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem; color: #c5ccd8;
+      background: rgba(15,20,28,0.72);
+      padding: 0.45rem 0.6rem;
+      border-radius: 7px;
+    }
+    .gal-legend i {
+      display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+      margin-right: 0.3rem; vertical-align: -1px;
+    }
+    .gal-controls { gap: 0.85rem; }
+    .gal-status {
+      padding: 0.75rem 0.8rem;
+      border-radius: 9px;
+      background: #f6f7f9;
+      border: 1px solid var(--line);
+      display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    .gal-status strong {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.02rem; font-weight: 650; color: var(--ink);
+    }
+    .gal-status span { font-size: 0.84rem; color: var(--ink-soft); line-height: 1.4; }
+    .gal-ex-blurb {
+      margin: 0.45rem 0 0;
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      line-height: 1.4;
+    }
+    #gal-examples { margin-top: 0.35rem; }
+    #gal-examples button { flex: 1; min-width: 0; text-align: center; }
+
+    .gal-stage:fullscreen,
+    .gal-stage:-webkit-full-screen {
+      background: #0f141c;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      min-height: 0;
+      border: none;
+      border-radius: 0;
+      cursor: grab;
+    }
+    .gal-stage:fullscreen:active,
+    .gal-stage:-webkit-full-screen:active { cursor: grabbing; }
+    .gal-stage:fullscreen canvas,
+    .gal-stage:-webkit-full-screen canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* hover glossary tips */
+    .tip {
+      border-bottom: 1px dotted var(--accent);
+      cursor: help;
+      position: relative;
+      color: inherit;
+    }
+    .tip:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 8px);
+      transform: translateX(-50%) translateY(-4px);
+      width: max(12rem, min(18rem, 70vw));
+      padding: 0.55rem 0.7rem;
+      background: var(--ink);
+      color: #f3f5f8;
+      font-family: "Schibsted Grotesk", system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      line-height: 1.4;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(20,24,32,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 40;
+      text-align: left;
+      white-space: normal;
+    }
+    .tip::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 2px);
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-bottom-color: var(--ink);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      z-index: 41;
+    }
+    .tip:hover::after,
+    .tip:focus::after,
+    .tip:hover::before,
+    .tip:focus::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">Interactive guide · arXiv:2610.07152</p>
+      <h1>Uncovering the physical origins of black holes in the Milky Way</h1>
+      <p class="lede">
+        A casual walkthrough of how <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids, not just quick analytic recipes.">POSYDON</span> connects binary star physics to today's Galactic black holes,
+        and what <span class="tip" tabindex="0" data-tip="ESA's space observatory that measures precise positions and motions of stars. Great for finding quiet black holes tugging on a visible companion.">Gaia</span> and <span class="tip" tabindex="0" data-tip="NASA's Nancy Grace Roman Space Telescope. Expected to catch lots of black holes through gravitational microlensing.">Roman</span> might actually see.
+      </p>
+      <p class="byline">
+        Based on <a href="https://arxiv.org/abs/2610.07152" target="_blank" rel="noopener">Kiato, Lipschultz, Kalogera et al.</a>
+        (submitted to ApJ). Co-authors include Andrews, Briel, Chattaraj, Gossage, and Srivastava.
+      </p>
+      <div class="meta-row">
+        <span>POSYDON v2.3.2</span>
+        <span>~4×10⁸ Galactic BHs</span>
+        <span>Fiducial: solar metallicity</span>
+      </div>
+      <nav class="toc">
+        <a href="#why">Why this matters</a>
+        <a href="#how">How the models work</a>
+        <a href="#census">The BH census</a>
+        <a href="#kicks">Natal kicks</a>
+        <a href="#channels">Two roads to BH-BH</a>
+        <a href="#ce">Common envelopes</a>
+        <a href="#galaxy">Galactic seeding</a>
+        <a href="#observe">Gaia &amp; Roman</a>
+        <a href="#takeaways">Takeaways</a>
+      </nav>
+    </header>
+
+    <article class="chapter" id="why">
+      <p class="ch-label">01 · Motivation</p>
+      <h2>We're about to find a lot more black holes</h2>
+      <div class="prose">
+        <p>
+          On paper, the Milky Way should have <strong>hundreds of millions</strong> of stellar-mass black holes.
+          Almost none of them glow. Until recently we mostly knew the loud ones sitting in <span class="tip" tabindex="0" data-tip="A binary where a black hole (or neutron star) steals gas from a companion. The gas heats up and shines in X-rays.">X-ray binaries</span>
+          (a few dozen with solid mass measurements), plus whatever <span class="tip" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy.">LIGO/Virgo/KAGRA</span> finds far away.
+        </p>
+        <p>
+          That's changing fast. <span class="tip" tabindex="0" data-tip="ESA's space observatory that measures precise positions and motions of stars. Great for finding quiet black holes tugging on a visible companion.">Gaia</span> already confirmed three sleepy black holes with bright companions
+          (Gaia BH1, BH2, BH3). <span class="tip" tabindex="0" data-tip="NASA's Nancy Grace Roman Space Telescope. Expected to catch lots of black holes through gravitational microlensing.">Roman</span> should <span class="tip" tabindex="0" data-tip="When a massive object briefly bends and brightens light from a background star. The light curve can reveal the lens mass even if the lens is dark.">microlens</span> hundreds more. Gaia DR4 is expected to add dozens of
+          astrometric BH binaries. So the fun question is shifting from "find me one cool system" to
+          "what does the whole population look like?"
+        </p>
+        <p>
+          You can't answer that by just counting corpses. Most massive stars grow up with a roommate.
+          Stuff like <span class="tip" tabindex="0" data-tip="One star dumps gas onto the other through the inner Lagrange point when it fills its Roche lobe.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A messy phase where both stars share one giant envelope. The orbit usually shrinks a lot, or the stars merge.">common envelope</span>s, mergers, and supernova kicks decide whether a black hole ends up alone
+          or paired, heavy or light, tight or wide. A lot of older population codes approximate that with
+          fitting formulae. This paper uses <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids, not just quick analytic recipes.">POSYDON</span> instead, which leans on detailed <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. The workhorse 1D stellar structure code behind POSYDON's grids.">MESA</span> binary grids.
+        </p>
+      </div>
+      <div class="callout">
+        <strong>The basic idea:</strong> take today's Galactic black holes, trace them back to how they formed,
+        poke the uncertain physics to see what sticks, then ask (at a first-pass level) what Gaia and Roman
+        might actually notice.
+      </div>
+    </article>
+
+    <article class="chapter" id="how">
+      <p class="ch-label">02 · Methods</p>
+      <h2>Fancy binaries, simple Galaxy</h2>
+      <div class="prose">
+        <p>
+          POSYDON evolves single stars and binaries from the <span class="tip" tabindex="0" data-tip="Zero-age main sequence: the starting line, when a star first settles into hydrogen burning.">ZAMS</span> using pre-computed MESA grids.
+          The main ("fiducial") run throws <strong>10 million binaries</strong> at solar <span class="tip" tabindex="0" data-tip="How metal-rich the gas is (everything heavier than helium). Higher Z usually means stronger stellar winds.">metallicity</span>,
+          then scales the results up to a Milky Way-ish galaxy (~6×10¹⁰&nbsp;M☉ of stars, steady star formation
+          for 10&nbsp;Gyr). "Today" means: anything that still has a black hole in it at 10&nbsp;Gyr.
+        </p>
+        <p>
+          Some stuff stays locked: a Kroupa-like <span class="tip" tabindex="0" data-tip="Initial mass function. How common stars of different birth masses are. Heavier stars are rarer.">IMF</span> for the primary stars, POSYDON's wind and mixing setup,
+          and the usual α<sub>CE</sub>-λ<sub>CE</sub> <span class="tip" tabindex="0" data-tip="A messy phase where both stars share one giant envelope. The orbit usually shrinks a lot, or the stars merge.">common envelope</span> recipe. Across twelve models, they flip the knobs
+          that actually rearrange the BH census:
+        </p>
+      </div>
+      <div class="timeline">
+        <div class="step">
+          <strong>Initial binaries</strong>
+          <span>Moe &amp; Di Stefano (2017) period/mass-ratio/eccentricity correlations, versus a simpler Sana+12 + flat-q setup.</span>
+        </div>
+        <div class="step">
+          <strong>Core collapse</strong>
+          <span>Fryer delayed engine as the default, plus Sukhbold+16 and Patton+20 options that can still make low-mass BHs.</span>
+        </div>
+        <div class="step">
+          <strong>Natal kicks</strong>
+          <span>Disberg log-normal NS kicks, then scaled for BHs by mass, fallback, full NS-like, or zero. There's also a Hobbs Maxwellian version.</span>
+        </div>
+        <div class="step">
+          <strong>Common-envelope efficiency</strong>
+          <span>α<sub>CE</sub> = 1.0 (default), 0.5, and 0.1.</span>
+        </div>
+        <div class="step">
+          <strong>Metallicity</strong>
+          <span>Z☉, 0.1&nbsp;Z☉, and 0.01&nbsp;Z☉. Winds (and that ~13&nbsp;M☉ bump) care a lot about this.</span>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          When they want to talk about observations, they drop the synthetic systems into a Milky Way model
+          and integrate orbits with <em>gala</em>, updating velocities whenever a compact object is born.
+          Full survey selection effects are left for later. This paper is about the intrinsic population,
+          plus a first look at where that population sits in observable space.
+        </p>
+      </div>
+    </article>
+
+    <article class="chapter" id="census">
+      <p class="ch-label">03 · Demographics</p>
+      <h2>Most Galactic black holes are alone (but they usually weren't born that way)</h2>
+      <div class="prose">
+        <p>
+          In the fiducial solar-metallicity run, you get about <strong>4×10⁸</strong> stellar-mass
+          black holes in the Galaxy. Roughly three-quarters are single today. The rest still have a partner.
+          That loneliness is usually earned: stellar mergers and kicked-apart binaries beat out stars that
+          were born alone.
+        </p>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><div class="n">~4×10⁸</div><div class="l">Total Galactic BHs</div></div>
+        <div class="stat"><div class="n">78%</div><div class="l">Isolated at 10 Gyr</div></div>
+        <div class="stat"><div class="n">19%</div><div class="l">In detached BH-BH binaries</div></div>
+      </div>
+
+      <div class="prose">
+        <p>
+          For the loners, <strong>stellar mergers</strong> win (42% of all BHs): two normal stars smash
+          together (often after a failed common envelope), then the merger product later collapses.
+          <strong>Disrupted binaries</strong> come next (27%): a <span class="tip" tabindex="0" data-tip="An extra velocity shove a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the
+          binary apart at the first or second <span class="tip" tabindex="0" data-tip="The endgame of a massive star: the iron core collapses and you get a neutron star, a black hole, or sometimes nothing.">core collapse</span>. Born-single stars, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational waves can merge them.">DCO</span>
+          mergers fill out the leftovers.
+        </p>
+        <p>
+          The binaries that survive look lopsided. <span class="tip" tabindex="0" data-tip="Not transferring mass right now. The two objects orbit quietly without an accretion disk lighting up.">Detached</span> <strong>BH-BH</strong> systems alone are ~19%
+          of all BHs. BH+NS, BH+WD, and BH+star systems together are only a few percent. Funny enough,
+          those rare ones are basically everything we've observed so far.
+        </p>
+        <p>
+          The mass spectra keep showing two fingerprints: a low-mass bump near ~2.5 to 5&nbsp;M☉
+          (helped by <span class="tip" tabindex="0" data-tip="Mass transfer that stays under control instead of running away into a common envelope.">stable mass transfer</span> before BH formation, plus the delayed explosion engine) and a skinny pile-up
+          near <strong>~13&nbsp;M☉</strong> from windy <span class="tip" tabindex="0" data-tip="Hot, helium-rich stars that have already lost their hydrogen envelopes. They drive fierce winds.">Wolf-Rayet</span> evolution. Median masses land around
+          ~8.2&nbsp;M☉ (isolated) and ~12.5&nbsp;M☉ (in binaries).
+        </p>
+      </div>
+
+      <div class="figure" id="demo">
+        <p class="figure-cap">Figure · Fiducial demographics (paper §III, Fig. 1)</p>
+        <h3>Where do Galactic BHs end up?</h3>
+        <p class="hint">Click a segment or row to read about that channel. Fractions are of all present-day BHs.</p>
+        <div class="pop-stack" id="pop-stack"></div>
+        <div class="pop-list" id="pop-list"></div>
+        <div class="detail-box" id="demo-detail"></div>
+      </div>
+    </article>
+
+    <article class="chapter" id="kicks">
+      <p class="ch-label">04 · Natal kicks &amp; disruption</p>
+      <h2>A kick decides who stays together</h2>
+      <div class="prose">
+        <p>
+          When a star goes boom, two things mess with the orbit. Symmetric mass loss shifts the center of
+          mass (the <span class="tip" tabindex="0" data-tip="Even without an asymmetric kick, dumping mass suddenly can unbind or widen a binary. Named after Adriaan Blaauw.">Blaauw effect</span>). Asymmetries can also give the remnant an extra <span class="tip" tabindex="0" data-tip="An extra velocity shove a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span>.
+          Add those up and you get the post-supernova orbital energy. If that energy is positive, the binary
+          is done. Everyone flies free.
+        </p>
+        <p>
+          Neutron star kicks are somewhat pinned down by pulsar motions. The fiducial model draws from the
+          Disberg et al. log-normal (peak around 150 to 200&nbsp;km/s). Black hole kicks? Much mushier.
+          The paper's default assumes the same kick <em>momentum</em> as for neutron stars, so heavier
+          remnants get slower kicks:
+        </p>
+      </div>
+      <p class="eq" style="max-width: var(--measure); margin: 0.75rem 0 1.1rem;">
+        <em>v<sub>BH</sub> = v<sub>NS</sub> · M<sub>NS</sub> / M<sub>BH</sub></em>
+        &nbsp;&nbsp;·&nbsp;&nbsp; <span class="tip" tabindex="0" data-tip="Material that falls back onto the newborn compact object. More fallback usually means a weaker kick in these models.">fallback</span>:&nbsp;
+        <em>v<sub>kick</sub> = (1 − f<sub>fb</sub>) · v<sub>NS</sub></em>
+      </p>
+      <div class="prose">
+        <p>
+          The extremes are useful bookends. Full NS-like kicks smash most binaries apart. Zero BH kicks
+          keep almost everyone bound and let detached systems stretch out. Fallback-reduced kicks are kinder
+          to massive direct-collapse remnants, which helps the ~13&nbsp;M☉ wind feature show up among survivors.
+        </p>
+        <p>
+          Disruption is a big reason so many BHs are single, and why low-mass BHs are especially easy to
+          unbind (they get the bigger kicks under inverse-mass scaling). Play with it below. Widen the orbit,
+          crank the kick, or flip to NS-like kicks and watch the pair come undone.
+        </p>
+      </div>
+
+      <div class="figure">
+        <p class="figure-cap">Interactive · Instantaneous post-SN 2-body orbit</p>
+        <h3>Natal kick: bound or disrupted?</h3>
+        <p class="hint">The loop shows the pre-SN orbit, the collapse, then whatever happens after.</p>
+        <div class="grid-2">
+          <div class="controls">
+            <div class="control">
+              <label>Kick prescription</label>
+              <div class="seg" id="kick-presets">
+                <button type="button" data-mode="fiducial" class="active">Inverse mass</button>
+                <button type="button" data-mode="fallback">Fallback</button>
+                <button type="button" data-mode="ns">NS-like</button>
+                <button type="button" data-mode="zero">Zero kick</button>
+              </div>
+            </div>
+            <div class="control">
+              <label>Underlying NS kick <span class="val" id="vns-val">200 km/s</span></label>
+              <input type="range" id="vns" min="0" max="600" step="5" value="200" />
+            </div>
+            <div class="control">
+              <label>BH remnant mass <span class="val" id="mbh-val">8.0 M☉</span></label>
+              <input type="range" id="mbh" min="2.5" max="25" step="0.5" value="8" />
+            </div>
+            <div class="control">
+              <label>Companion mass <span class="val" id="m2-val">10.0 M☉</span></label>
+              <input type="range" id="m2" min="1" max="40" step="0.5" value="10" />
+            </div>
+            <div class="control">
+              <label>Pre-SN separation <span class="val" id="a-val">0.50 AU</span></label>
+              <input type="range" id="a" min="0.05" max="5" step="0.05" value="0.5" />
+            </div>
+            <div class="control">
+              <label>Kick angle vs orbital velocity <span class="val" id="theta-val">45°</span></label>
+              <input type="range" id="theta" min="0" max="180" step="1" value="45" />
+            </div>
+            <div class="control">
+              <label>Ejected mass (ΔM) <span class="val" id="dm-val">5.0 M☉</span></label>
+              <input type="range" id="dm" min="0" max="20" step="0.5" value="5" />
+            </div>
+            <div class="status bound" id="kick-status">
+              <strong>Bound</strong>
+              <span class="meta" id="kick-meta">-</span>
+            </div>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="kick-canvas" width="640" height="640"></canvas>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="chapter" id="channels">
+      <p class="ch-label">05 · Formation pathways</p>
+      <h2>Two roads to a BH-BH binary (and a ~13 M☉ fingerprint)</h2>
+      <div class="prose">
+        <p>
+          Detached BH-BH binaries are the most common surviving setup, and they still remember what happened
+          during the star+star phase. Two channels stand out before the first black hole forms:
+        </p>
+        <p>
+          <strong>Stable mass transfer</strong> strips the primary, smears final BH masses over a wide range,
+          and likes making lower-mass black holes. It's also the main path to the low-mass bumps you see in
+          disrupted systems and a lot of BH+"other" binaries.
+        </p>
+        <p>
+          <strong>Wind-driven, non-interacting evolution</strong> takes over for very massive primaries
+          (≳80&nbsp;M☉) at solar metallicity. Strong winds keep the star from puffing up too much, so
+          <span class="tip" tabindex="0" data-tip="When a star expands past the gravitational teardrop it can fill without dumping mass onto its companion.">Roche-lobe overflow</span> never happens. Then <span class="tip" tabindex="0" data-tip="Hot, helium-rich stars that have already lost their hydrogen envelopes. They drive fierce winds.">Wolf-Rayet</span> winds shove a wide range of ZAMS masses toward a narrow final mass,
+          and you get black holes clustered near <strong>~13&nbsp;M☉</strong>. That plateau is especially
+          sharp among detached BH-BH systems.
+        </p>
+        <p>
+          Metallicity is the soft underbelly of that fingerprint. Lower Z weakens winds, washes out the
+          plateau, makes BHs heavier, and lets stable mass transfer own the high-mass end. At 0.01&nbsp;Z☉
+          a few systems even poke past the <span class="tip" tabindex="0" data-tip="A predicted desert in BH masses where pair production blows stars apart before they can make a remnant in that range.">pair-instability gap</span>.
+        </p>
+      </div>
+
+      <div class="figure" id="wind">
+        <p class="figure-cap">Interactive · Schematic of paper Fig. 7</p>
+        <h3>M<sub>ZAMS</sub> to M<sub>BH</sub> by channel</h3>
+        <p class="hint">Flip channels and metallicity. That solar ~13 M☉ plateau is a wind thing.</p>
+        <div class="controls" style="margin-bottom: 0.85rem; max-width: 420px;">
+          <div class="control">
+            <label>Highlight channel</label>
+            <div class="seg" id="channel-toggle">
+              <button type="button" data-ch="both" class="active">Both</button>
+              <button type="button" data-ch="smt">Stable MT</button>
+              <button type="button" data-ch="wind">Wind-driven</button>
+            </div>
+          </div>
+          <div class="control">
+            <label>Metallicity <span class="val" id="z-val">1.0 Z☉</span></label>
+            <input type="range" id="z-slider" min="0" max="2" step="1" value="2" />
+          </div>
+        </div>
+        <div class="channel-stage">
+          <svg class="channel-svg" id="channel-svg" viewBox="0 0 900 390" role="img"></svg>
+        </div>
+        <p class="channel-note" id="channel-note"></p>
+      </div>
+
+      <div class="prose">
+        <p>
+          Stellar mergers (the biggest isolated channel) also care about when mass transfer goes unstable.
+          POSYDON doesn't lean on one magic critical mass ratio. Instability can come from crazy transfer
+          rates, L2 overflow, contact with an evolved star, or photon-trapping around a compact accretor.
+          Short-period contact, main-sequence CE, and evolved Roche-lobe overflow each feed different merger
+          products, but post-merger winds still help build that ~13&nbsp;M☉ feature.
+        </p>
+      </div>
+    </article>
+
+    <article class="chapter" id="ce">
+      <p class="ch-label">06 · Common envelopes</p>
+      <h2>α<sub>CE</sub> doesn't make black holes. It decides who survives.</h2>
+      <div class="prose">
+        <p>
+          Unstable mass transfer can dunk the binary into a <span class="tip" tabindex="0" data-tip="A messy phase where both stars share one giant envelope. The orbit usually shrinks a lot, or the stars merge.">common envelope</span>. The efficiency α<sub>CE</sub> is the
+          fraction of orbital energy used to blow that envelope off. Lower α means a deeper inspiral:
+          more mergers, tighter survivors, and a harder time for unequal-mass systems.
+        </p>
+        <p>
+          In the paper's runs, dialing α<sub>CE</sub> from 1.0 to 0.5 to 0.1 boosts stellar mergers,
+          BH+star mergers, and especially DCO mergers (BH-BH pulling ahead of BH-NS). Detached BH-BH
+          counts tick up a bit, while BH+NS/WD/star detached systems drop. The BH mass peaks barely budge.
+          CE rearranges <em>who is bound to whom</em>, not how heavy the remnants are.
+        </p>
+      </div>
+
+      <div class="figure">
+        <p class="figure-cap">Interactive · Schematic of paper §IV.4</p>
+        <h3>Dial the common-envelope efficiency</h3>
+        <p class="hint">Bars are relative to the default α<sub>CE</sub> = 1 case.</p>
+        <div class="controls" style="max-width: 460px; margin-bottom: 0.95rem;">
+          <div class="control">
+            <label>α<sub>CE</sub> <span class="val" id="ace-val">1.00</span></label>
+            <input type="range" id="ace" min="0.1" max="1.0" step="0.05" value="1.0" />
+          </div>
+        </div>
+        <div class="ce-viz">
+          <div class="ce-card">
+            <h3>CE outcome tendency</h3>
+            <canvas id="ce-canvas" width="420" height="210"></canvas>
+            <div class="ce-meter" id="ce-meter"></div>
+            <div class="ce-stats">
+              <span>Survive / shrink <b id="ce-survive">-</b></span>
+              <span>Merge <b id="ce-merge">-</b></span>
+            </div>
+          </div>
+          <div class="ce-card">
+            <h3>Population response</h3>
+            <div id="ce-bars"></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="chapter" id="galaxy">
+      <p class="ch-label">07 · Galactic embedding</p>
+      <h2>Drop the black holes into a real Galaxy</h2>
+      <div class="prose">
+        <p>
+          Binary evolution alone tells you what a system <em>is</em>. To talk about Gaia or Roman, you also
+          need to know <em>where</em> it is. The paper takes POSYDON survivors and seeds them into a Milky Way
+          model (low-α disk, high-α disk, central component), each with its own star-formation history and
+          metallicity mix.
+        </p>
+        <p>
+          For every birth site they draw a formation time, position, and metallicity, then match it to the
+          nearest POSYDON metallicity track. The system starts on a roughly circular orbit with a bit of
+          random velocity scatter. From there,
+          <span class="tip" tabindex="0" data-tip="A Python package for Galactic dynamics. The paper uses it to integrate orbits in a Milky Way potential.">gala</span>
+          integrates the path forward in time.
+        </p>
+        <p>
+          Whenever POSYDON says a compact object forms, the Galactic velocity gets updated for mass loss
+          and the <span class="tip" tabindex="0" data-tip="An extra velocity shove a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span>
+          (rotated from the binary frame into Galactocentric coordinates). If the binary stays bound, the
+          pair keeps moving together. If it disrupts, the two pieces fly on their own from that moment on.
+        </p>
+      </div>
+      <div class="callout">
+        <strong>In the toy path below:</strong> birth in the disk → quiet evolution on a near-circular orbit →
+        supernova kick that unbinds the pair → BH and companion drift apart → present-day positions.
+        Drag to rotate. Hit replay to watch it again.
+      </div>
+
+      <div class="figure" id="gal-figure">
+        <p class="figure-cap">Interactive · Schematic of paper §II.3</p>
+        <h3>One disrupted binary through the Milky Way</h3>
+        <p class="hint">Pick an example, then drag to orbit (tilt for edge-on) and scroll to zoom a bit. Phases: birth → pre-SN → kick → BH and companion paths.</p>
+        <div class="gal-layout">
+          <div class="gal-stage" id="gal-stage">
+            <canvas id="gal-canvas" width="900" height="560"></canvas>
+            <button type="button" class="gal-fs-btn" id="gal-fs" title="Fullscreen (Esc to exit)">Fullscreen</button>
+            <div class="gal-legend" id="gal-legend"></div>
+          </div>
+          <div class="controls gal-controls">
+            <div class="control">
+              <label>Example system</label>
+              <div class="seg" id="gal-examples">
+                <button type="button" data-ex="mild" class="active">Mild</button>
+                <button type="button" data-ex="typical">Typical</button>
+                <button type="button" data-ex="strong">Strong</button>
+              </div>
+              <p class="gal-ex-blurb" id="gal-ex-blurb">≈40 km/s kick. BH stays close to the midplane; companion barely budges.</p>
+            </div>
+            <div class="control">
+              <label>Story progress <span class="val" id="gal-progress-val">0%</span></label>
+              <input type="range" id="gal-progress" min="0" max="1000" step="1" value="0" />
+            </div>
+            <div class="seg" id="gal-play-btns">
+              <button type="button" id="gal-play" class="active">Play</button>
+              <button type="button" id="gal-pause">Pause</button>
+              <button type="button" id="gal-replay">Replay</button>
+            </div>
+            <div class="gal-status" id="gal-status">
+              <strong>Seeding</strong>
+              <span>Placing a massive binary on a disk orbit near the Sun's Galactocentric radius.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="chapter" id="observe">
+      <p class="ch-label">08 · Observational links</p>
+      <h2>What Gaia and Roman can actually test</h2>
+      <div class="prose">
+        <p>
+          <strong>Gaia BH+star systems.</strong> Quiet black holes with luminous companions are rare in the
+          full census, but they're gold for astrometry. POSYDON fills the middle ground between tight post-CE
+          systems and wide non-interacting binaries with a solid <span class="tip" tabindex="0" data-tip="Mass transfer that stays under control instead of running away into a common envelope.">stable mass transfer</span> population. Rapid codes mostly miss
+          that middle. Gaia BH1 and BH2 sit near it, which makes them look a little less like weirdos in
+          mass-period space (matching every observed detail is still tough).
+        </p>
+        <p>
+          <strong>Roman microlensing of BH-BH lenses.</strong> After parking populations in a Galactic model
+          and doing a simple Einstein-radius cut, about <strong>~10%</strong> of bulge-pointed detached
+          BH-BH systems land in the sweet spot for binary-lens signatures
+          (0.7 &lt; θ<sub>sep</sub>/θ̃<sub>E</sub> &lt; 1.8). If you can get component masses, the low-mass
+          stable-MT pile-up and the ~13&nbsp;M☉ wind feature become real observational tests.
+        </p>
+        <p>
+          These are intentionally rough links. Real survey forecasts need selection functions (gaiamock,
+          PopSyCLE, and friends) on top of the kinematically evolved catalogs the paper already built.
+        </p>
+      </div>
+      <div class="callout">
+        Across core-collapse variants, the qualitative map holds:
+        <strong>low-mass BH-BH ≈ stable mass transfer</strong>;
+        <strong>narrow high-mass feature ≈ wind-driven non-interacting progenitors</strong>.
+        Metallicity and winds decide where that feature sits, or whether it shows up at all.
+      </div>
+    </article>
+
+    <article class="chapter" id="takeaways">
+      <p class="ch-label">09 · Conclusions</p>
+      <h2>What to take home</h2>
+      <div class="prose">
+        <p>
+          Most Milky Way black holes are single today, but that usually means a binary story ended in a
+          merger or a kick, not that the star was born alone. The binaries that stick around are mostly
+          detached BH-BH systems with two solar-metallicity pathways baked in: stable mass transfer at
+          lower masses, and a wind-driven ~13&nbsp;M☉ plateau up high.
+        </p>
+        <p>
+          Natal kicks and common-envelope efficiency reshuffle who stays bound and how tight they are.
+          Metallicity reshapes masses and can wipe out the wind fingerprint. Detailed binary evolution also
+          turns up a stable-MT BH+star population that rapid codes underproduce, which is a nice place for
+          Gaia to tell modeling approaches apart.
+        </p>
+        <p>
+          Next up in the paper's plan: forward-modeling. Take these intrinsic, kinematically evolved
+          populations and ask what Gaia DR4 and Roman will actually detect.
+        </p>
+      </div>
+    </article>
+
+    <footer class="site">
+      Interactive explanation of
+      <a href="https://arxiv.org/abs/2610.07152">arXiv:2610.07152</a>
+      (Kiato, Lipschultz, Kalogera et al.). The figures are teaching illustrations grounded in the paper's
+      fiducial results and physics, not survey forecasts or raw POSYDON catalogs.
+      Kick orbits use instantaneous post-SN 2-body energy and numerical integration.
+      Hover the dotted terms for quick definitions.
+    </footer>
+  </div>
+
+
+<script>
+
+    const G = 4 * Math.PI ** 2; // AU^3 yr^-2 Msun^-1
+    const AU_KM = 1.495978707e8;
+    const YR_S = 365.25 * 24 * 3600;
+    const KMS_TO_AUYR = YR_S / AU_KM;
+    const MNS = 1.4;
+    const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+    // ═══════════════════════════════════════════
+    // Natal kicks - numerical 2-body post-SN orbit
+    // ═══════════════════════════════════════════
+    const kickUI = { mode: "fiducial", vns: 200, mbh: 8, m2: 10, a: 0.5, theta: 45, dm: 5 };
+    let animT = 0;
+    let sim = null; // rebuilt when params change
+
+    function kickSpeedKms() {
+      if (kickUI.mode === "zero") return 0;
+      if (kickUI.mode === "ns") return kickUI.vns;
+      if (kickUI.mode === "fallback") {
+        const ffb = clamp((kickUI.mbh - 2.5) / 17.5, 0, 0.95);
+        return (1 - ffb) * kickUI.vns;
+      }
+      return kickUI.vns * (MNS / kickUI.mbh);
+    }
+
+    function rebuildSim() {
+      const m1 = kickUI.mbh + kickUI.dm;
+      const m2 = kickUI.m2;
+      const mBH = kickUI.mbh;
+      const a = kickUI.a;
+      const Mpre = m1 + m2;
+      const Mpost = mBH + m2;
+      const n = Math.sqrt(G * Mpre / (a ** 3));
+      const vOrb = n * a; // AU/yr relative
+
+      // SN at angle nu on circular orbit
+      const nu = 0.6;
+      const c = Math.cos(nu), s = Math.sin(nu);
+      const r1 = a * m2 / Mpre;
+      const r2 = a * m1 / Mpre;
+
+      // Pre-SN positions / velocities in pre CM frame
+      const p1 = { x: r1 * c, y: r1 * s, vx: -r1 * n * s, vy: r1 * n * c };
+      const p2 = { x: -r2 * c, y: -r2 * s, vx: r2 * n * s, vy: -r2 * n * c };
+
+      // Kick basis: tangent (velocity dir of primary) and radial
+      const tx = -s, ty = c;
+      const rx = c, ry = s;
+      const th = kickUI.theta * Math.PI / 180;
+      const vk = kickSpeedKms() * KMS_TO_AUYR;
+      const kx = vk * (Math.cos(th) * tx + Math.sin(th) * rx);
+      const ky = vk * (Math.cos(th) * ty + Math.sin(th) * ry);
+
+      // Post-SN velocities
+      const v1x = p1.vx + kx, v1y = p1.vy + ky;
+      const v2x = p2.vx, v2y = p2.vy;
+
+      // Move to post-SN CM frame (mass change shifts CM; subtract both position & velocity)
+      const cmx = (mBH * p1.x + m2 * p2.x) / Mpost;
+      const cmy = (mBH * p1.y + m2 * p2.y) / Mpost;
+      const vCMx = (mBH * v1x + m2 * v2x) / Mpost;
+      const vCMy = (mBH * v1y + m2 * v2y) / Mpost;
+
+      const bh0 = { x: p1.x - cmx, y: p1.y - cmy, vx: v1x - vCMx, vy: v1y - vCMy };
+      const c0  = { x: p2.x - cmx, y: p2.y - cmy, vx: v2x - vCMx, vy: v2y - vCMy };
+
+      // Orbital elements of relative motion
+      const rxr = bh0.x - c0.x, ryr = bh0.y - c0.y;
+      const vxr = bh0.vx - c0.vx, vyr = bh0.vy - c0.vy;
+      const r = Math.hypot(rxr, ryr);
+      const v = Math.hypot(vxr, vyr);
+      const mu = G * Mpost;
+      const eps = 0.5 * v * v - mu / r;
+      const hz = rxr * vyr - ryr * vxr;
+      const ecc = Math.sqrt(Math.max(0, 1 + 2 * eps * hz * hz / (mu * mu)));
+      const bound = eps < 0;
+      const aPost = bound ? -mu / (2 * eps) : null;
+      const period = bound ? 2 * Math.PI * Math.sqrt(aPost ** 3 / mu) : null;
+
+      // Eccentricity vector → argument of periapsis
+      const ex = (vyr * hz) / mu - rxr / r;
+      const ey = (-vxr * hz) / mu - ryr / r;
+      const periArg = Math.atan2(ey, ex);
+
+      // Integrate post-SN trajectories for drawing
+      const trail = integrate2Body(bh0, c0, mBH, m2, bound ? period * 1.02 : 4.0);
+
+      sim = {
+        m1, m2, mBH, a, n, Mpre, Mpost, nu,
+        vOrb_kms: vOrb / KMS_TO_AUYR,
+        vkick_kms: kickSpeedKms(),
+        kx, ky, tx, ty, rx, ry,
+        p1, p2, bh0, c0,
+        eps, ecc, bound, aPost, period, mu, hz, periArg,
+        trail,
+        ffb: clamp((kickUI.mbh - 2.5) / 17.5, 0, 0.95),
+      };
+      animT = 0;
+      updateStatus();
+    }
+
+    function integrate2Body(bh, comp, mBH, m2, tMax) {
+      // Relative formulation + CM fixed at 0
+      let x = bh.x - comp.x;
+      let y = bh.y - comp.y;
+      let vx = bh.vx - comp.vx;
+      let vy = bh.vy - comp.vy;
+      const mu = G * (mBH + m2);
+      const fBH = m2 / (mBH + m2);
+      const fC = mBH / (mBH + m2);
+
+      const dt = tMax / 400;
+      const pts = [];
+      for (let i = 0; i <= 400; i++) {
+        pts.push({
+          t: i * dt,
+          x1: fBH * x, y1: fBH * y,
+          x2: -fC * x, y2: -fC * y,
+        });
+        // Velocity Verlet on relative orbit: a = -μ r / |r|³
+        const R = Math.hypot(x, y) || 1e-12;
+        const a0 = -mu / (R * R * R);
+        const ax = a0 * x, ay = a0 * y;
+        x += vx * dt + 0.5 * ax * dt * dt;
+        y += vy * dt + 0.5 * ay * dt * dt;
+        const R2 = Math.hypot(x, y) || 1e-12;
+        const a1s = -mu / (R2 * R2 * R2);
+        const ax2 = a1s * x, ay2 = a1s * y;
+        vx += 0.5 * (ax + ax2) * dt;
+        vy += 0.5 * (ay + ay2) * dt;
+      }
+      return pts;
+    }
+
+    function prePositions(tYearsBeforeSN) {
+      // t=0 at SN; negative before
+      const nu = sim.nu + sim.n * tYearsBeforeSN;
+      const c = Math.cos(nu), s = Math.sin(nu);
+      const r1 = sim.a * sim.m2 / sim.Mpre;
+      const r2 = sim.a * sim.m1 / sim.Mpre;
+      return {
+        x1: r1 * c, y1: r1 * s,
+        x2: -r2 * c, y2: -r2 * s,
+      };
+    }
+
+    function postPositions(tYears) {
+      const trail = sim.trail;
+      if (tYears <= 0) return trail[0];
+      const tMax = trail[trail.length - 1].t;
+      const u = clamp(tYears / tMax, 0, 1) * (trail.length - 1);
+      const i = Math.floor(u);
+      const f = u - i;
+      const a = trail[i], b = trail[Math.min(i + 1, trail.length - 1)];
+      return {
+        x1: a.x1 + (b.x1 - a.x1) * f,
+        y1: a.y1 + (b.y1 - a.y1) * f,
+        x2: a.x2 + (b.x2 - a.x2) * f,
+        y2: a.y2 + (b.y2 - a.y2) * f,
+      };
+    }
+
+    function updateLabels() {
+      document.getElementById("vns-val").textContent = `${kickUI.vns} km/s`;
+      document.getElementById("mbh-val").textContent = `${kickUI.mbh.toFixed(1)} M☉`;
+      document.getElementById("m2-val").textContent = `${kickUI.m2.toFixed(1)} M☉`;
+      document.getElementById("a-val").textContent = `${kickUI.a.toFixed(2)} AU`;
+      document.getElementById("theta-val").textContent = `${kickUI.theta}°`;
+      document.getElementById("dm-val").textContent = `${kickUI.dm.toFixed(1)} M☉`;
+    }
+
+    function updateStatus() {
+      const el = document.getElementById("kick-status");
+      el.className = "status " + (sim.bound ? "bound" : "disrupted");
+      el.querySelector("strong").textContent = sim.bound ? "Bound binary" : "Disrupted → isolated BH";
+      const parts = [
+        `v_kick = ${sim.vkick_kms.toFixed(0)} km/s`,
+        `v_orb = ${sim.vOrb_kms.toFixed(0)} km/s`,
+        `e = ${sim.ecc.toFixed(2)}`,
+      ];
+      if (sim.bound) parts.push(`a' = ${sim.aPost.toFixed(2)} AU`);
+      else parts.push("ε > 0 (unbound)");
+      if (kickUI.mode === "fallback") parts.push(`f_fb ≈ ${sim.ffb.toFixed(2)}`);
+      document.getElementById("kick-meta").textContent = parts.join(" · ");
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function drawKick(dt) {
+      animT += dt;
+      const canvas = document.getElementById("kick-canvas");
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#f4f6f9";
+      ctx.fillRect(0, 0, w, h);
+      if (!sim) return;
+
+      // Timeline
+      const cycle = 8.0;
+      const tau = animT % cycle;
+      const tPre = 2.4, tFlash = 2.65;
+      let phase, tPhys;
+      if (tau < tPre) {
+        phase = "pre";
+        tPhys = (tau / tPre - 1) * (2 * Math.PI / sim.n); // one full pre orbit ending at SN
+      } else if (tau < tFlash) {
+        phase = "flash";
+        tPhys = 0;
+      } else {
+        phase = "post";
+        const frac = (tau - tFlash) / (cycle - tFlash);
+        // Bound: show ~1 orbit. Unbound: stay near the hyperbolic bend (short physical time).
+        tPhys = frac * (sim.bound ? Math.min(sim.period * 1.05, 5) : 0.12);
+      }
+
+      // Frame tightly around the interesting region (ellipse / hyperbolic bend)
+      let maxR = sim.a * 1.55;
+      if (sim.bound && sim.aPost) {
+        maxR = Math.max(maxR, sim.aPost * (1 + sim.ecc) * 1.2);
+      } else {
+        maxR = Math.max(maxR, sim.a * 2.8); // keep hyperbolic bend in view
+      }
+      maxR = Math.max(maxR, 0.4);
+      const scale = Math.min(w, h) * 0.42 / maxR;
+      const cx = w * 0.5, cy = h * 0.52;
+      const S = (x, y) => ({ x: cx + x * scale, y: cy - y * scale });
+
+      // CM
+      ctx.fillStyle = "#b8bec8";
+      ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill();
+
+      // Pre-SN orbit guide
+      if (phase !== "post") {
+        const r1 = sim.a * sim.m2 / sim.Mpre;
+        ctx.strokeStyle = "rgba(31,79,156,0.28)";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.arc(cx, cy, r1 * scale, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Post-SN guides + trails
+      if (phase === "post") {
+        if (sim.bound && sim.aPost) {
+          // Analytical ellipses around CM for BH and companion
+          const aRel = sim.aPost;
+          const ca = Math.cos(sim.periArg), sa = Math.sin(sim.periArg);
+          const fBH = sim.m2 / sim.Mpost;
+          const fC = sim.mBH / sim.Mpost;
+          const drawEll = (frac, color, width) => {
+            ctx.beginPath();
+            for (let i = 0; i <= 128; i++) {
+              const ang = (i / 128) * Math.PI * 2;
+              const rr = aRel * (1 - sim.ecc * sim.ecc) / (1 + sim.ecc * Math.cos(ang));
+              const xr = rr * Math.cos(ang), yr = rr * Math.sin(ang);
+              const X = ca * xr - sa * yr;
+              const Y = sa * xr + ca * yr;
+              const p = S(frac * X, frac * Y);
+              if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.setLineDash([6, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          };
+          drawEll(fBH, "rgba(27,107,72,0.75)", 2);
+          drawEll(-fC, "rgba(184,148,31,0.55)", 1.5);
+        } else {
+          // Hyperbolic paths near SN (bodies stay in-frame thanks to short tPhys)
+          const drawBodyTrail = (xKey, yKey, color, width) => {
+            ctx.beginPath();
+            let started = false;
+            for (let i = 0; i < sim.trail.length; i++) {
+              const p = S(sim.trail[i][xKey], sim.trail[i][yKey]);
+              if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+              if (Math.hypot(p.x - cx, p.y - cy) > Math.min(w, h) * 0.47) {
+                if (started) break;
+                continue;
+              }
+              if (!started) { ctx.moveTo(p.x, p.y); started = true; }
+              else ctx.lineTo(p.x, p.y);
+            }
+            if (!started) return;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.setLineDash([6, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          };
+          drawBodyTrail("x1", "y1", "rgba(161,44,44,0.8)", 2.2);
+          drawBodyTrail("x2", "y2", "rgba(184,148,31,0.65)", 1.8);
+        }
+      }
+
+      const pos = phase === "post" ? postPositions(tPhys) : prePositions(tPhys);
+      const p1 = S(pos.x1, pos.y1);
+      const p2 = S(pos.x2, pos.y2);
+
+      // Separation line
+      ctx.strokeStyle = "rgba(20,24,32,0.12)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+
+      // Kick arrow only during flash
+      if (phase === "flash") {
+        const sn = prePositions(0);
+        const s1 = S(sn.x1, sn.y1);
+        const mag = Math.hypot(sim.kx, sim.ky) || 1;
+        const len = 22 + Math.min(55, sim.vkick_kms * 0.09);
+        const ux = sim.kx / mag, uy = sim.ky / mag;
+        const ax = s1.x + ux * len;
+        const ay = s1.y - uy * len;
+        ctx.strokeStyle = "#c2472a";
+        ctx.fillStyle = "#c2472a";
+        ctx.lineWidth = 2.3;
+        ctx.beginPath(); ctx.moveTo(s1.x, s1.y); ctx.lineTo(ax, ay); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(ax - ux * 8 + uy * 4, ay + uy * 8 + ux * 4);
+        ctx.lineTo(ax - ux * 8 - uy * 4, ay + uy * 8 - ux * 4);
+        ctx.closePath(); ctx.fill();
+        ctx.font = "500 11px IBM Plex Mono";
+        ctx.fillText("v_kick", ax + 5, ay - 4);
+      }
+
+      if (phase === "flash") {
+        const f = (tau - tPre) / (tFlash - tPre);
+        ctx.fillStyle = `rgba(255,210,150,${0.5 * (1 - f)})`;
+        ctx.beginPath(); ctx.arc(p1.x, p1.y, 16 + f * 42, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Companion
+      const rC = 6 + Math.sqrt(sim.m2) * 1.3;
+      ctx.fillStyle = "#b8941f";
+      ctx.beginPath(); ctx.arc(p2.x, p2.y, rC, 0, Math.PI * 2); ctx.fill();
+
+      // Primary / BH
+      if (phase === "pre") {
+        const rS = 7 + Math.sqrt(sim.m1) * 1.05;
+        ctx.fillStyle = "#3d6cb5";
+        ctx.beginPath(); ctx.arc(p1.x, p1.y, rS, 0, Math.PI * 2); ctx.fill();
+      } else {
+        const rB = 4.5 + Math.sqrt(sim.mBH) * 0.8;
+        ctx.fillStyle = "#141820";
+        ctx.beginPath(); ctx.arc(p1.x, p1.y, rB, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "rgba(31,79,156,0.7)";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(p1.x, p1.y, rB + 3.5, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      ctx.fillStyle = "#3c4454";
+      ctx.font = "500 12px Schibsted Grotesk";
+      ctx.fillText(phase === "pre" ? `Progenitor ${sim.m1.toFixed(1)} M☉` : `BH ${sim.mBH.toFixed(1)} M☉`, p1.x + 12, p1.y - 10);
+      ctx.fillText(`Companion ${sim.m2.toFixed(1)} M☉`, p2.x + 12, p2.y - 10);
+
+      const banner = sim.bound ? "BOUND" : "DISRUPTED";
+      ctx.font = "600 12px IBM Plex Mono";
+      const tw = ctx.measureText(banner).width;
+      ctx.fillStyle = sim.bound ? "#1b6b48" : "#a12c2c";
+      roundRect(ctx, w - tw - 26, 12, tw + 14, 26, 6); ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.fillText(banner, w - tw - 19, 30);
+
+      ctx.fillStyle = "#6a7384";
+      ctx.font = "500 11px IBM Plex Mono";
+      const phaseLabel = phase === "pre" ? "pre-SN circular orbit"
+        : phase === "flash" ? "core collapse + kick"
+        : (sim.bound ? "post-SN bound orbit" : "post-SN unbound escape");
+      ctx.fillText(phaseLabel, 14, 24);
+    }
+
+    document.querySelectorAll("#kick-presets button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#kick-presets button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        kickUI.mode = btn.dataset.mode;
+        rebuildSim();
+      });
+    });
+    ["vns", "mbh", "m2", "a", "theta", "dm"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", (e) => {
+        kickUI[id] = parseFloat(e.target.value);
+        updateLabels();
+        rebuildSim();
+      });
+    });
+    updateLabels();
+    rebuildSim();
+
+    // ═══════════════════════════════════════════
+    // Population channels
+    // ═══════════════════════════════════════════
+    const channels = [
+      { id: "merger", name: "Stellar mergers", pct: 42, color: "#1f4f9c", group: "isolated",
+        detail: "Two normal stars merge (often after a failed CE), then the leftover collapses to a BH. Biggest isolated channel." },
+      { id: "disrupt", name: "Disrupted binaries", pct: 27, color: "#c2472a", group: "isolated",
+        detail: "The binary comes unbound at the first or second collapse when the kick and/or mass loss push the energy positive." },
+      { id: "single", name: "Initially single", pct: 4, color: "#5b7a9a", group: "isolated",
+        detail: "Born without a companion under the Moe+17 mass-dependent binary fraction. Mostly low-mass BHs." },
+      { id: "bhstar-m", name: "BH+star mergers", pct: 4, color: "#8a6b3d", group: "isolated",
+        detail: "The BH survives the kick, then later merges with its companion after unstable MT or a failed CE." },
+      { id: "dco-m", name: "DCO mergers", pct: 1, color: "#6e7686", group: "isolated",
+        detail: "Rare double-compact mergers within 10 Gyr. Only channel reaching ≳30-50 M☉ remnants at solar Z." },
+      { id: "bhbh", name: "Detached BH-BH", pct: 19, color: "#141820", group: "binary",
+        detail: "Dominant surviving binary class: stable-MT (broad, lower-mass) plus the wind-driven ~13 M☉ channel." },
+      { id: "otherbin", name: "BH + other", pct: 3, color: "#3d7a5c", group: "binary",
+        detail: "BH+WD, BH+NS, and BH+star combined. Rare, but basically the main current observational windows." },
+    ];
+    let active = "disrupt";
+
+    function renderPop() {
+      const stack = document.getElementById("pop-stack");
+      stack.innerHTML = channels.map((c) => `
+        <button type="button" class="pop-seg ${active === c.id ? "active" : ""}" data-id="${c.id}"
+          style="flex:${c.pct};background:${c.color}" title="${c.name}: ${c.pct}%">
+          ${c.pct >= 10 ? `<span class="pct">${c.pct}%</span><span class="lbl">${c.name}</span>` : `<span class="pct" style="font-size:0.85rem">${c.pct}</span>`}
+        </button>`).join("");
+      stack.querySelectorAll(".pop-seg").forEach((b) => {
+        b.addEventListener("click", () => { active = b.dataset.id; renderPop(); });
+      });
+
+      const list = document.getElementById("pop-list");
+      const max = 42;
+      list.innerHTML = `
+        <div style="font-family:IBM Plex Mono;font-size:0.66rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0.15rem 0 0.2rem">Isolation channels · 78%</div>
+        ${channels.filter((c) => c.group === "isolated").map((c) => popRow(c, max)).join("")}
+        <div style="font-family:IBM Plex Mono;font-size:0.66rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0.7rem 0 0.2rem">Surviving binaries · 22%</div>
+        ${channels.filter((c) => c.group === "binary").map((c) => popRow(c, max)).join("")}
+      `;
+      list.querySelectorAll(".pop-row").forEach((b) => {
+        b.addEventListener("click", () => { active = b.dataset.id; renderPop(); });
+      });
+
+      const c = channels.find((x) => x.id === active);
+      document.getElementById("demo-detail").innerHTML =
+        `<h3>${c.name} · ${c.pct}% of all BHs</h3><p>${c.detail}</p>`;
+    }
+    function popRow(c, max) {
+      return `<button type="button" class="pop-row ${active === c.id ? "active" : ""}" data-id="${c.id}">
+          <span class="name">${c.name}</span>
+          <span class="track"><span class="fill" style="width:${(c.pct / max) * 100}%;background:${c.color}"></span></span>
+          <span class="num">${c.pct}%</span>
+        </button>`;
+    }
+    renderPop();
+
+    // ═══════════════════════════════════════════
+    // Wind / SMT channels
+    // ═══════════════════════════════════════════
+    let channelMode = "both", zLevel = 2;
+    const zLabels = ["0.01 Z☉", "0.1 Z☉", "1.0 Z☉"];
+    function mulberry32(seed) {
+      return function () {
+        let t = (seed += 0x6d2b79f5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    function drawChannels() {
+      const svg = document.getElementById("channel-svg");
+      const W = 900, H = 390;
+      const pad = { l: 56, r: 22, t: 22, b: 46 };
+      const yMax = zLevel === 0 ? 130 : zLevel === 1 ? 60 : 32;
+      const rand = mulberry32(42 + zLevel * 17);
+      const xScale = (m) => pad.l + ((m - 15) / 125) * (W - pad.l - pad.r);
+      const yScale = (m) => H - pad.b - (m / yMax) * (H - pad.t - pad.b);
+      const showSMT = channelMode !== "wind";
+      const showWind = channelMode !== "smt";
+      let smt = "", wind = "";
+      for (let i = 0; i < 70; i++) {
+        const mz = 18 + rand() * 70;
+        let mbh = (3 + (mz - 18) * 0.12 + (rand() - 0.5) * (3 + mz / 40)) *
+          (zLevel === 2 ? 1 : zLevel === 1 ? 1.6 : 2.4);
+        if (mbh < 2 || mbh > yMax) continue;
+        smt += `<circle cx="${xScale(mz)}" cy="${yScale(mbh)}" r="${2 + rand()}" fill="#9a3d6a" opacity="${showSMT ? 0.55 : 0.06}"/>`;
+      }
+      for (let i = 0; i < 55; i++) {
+        const mz = 25 + rand() * 110;
+        let mbh;
+        if (zLevel === 2) mbh = mz < 80 ? 2.5 + (mz - 20) * 0.11 + (rand() - 0.5) : 13 + (rand() - 0.5) * 1.1;
+        else if (zLevel === 1) mbh = mz < 80 ? 3 + (mz - 20) * 0.18 + (rand() - 0.5) * 2 : 12 + (mz - 80) * 0.25 + (rand() - 0.5) * 5;
+        else mbh = 5 + (mz - 20) * 0.4 + (rand() - 0.5) * 10;
+        if (mbh < 2 || mbh > yMax) continue;
+        wind += `<circle cx="${xScale(mz)}" cy="${yScale(mbh)}" r="2.3" fill="#1f4f9c" opacity="${showWind ? (mz > 80 && zLevel === 2 ? 0.75 : 0.5) : 0.06}"/>`;
+      }
+      const yTicks = zLevel === 0 ? [0, 30, 60, 90, 120] : zLevel === 1 ? [0, 15, 30, 45, 60] : [0, 8, 16, 24, 32];
+      const plateau = (zLevel === 2 && showWind) ? `
+        <line x1="${xScale(80)}" y1="${yScale(13)}" x2="${xScale(140)}" y2="${yScale(13)}" stroke="#1f4f9c" stroke-width="1.7" stroke-dasharray="5 4" opacity="0.7"/>
+        <text x="${xScale(108)}" y="${yScale(13) - 8}" fill="#1f4f9c" font-family="IBM Plex Mono" font-size="11">~13 Msun plateau</text>` : "";
+      svg.innerHTML = `
+        <rect width="${W}" height="${H}" fill="#fff"/>
+        ${yTicks.map((t) => `<line x1="${pad.l}" y1="${yScale(t)}" x2="${W - pad.r}" y2="${yScale(t)}" stroke="#eef0f3"/>
+          <text x="${pad.l - 8}" y="${yScale(t) + 4}" text-anchor="end" fill="#6a7384" font-family="IBM Plex Mono" font-size="11">${t}</text>`).join("")}
+        ${[20,40,60,80,100,120,140].map((t) => `<text x="${xScale(t)}" y="${H - pad.b + 18}" text-anchor="middle" fill="#6a7384" font-family="IBM Plex Mono" font-size="11">${t}</text>`).join("")}
+        <text x="16" y="${H / 2}" fill="#3c4454" font-family="Newsreader" font-size="13" transform="rotate(-90 16 ${H / 2})">M_BH,1 / Msun</text>
+        <text x="${W / 2}" y="${H - 8}" text-anchor="middle" fill="#3c4454" font-family="Newsreader" font-size="13">M_ZAMS,1 / Msun</text>
+        <g>${smt}</g><g>${wind}</g>${plateau}
+        <g font-family="Schibsted Grotesk" font-size="12" fill="#3c4454">
+          <rect x="${W - 196}" y="16" width="11" height="11" rx="2" fill="#9a3d6a"/><text x="${W - 178}" y="26">Stable mass transfer</text>
+          <rect x="${W - 196}" y="36" width="11" height="11" rx="2" fill="#1f4f9c"/><text x="${W - 178}" y="46">Non-interacting / wind</text>
+        </g>`;
+      document.getElementById("channel-note").textContent = [
+        "At 0.01 Z☉ the winds are weak, so the 13 M☉ feature disappears and BH masses climb.",
+        "At 0.1 Z☉ the wind-driven plateau is already washed out, and stable mass transfer owns the massive BH-BH systems.",
+        "At solar metallicity, Wolf-Rayet winds herd massive non-interacting progenitors into a tight ~13 M☉ pile-up.",
+      ][zLevel];
+    }
+    document.querySelectorAll("#channel-toggle button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#channel-toggle button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        channelMode = btn.dataset.ch;
+        drawChannels();
+      });
+    });
+    document.getElementById("z-slider").addEventListener("input", (e) => {
+      zLevel = parseInt(e.target.value, 10);
+      document.getElementById("z-val").textContent = zLabels[zLevel];
+      drawChannels();
+    });
+    drawChannels();
+
+    // ═══════════════════════════════════════════
+    // Common envelope
+    // ═══════════════════════════════════════════
+    function drawCE() {
+      const alpha = parseFloat(document.getElementById("ace").value);
+      document.getElementById("ace-val").textContent = alpha.toFixed(2);
+      const t = (1 - alpha) / 0.9;
+      const survive = clamp(0.72 - t * 0.38, 0.25, 0.85);
+      const merge = 1 - survive;
+      document.getElementById("ce-meter").innerHTML =
+        `<div class="survive" style="flex:${survive}"></div><div class="merge" style="flex:${merge}"></div>`;
+      document.getElementById("ce-survive").textContent = `${Math.round(survive * 100)}%`;
+      document.getElementById("ce-merge").textContent = `${Math.round(merge * 100)}%`;
+      const bars = [
+        { name: "Stellar mergers", v: 1 + t * 0.25, color: "#1f4f9c" },
+        { name: "BH+star mergers", v: 1 + t * 0.35, color: "#3d74c4" },
+        { name: "DCO mergers", v: 1 + t * 1.1, color: "#141820" },
+        { name: "Detached BH-BH", v: 1 + t * 0.15, color: "#5c6575" },
+        { name: "Unequal detached", v: 1 - t * 0.35, color: "#a12c2c" },
+      ];
+      document.getElementById("ce-bars").innerHTML = bars.map((b) => `
+        <div style="margin-bottom:0.48rem">
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.16rem">
+            <span>${b.name}</span>
+            <span style="font-family:IBM Plex Mono;color:var(--muted)">${Math.round(b.v * 100)}% of α=1</span>
+          </div>
+          <div style="height:7px;background:#e1e5ec;border-radius:99px;overflow:hidden">
+            <div style="height:100%;width:${clamp(b.v / 2.2, 0.12, 1) * 100}%;background:${b.color};border-radius:99px;transition:width 0.3s"></div>
+          </div>
+        </div>`).join("");
+
+      const canvas = document.getElementById("ce-canvas");
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth || 400, h = 200;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h);
+      const cx = w * 0.4, cy = h * 0.58;
+      const turns = 2.1 + (1 - alpha) * 2.6;
+      const rStart = Math.min(w, h) * 0.34, rEnd = 8 + alpha * 26;
+      ctx.strokeStyle = "rgba(31,79,156,0.14)"; ctx.lineWidth = 12;
+      ctx.beginPath(); ctx.arc(cx, cy, rStart + 6, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = "#1f4f9c"; ctx.lineWidth = 2; ctx.beginPath();
+      for (let i = 0; i <= 180; i++) {
+        const u = i / 180, ang = u * turns * Math.PI * 2, rad = rStart * (1 - u) + rEnd * u;
+        const x = cx + Math.cos(ang) * rad, y = cy + Math.sin(ang) * rad;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      const angF = turns * Math.PI * 2;
+      const x0 = cx + Math.cos(angF) * rEnd, y0 = cy + Math.sin(angF) * rEnd;
+      ctx.fillStyle = "#141820"; ctx.beginPath(); ctx.arc(x0, y0, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#b8941f"; ctx.beginPath(); ctx.arc(x0 + rEnd * 0.55, y0, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#3c4454"; ctx.font = "500 12px Schibsted Grotesk";
+      ctx.fillText(alpha < 0.35 ? "Deep inspiral → merger-prone" : alpha < 0.7 ? "Moderate shrinkage" : "Easier ejection → wider survivors", 12, 22);
+    }
+    document.getElementById("ace").addEventListener("input", drawCE);
+    drawCE();
+
+    // ═══════════════════════════════════════════
+    // Galactic seeding 3D path
+    // ═══════════════════════════════════════════
+    const GAL_EXAMPLES = {
+      mild: {
+        title: "Mild kick",
+        blurb: "≈40 km/s natal kick. BH stays close to the midplane; companion barely budges.",
+        R0: 8.2,
+        birthPhi: 0.35,
+        kick: 40,
+        kickRad: 0.3,
+        kickTan: 0.25,
+        kickZ: 0.4,
+        blaauw: 5,
+        zBirth: 0.04,
+      },
+      typical: {
+        title: "Typical disruption",
+        blurb: "≈100 km/s with a strong vertical shove. BH climbs about a kiloparsec off the plane.",
+        R0: 8.2,
+        birthPhi: 0.55,
+        kick: 100,
+        kickRad: 0.35,
+        kickTan: -0.15,
+        kickZ: 0.9,
+        blaauw: 8,
+        zBirth: 0.05,
+      },
+      strong: {
+        title: "Strong kick",
+        blurb: "≈200 km/s. Hot, eccentric BH orbit that swings well above the disk.",
+        R0: 7.0,
+        birthPhi: 1.05,
+        kick: 200,
+        kickRad: 0.55,
+        kickTan: 0.2,
+        kickZ: 0.95,
+        blaauw: 12,
+        zBirth: 0.06,
+      },
+    };
+
+    // Schematic Galactocentric placements (not survey-accurate; just recognizable halo toys)
+    const GAL_CLUSTERS = [
+      {
+        id: "omg",
+        name: "ω Cen",
+        hint: "the Milky Way's heaviest globular",
+        x: -9.2, y: 4.1, z: 2.2,
+        scale: 0.24,
+        tint: [255, 214, 170],
+        n: 95,
+      },
+      {
+        id: "m13",
+        name: "M13",
+        hint: "the Great Hercules Cluster",
+        x: 7.4, y: -10.6, z: 6.8,
+        scale: 0.19,
+        tint: [190, 210, 255],
+        n: 80,
+      },
+      {
+        id: "m22",
+        name: "M22",
+        hint: "a bright Sagittarius globular",
+        x: 3.2, y: 11.4, z: -2.8,
+        scale: 0.2,
+        tint: [230, 235, 255],
+        n: 85,
+      },
+    ];
+
+    const gal = {
+      playing: true,
+      progress: 0, // 0..1
+      example: "mild",
+      yaw: 0.85,
+      pitch: 0.55,
+      zoom: 1,
+      dragging: false,
+      lastX: 0,
+      lastY: 0,
+      lastInteract: performance.now(),
+      path: null,
+      snIndex: 0,
+      stars: null,
+      clusters: null,
+      mouseX: -1e9,
+      mouseY: -1e9,
+      hoverCluster: null,
+    };
+
+    function galInteract() {
+      gal.lastInteract = performance.now();
+    }
+
+    function buildGalStars() {
+      const stars = [];
+      const hash = (i, a, b) => {
+        const t = Math.sin(i * a) * b;
+        return t - Math.floor(t);
+      };
+      // Dense far shell
+      for (let i = 0; i < 630; i++) {
+        const uu = hash(i, 12.9898, 43758.5453);
+        const vv = hash(i, 78.233, 12345.6789);
+        const ww = hash(i, 39.417, 9876.5432);
+        const theta = uu * Math.PI * 2;
+        const phi = Math.acos(2 * vv - 1);
+        const radius = 16 + ww * 28;
+        stars.push({
+          x: radius * Math.sin(phi) * Math.cos(theta),
+          y: radius * Math.sin(phi) * Math.sin(theta),
+          z: radius * Math.cos(phi) * 0.7,
+          bright: 0.18 + uu * 0.55,
+          size: 0.7 + vv * 1.5,
+        });
+      }
+      // Extra field stars near the disk volume so the scene feels populated
+      for (let i = 0; i < 420; i++) {
+        const uu = hash(i + 500, 19.191, 24591.321);
+        const vv = hash(i + 500, 47.117, 8912.441);
+        const ww = hash(i + 500, 91.733, 33445.12);
+        const r = 3 + uu * 16;
+        const ang = vv * Math.PI * 2;
+        const z = (ww - 0.5) * 4.5;
+        stars.push({
+          x: r * Math.cos(ang),
+          y: r * Math.sin(ang),
+          z,
+          bright: 0.28 + vv * 0.5,
+          size: 0.9 + uu * 1.4,
+        });
+      }
+      gal.stars = stars;
+
+      // Tiny dense star balls for the globular easter eggs
+      const clusters = GAL_CLUSTERS.map((c, ci) => {
+        const members = [];
+        for (let i = 0; i < c.n; i++) {
+          const uu = hash(i + ci * 1000, 23.11, 9182.3);
+          const vv = hash(i + ci * 1000, 61.77, 4412.8);
+          const ww = hash(i + ci * 1000, 7.33, 22991.4);
+          // Approx. King-ish: most stars near core, rare halo members
+          const rad = c.scale * Math.pow(uu, 1.7) * (0.35 + vv);
+          const th = vv * Math.PI * 2;
+          const ph = Math.acos(2 * ww - 1);
+          members.push({
+            x: c.x + rad * Math.sin(ph) * Math.cos(th),
+            y: c.y + rad * Math.sin(ph) * Math.sin(th),
+            z: c.z + rad * Math.cos(ph),
+            bright: 0.45 + uu * 0.5,
+            size: 0.7 + (1 - rad / c.scale) * 1.4,
+          });
+        }
+        return { ...c, members };
+      });
+      gal.clusters = clusters;
+    }
+
+    const KPC = 1; // unit = kpc
+    const VC = 220; // km/s circular
+    // Convert: time unit such that omega = Vc/R. Use Myr.
+    // 1 km/s * 1 Myr ≈ 1.023e-3 kpc
+    // 1 km/s · 1 Myr ≈ 1.023 pc = 0.001023 kpc
+    const KMS_MYR_TO_KPC = 0.001022712165;
+
+    function rebuildGalPath() {
+      const ex = GAL_EXAMPLES[gal.example] || GAL_EXAMPLES.mild;
+      const R0 = ex.R0;
+      const birthPhi = ex.birthPhi;
+      const kick = ex.kick;
+      const fac = KMS_MYR_TO_KPC * KMS_MYR_TO_KPC;
+
+      const accel = (X, Y, Z) => {
+        const r = Math.hypot(X, Y) || 1e-6;
+        // Flat rotation curve in-plane; mild vertical restoring (~80 Myr period)
+        const nu2 = 0.005;
+        return {
+          ax: -(VC * VC) / (r * r) * X * fac,
+          ay: -(VC * VC) / (r * r) * Y * fac,
+          az: -nu2 * Z,
+        };
+      };
+
+      const integrate = (x0, y0, z0, vxKms, vyKms, vzKms, tMax, n) => {
+        const dt = tMax / n;
+        let x = x0, y = y0, z = z0;
+        let vx = vxKms * KMS_MYR_TO_KPC;
+        let vy = vyKms * KMS_MYR_TO_KPC;
+        let vz = vzKms * KMS_MYR_TO_KPC;
+        const pts = [];
+        for (let i = 0; i <= n; i++) {
+          pts.push({ t: i * dt, x, y, z });
+          if (i === n) break;
+          const a1 = accel(x, y, z);
+          const x2 = x + vx * dt + 0.5 * a1.ax * dt * dt;
+          const y2 = y + vy * dt + 0.5 * a1.ay * dt * dt;
+          const z2 = z + vz * dt + 0.5 * a1.az * dt * dt;
+          const a2 = accel(x2, y2, z2);
+          vx += 0.5 * (a1.ax + a2.ax) * dt;
+          vy += 0.5 * (a1.ay + a2.ay) * dt;
+          vz += 0.5 * (a1.az + a2.az) * dt;
+          x = x2; y = y2; z = z2;
+        }
+        return {
+          pts,
+          vxKms: vx / KMS_MYR_TO_KPC,
+          vyKms: vy / KMS_MYR_TO_KPC,
+          vzKms: vz / KMS_MYR_TO_KPC,
+        };
+      };
+
+      // Phase A: pre-SN disk orbit (~0.4 of a Galactic orbit so the arc is obvious)
+      const tPre = 90;
+      const pre = integrate(
+        R0 * Math.cos(birthPhi),
+        R0 * Math.sin(birthPhi),
+        ex.zBirth,
+        -VC * Math.sin(birthPhi),
+        VC * Math.cos(birthPhi),
+        6,
+        tPre,
+        140
+      );
+      const sn = pre.pts[pre.pts.length - 1];
+      gal.snIndex = pre.pts.length - 1;
+
+      // Kick in Galactocentric frame
+      const rsn = Math.hypot(sn.x, sn.y) || 1;
+      const radx = sn.x / rsn, rady = sn.y / rsn;
+      const tanx = -rady, tany = radx;
+      const vxBH = pre.vxKms + kick * ex.kickRad * radx + kick * ex.kickTan * tanx;
+      const vyBH = pre.vyKms + kick * ex.kickRad * rady + kick * ex.kickTan * tany;
+      const vzBH = pre.vzKms + kick * ex.kickZ;
+      // Companion keeps nearly circular motion with only a mild Blaauw nudge
+      const vxC = pre.vxKms - ex.blaauw * radx;
+      const vyC = pre.vyKms - ex.blaauw * rady;
+      const vzC = pre.vzKms - ex.blaauw * 0.25;
+
+      // Phase B: post-disruption orbits (long enough to curve around the Galaxy)
+      const tPost = 180;
+      const bh = integrate(sn.x, sn.y, sn.z, vxBH, vyBH, vzBH, tPost, 220);
+      const comp = integrate(sn.x, sn.y, sn.z, vxC, vyC, vzC, tPost, 220);
+      bh.pts.forEach((p) => { p.t += tPre; });
+      comp.pts.forEach((p) => { p.t += tPre; });
+
+      gal.path = {
+        pre: pre.pts,
+        bh: bh.pts,
+        comp: comp.pts,
+        birth: pre.pts[0],
+        sn,
+        finalBH: bh.pts[bh.pts.length - 1],
+        finalC: comp.pts[comp.pts.length - 1],
+        tPre,
+        tTot: tPre + tPost,
+        example: ex,
+      };
+    }
+
+    function galProject(x, y, z, w, h) {
+      // camera look at origin, distance
+      const cy = Math.cos(gal.yaw), sy = Math.sin(gal.yaw);
+      const cp = Math.cos(gal.pitch), sp = Math.sin(gal.pitch);
+      // yaw around z, then pitch
+      let x1 = x * cy - y * sy;
+      let y1 = x * sy + y * cy;
+      let z1 = z;
+      let y2 = y1 * cp - z1 * sp;
+      let z2 = y1 * sp + z1 * cp;
+      const dist = 28;
+      const f = 520 * gal.zoom;
+      const depth = z2 + dist;
+      const s = f / depth;
+      return {
+        X: w * 0.5 + x1 * s * (w / 900),
+        Y: h * 0.52 - y2 * s * (w / 900),
+        depth,
+        s,
+      };
+    }
+
+    function galPhaseInfo(p) {
+      if (p < 0.1) return { title: "Seeding", text: "A massive binary is placed in the thin disk near R ≈ 8.2 kpc with a near-circular birth velocity." };
+      if (p < 0.38) return { title: "Pre-supernova evolution", text: "The system rides with the disk while the primary evolves. POSYDON handles the binary physics offline; here we just follow the Galactic orbit." };
+      if (p < 0.48) return { title: "Core collapse + kick", text: "Mass loss and a natal kick hit. In this example the binary unbinds, so the BH and companion become independent tracers." };
+      if (p < 0.88) return { title: "Post-disruption drift", text: "Each object is integrated on its own in the Galactic potential. The BH's kick sends it onto a hotter, higher-|z| orbit." };
+      return { title: "Present-day snapshot", text: "Final positions after the schematic post-kick evolution. In the paper this is the catalog that Gaia/Roman selection can be layered onto." };
+    }
+
+    function drawGalaxy() {
+      const canvas = document.getElementById("gal-canvas");
+      if (!canvas || !gal.path) return;
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#0f141c";
+      ctx.fillRect(0, 0, w, h);
+
+      // stars in world space so they move with the camera
+      if (!gal.stars) buildGalStars();
+      for (const st of gal.stars) {
+        const pr = galProject(st.x, st.y, st.z, w, h);
+        if (pr.depth < 2) continue;
+        if (pr.X < -4 || pr.Y < -4 || pr.X > w + 4 || pr.Y > h + 4) continue;
+        const alpha = Math.min(0.85, st.bright * (22 / pr.depth));
+        ctx.fillStyle = `rgba(230,235,245,${alpha})`;
+        const s = Math.max(0.7, st.size * (18 / pr.depth));
+        ctx.beginPath();
+        ctx.arc(pr.X, pr.Y, s * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Globular cluster easter eggs (dense little star balls in the halo)
+      gal.hoverCluster = null;
+      if (gal.clusters) {
+        for (const cl of gal.clusters) {
+          const core = galProject(cl.x, cl.y, cl.z, w, h);
+          if (core.depth < 2) continue;
+          const glowR = Math.max(4, (cl.scale * 140) / core.depth);
+          // Soft unresolved glow
+          const g = ctx.createRadialGradient(core.X, core.Y, 0, core.X, core.Y, glowR * 2.2);
+          const [tr, tg, tb] = cl.tint;
+          g.addColorStop(0, `rgba(${tr},${tg},${tb},0.28)`);
+          g.addColorStop(0.45, `rgba(${tr},${tg},${tb},0.1)`);
+          g.addColorStop(1, `rgba(${tr},${tg},${tb},0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(core.X, core.Y, glowR * 2.2, 0, Math.PI * 2);
+          ctx.fill();
+          for (const st of cl.members) {
+            const pr = galProject(st.x, st.y, st.z, w, h);
+            if (pr.depth < 2) continue;
+            if (pr.X < -6 || pr.Y < -6 || pr.X > w + 6 || pr.Y > h + 6) continue;
+            const alpha = Math.min(0.95, st.bright * (26 / pr.depth));
+            ctx.fillStyle = `rgba(${tr},${tg},${tb},${alpha})`;
+            const s = Math.max(0.6, st.size * (20 / pr.depth));
+            ctx.beginPath();
+            ctx.arc(pr.X, pr.Y, s * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          const hitR = Math.max(14, glowR * 1.6);
+          const dMouse = Math.hypot(gal.mouseX - core.X, gal.mouseY - core.Y);
+          if (dMouse < hitR) gal.hoverCluster = { cl, core, glowR };
+        }
+        if (gal.hoverCluster) {
+          const { cl, core, glowR } = gal.hoverCluster;
+          ctx.fillStyle = "rgba(15,20,28,0.78)";
+          ctx.strokeStyle = "rgba(220,230,245,0.35)";
+          ctx.lineWidth = 1;
+          const label = cl.name;
+          ctx.font = "600 12px IBM Plex Mono";
+          const tw = ctx.measureText(label).width;
+          ctx.font = "500 10px Schibsted Grotesk";
+          const hw = ctx.measureText(cl.hint).width;
+          const boxW = Math.max(tw, hw) + 16;
+          const bx = core.X + glowR + 8;
+          const by = core.Y - 22;
+          ctx.beginPath();
+          ctx.roundRect(bx, by, boxW, 34, 6);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = "#f0f3f8";
+          ctx.font = "600 12px IBM Plex Mono";
+          ctx.fillText(label, bx + 8, by + 14);
+          ctx.fillStyle = "rgba(190,200,215,0.9)";
+          ctx.font = "500 10px Schibsted Grotesk";
+          ctx.fillText(cl.hint, bx + 8, by + 27);
+        }
+      }
+
+      // disk rings (draw in angular order)
+      const rings = [4, 6, 8.2, 10, 12];
+      for (const R of rings) {
+        ctx.beginPath();
+        for (let i = 0; i <= 96; i++) {
+          const ang = (i / 96) * Math.PI * 2;
+          const p = galProject(R * Math.cos(ang), R * Math.sin(ang), 0, w, h);
+          if (i === 0) ctx.moveTo(p.X, p.Y); else ctx.lineTo(p.X, p.Y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = R === 8.2 ? "rgba(90,140,200,0.5)" : "rgba(70,90,120,0.25)";
+        ctx.lineWidth = R === 8.2 ? 1.6 : 1;
+        ctx.stroke();
+      }
+
+      // galactic center
+      const gc = galProject(0, 0, 0, w, h);
+      ctx.fillStyle = "#e8b15a";
+      ctx.beginPath(); ctx.arc(gc.X, gc.Y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(232,177,90,0.7)";
+      ctx.font = "500 11px IBM Plex Mono";
+      ctx.fillText("GC", gc.X + 6, gc.Y - 4);
+
+      const path = gal.path;
+      const p = gal.progress;
+      // Map progress to story: 0-0.38 pre, 0.38-0.48 kick beat, 0.48-1 post
+      let showPreEnd = 1, showPost = 0, inKick = false;
+      if (p < 0.38) {
+        showPreEnd = p / 0.38;
+        showPost = 0;
+      } else if (p < 0.48) {
+        showPreEnd = 1;
+        showPost = 0;
+        inKick = true;
+      } else {
+        showPreEnd = 1;
+        showPost = (p - 0.48) / 0.52;
+      }
+
+      const drawTrail = (pts, frac, color, width) => {
+        const n = Math.max(2, Math.floor(frac * (pts.length - 1)));
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const pr = galProject(pts[i].x, pts[i].y, pts[i].z, w, h);
+          if (i === 0) ctx.moveTo(pr.X, pr.Y); else ctx.lineTo(pr.X, pr.Y);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.stroke();
+        return galProject(pts[n].x, pts[n].y, pts[n].z, w, h);
+      };
+
+      const birthP = galProject(path.birth.x, path.birth.y, path.birth.z, w, h);
+      ctx.fillStyle = "#3db8c5";
+      ctx.beginPath(); ctx.arc(birthP.X, birthP.Y, 5, 0, Math.PI * 2); ctx.fill();
+
+      const headPre = drawTrail(path.pre, showPreEnd, "rgba(61,184,197,0.85)", 2);
+
+      if (inKick || showPost > 0) {
+        const snP = galProject(path.sn.x, path.sn.y, path.sn.z, w, h);
+        ctx.fillStyle = inKick ? "rgba(255,200,120,0.9)" : "rgba(194,71,42,0.9)";
+        ctx.beginPath(); ctx.arc(snP.X, snP.Y, inKick ? 8 : 4.5, 0, Math.PI * 2); ctx.fill();
+        if (inKick) {
+          ctx.strokeStyle = "rgba(255,210,140,0.5)";
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(snP.X, snP.Y, 14, 0, Math.PI * 2); ctx.stroke();
+          ctx.fillStyle = "#f0d090";
+          ctx.font = "600 11px IBM Plex Mono";
+          ctx.fillText("SN + kick", snP.X + 12, snP.Y - 8);
+        }
+      }
+
+      let headBH = null, headC = null;
+      if (showPost > 0) {
+        headBH = drawTrail(path.bh, showPost, "rgba(220,220,230,0.9)", 2.2);
+        headC = drawTrail(path.comp, showPost, "rgba(201,162,39,0.85)", 1.8);
+        // markers
+        ctx.fillStyle = "#e8eaef";
+        ctx.beginPath(); ctx.arc(headBH.X, headBH.Y, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "rgba(90,140,200,0.9)";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(headBH.X, headBH.Y, 8, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = "#c9a227";
+        ctx.beginPath(); ctx.arc(headC.X, headC.Y, 5, 0, Math.PI * 2); ctx.fill();
+
+        if (showPost > 0.98) {
+          ctx.fillStyle = "#d7dde8";
+          ctx.font = "500 11px Schibsted Grotesk";
+          ctx.fillText("BH today", headBH.X + 10, headBH.Y - 6);
+          ctx.fillStyle = "#e0c35a";
+          ctx.fillText("Companion today", headC.X + 10, headC.Y + 14);
+        }
+      } else if (!inKick) {
+        // binary still together
+        ctx.fillStyle = "#7eb6ff";
+        ctx.beginPath(); ctx.arc(headPre.X, headPre.Y, 5, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // HUD
+      ctx.fillStyle = "rgba(197,204,216,0.85)";
+      ctx.font = "500 11px IBM Plex Mono";
+      ctx.fillText("drag to rotate · scroll to zoom · units: kpc", 14, 22);
+
+      const info = galPhaseInfo(p);
+      const status = document.getElementById("gal-status");
+      if (status) {
+        status.querySelector("strong").textContent = info.title;
+        status.querySelector("span").textContent = info.text;
+      }
+    }
+
+    function updateGalLabels() {
+      document.getElementById("gal-progress-val").textContent = `${Math.round(gal.progress * 100)}%`;
+      document.getElementById("gal-progress").value = Math.round(gal.progress * 1000);
+      const ex = GAL_EXAMPLES[gal.example];
+      const blurb = document.getElementById("gal-ex-blurb");
+      if (blurb && ex) blurb.textContent = ex.blurb;
+    }
+
+    rebuildGalPath();
+    document.getElementById("gal-legend").innerHTML = `
+      <span><i style="background:#3db8c5"></i>birth / pre-SN</span>
+      <span><i style="background:#c2472a"></i>supernova</span>
+      <span><i style="background:#e8eaef"></i>BH path</span>
+      <span><i style="background:#c9a227"></i>companion</span>`;
+
+    const galCanvas = document.getElementById("gal-canvas");
+    function galPointerPos(e) {
+      const rect = galCanvas.getBoundingClientRect();
+      gal.mouseX = e.clientX - rect.left;
+      gal.mouseY = e.clientY - rect.top;
+    }
+    galCanvas.addEventListener("pointerdown", (e) => {
+      gal.dragging = true;
+      galInteract();
+      gal.lastX = e.clientX;
+      gal.lastY = e.clientY;
+      galPointerPos(e);
+      galCanvas.setPointerCapture(e.pointerId);
+    });
+    galCanvas.addEventListener("pointermove", (e) => {
+      galPointerPos(e);
+      if (!gal.dragging) return;
+      galInteract();
+      const dx = e.clientX - gal.lastX;
+      const dy = e.clientY - gal.lastY;
+      gal.lastX = e.clientX;
+      gal.lastY = e.clientY;
+      gal.yaw += dx * 0.008;
+      // Allow nearly face-on through nearly edge-on
+      gal.pitch = clamp(gal.pitch + dy * 0.007, 0.02, Math.PI / 2 - 0.02);
+    });
+    galCanvas.addEventListener("pointerup", () => { gal.dragging = false; galInteract(); });
+    galCanvas.addEventListener("pointercancel", () => { gal.dragging = false; galInteract(); });
+    galCanvas.addEventListener("pointerleave", () => {
+      gal.mouseX = -1e9;
+      gal.mouseY = -1e9;
+      gal.hoverCluster = null;
+    });
+    galCanvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      galInteract();
+      const factor = Math.exp(-e.deltaY * 0.0012);
+      gal.zoom = clamp(gal.zoom * factor, 0.72, 1.55);
+    }, { passive: false });
+
+    document.getElementById("gal-progress").addEventListener("input", (e) => {
+      gal.progress = parseFloat(e.target.value) / 1000;
+      gal.playing = false;
+      galInteract();
+      document.getElementById("gal-play").classList.remove("active");
+      document.getElementById("gal-pause").classList.add("active");
+      updateGalLabels();
+    });
+    function setGalPlaying(on) {
+      gal.playing = !!on;
+      galInteract();
+      document.getElementById("gal-play").classList.toggle("active", gal.playing);
+      document.getElementById("gal-pause").classList.toggle("active", !gal.playing);
+    }
+    function selectGalExample(key) {
+      if (!GAL_EXAMPLES[key]) return;
+      gal.example = key;
+      document.querySelectorAll("#gal-examples button").forEach((b) => {
+        b.classList.toggle("active", b.dataset.ex === key);
+      });
+      rebuildGalPath();
+      gal.progress = 0;
+      setGalPlaying(true);
+      updateGalLabels();
+    }
+    document.getElementById("gal-examples").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-ex]");
+      if (!btn) return;
+      selectGalExample(btn.dataset.ex);
+    });
+    document.getElementById("gal-play").addEventListener("click", () => setGalPlaying(true));
+    document.getElementById("gal-pause").addEventListener("click", () => setGalPlaying(false));
+    document.getElementById("gal-replay").addEventListener("click", () => {
+      gal.progress = 0;
+      setGalPlaying(true);
+      updateGalLabels();
+    });
+
+    const galStage = document.getElementById("gal-stage");
+    const galFsBtn = document.getElementById("gal-fs");
+    function galIsFullscreen() {
+      return document.fullscreenElement === galStage || document.webkitFullscreenElement === galStage;
+    }
+    document.addEventListener("keydown", (e) => {
+      const tag = (e.target && e.target.tagName) || "";
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.code === "Space" || e.key === " ") {
+        if (!galIsFullscreen()) return;
+        e.preventDefault();
+        setGalPlaying(!gal.playing);
+        return;
+      }
+      if (e.code === "KeyR" || e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        gal.progress = 0;
+        setGalPlaying(true);
+        updateGalLabels();
+        return;
+      }
+      const exByNum = { "1": "mild", "2": "typical", "3": "strong" };
+      const exKey = exByNum[e.key];
+      if (exKey) {
+        e.preventDefault();
+        selectGalExample(exKey);
+      }
+    });
+    function syncGalFsLabel() {
+      galFsBtn.textContent = galIsFullscreen() ? "Exit" : "Fullscreen";
+      galFsBtn.title = galIsFullscreen() ? "Exit fullscreen (Esc)" : "Fullscreen (Esc to exit)";
+    }
+    async function toggleGalFullscreen() {
+      try {
+        if (galIsFullscreen()) {
+          if (document.exitFullscreen) await document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        } else if (galStage.requestFullscreen) {
+          await galStage.requestFullscreen();
+        } else if (galStage.webkitRequestFullscreen) {
+          galStage.webkitRequestFullscreen();
+        }
+      } catch (_) { /* user gesture / permission */ }
+      syncGalFsLabel();
+      requestAnimationFrame(() => drawGalaxy());
+    }
+    galFsBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleGalFullscreen();
+    });
+    document.addEventListener("fullscreenchange", () => {
+      syncGalFsLabel();
+      requestAnimationFrame(() => drawGalaxy());
+    });
+    document.addEventListener("webkitfullscreenchange", () => {
+      syncGalFsLabel();
+      requestAnimationFrame(() => drawGalaxy());
+    });
+
+    updateGalLabels();
+
+    let last = performance.now();
+    function frame(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      drawKick(dt);
+      if (gal.playing) {
+        gal.progress = Math.min(1, gal.progress + dt * 0.06);
+        if (gal.progress >= 1) {
+          gal.playing = false;
+          document.getElementById("gal-play").classList.remove("active");
+          document.getElementById("gal-pause").classList.add("active");
+          // Start idle spin immediately once the story finishes
+          gal.lastInteract = now - 5000;
+        }
+        updateGalLabels();
+      } else if (!gal.dragging && (now - gal.lastInteract) >= 5000) {
+        gal.yaw += dt * 0.12; // gentle idle spin after inactivity
+      }
+      drawGalaxy();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    window.addEventListener("resize", () => { drawCE(); drawGalaxy(); });
+  
+</script>
+</body>
+</html>

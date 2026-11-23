@@ -1,0 +1,18 @@
+---
+description: Project memory and commit/push workflow for this explainer
+alwaysApply: true
+---
+
+# Galactic BH viz — agent memory
+
+Read and update `MEMORY.md` when changing the page, galaxy viz, physics constants, controls, or shortcuts.
+
+## Done means committed
+
+When a user-facing change is finished (not mid-debug):
+
+1. Update `MEMORY.md` if behavior or conventions changed.
+2. Commit with a short why-focused message (HEREDOC).
+3. Push to `origin` on `main` unless the user says otherwise.
+
+Do not commit `verify/`, `.env*`, or secrets. Keep the site as a single self-contained `index.html` unless the user asks to split it.
