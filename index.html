@@ -4625,13 +4625,10 @@
         const mag = Math.hypot(sim.kx, sim.ky);
         ctx.font = "600 12px IBM Plex Mono";
         if (mag > 1e-9 && sim.vkick_kms > 0.5) {
-          // Arrow length ∝ kick speed (km/s), also tracks view zoom
-          const len = clamp(
-            sim.vkick_kms * 0.24 * (scale / scaleRef),
-            12,
-            Math.min(w, h) * 0.4
-          );
-          const head = clamp(len * 0.2, 6, 16);
+          // Arrow length ∝ kick speed (km/s) in screen px — independent of view zoom
+          // ~200 km/s → ~140px so the fiducial kick is easy to read
+          const len = clamp(sim.vkick_kms * 0.7, 18, Math.min(w, h) * 0.55);
+          const head = clamp(len * 0.18, 8, 20);
           const ux = sim.kx / mag, uy = sim.ky / mag;
           const ax = s1.x + ux * len;
           const ay = s1.y - uy * len;
