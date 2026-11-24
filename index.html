@@ -4405,9 +4405,21 @@
         tPhys = frac * (sim.bound ? Math.min(sim.period * 1.05, 5) : 0.12);
       }
 
-      // Scale from pre-SN separation only — do not reframe on the post-kick orbit
-      // (that made larger kicks look like a tighter pair, and larger a look closer).
-      const maxR = Math.max(sim.a * 1.75, 0.35);
+      // Pre/flash: frame on pre-SN separation. Post: zoom out so the new orbit fits.
+      let maxR = Math.max(sim.a * 1.75, 0.35);
+      if (phase === "post") {
+        if (sim.bound && sim.aPost) {
+          maxR = Math.max(maxR, sim.aPost * (1 + sim.ecc) * 1.2);
+        } else {
+          let trailR = sim.a * 2.5;
+          for (let i = 0; i < sim.trail.length; i += 4) {
+            const p = sim.trail[i];
+            trailR = Math.max(trailR, Math.hypot(p.x1, p.y1), Math.hypot(p.x2, p.y2));
+          }
+          // Cap runaway hyperbolas so the bend still reads near the SN
+          maxR = Math.max(maxR, Math.min(trailR * 1.1, sim.a * 6));
+        }
+      }
       const scale = Math.min(w, h) * 0.42 / maxR;
       const cx = w * 0.5, cy = h * 0.52;
       const S = (x, y) => ({ x: cx + x * scale, y: cy - y * scale });

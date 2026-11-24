@@ -32,4 +32,4 @@ Instantaneous post-SN 2-body schematic: pre-SN circular orbit → collapse + kic
 
 - 2026-11-23: Added **Default** button to reset prescription + sliders.
 - 2026-11-24: Pre-SN phase draws companion circular orbit as well as the primary’s.
-- 2026-11-24: View scale locked to pre-SN `a` only (no post-kick autofit).
+- 2026-11-24: Pre/flash framed on pre-SN `a`; post phase zooms out so the new orbit fits.
