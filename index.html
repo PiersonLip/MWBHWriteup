@@ -4188,7 +4188,6 @@
     const kickDefaults = { mode: "fiducial", vns: 200, mbh: 8, m2: 10, a: 0.5, theta: 45, dm: 5 };
     const kickUI = { ...kickDefaults };
     let animT = 0;
-    let kickAnimSpeed = 1; // follows view zoom (slower when zoomed out)
     let sim = null; // rebuilt when params change
 
     function kickSpeedKms() {
@@ -4276,7 +4275,6 @@
         ffb: clamp((kickUI.mbh - 2.5) / 17.5, 0, 0.95),
       };
       animT = 0;
-      kickAnimSpeed = 1;
       updateStatus();
     }
 
@@ -4438,8 +4436,9 @@
     }
 
     function drawKick(dt) {
-      // Advance the timeline slower when zoomed out (updated at end of last frame)
-      animT += dt * kickAnimSpeed;
+      // Phase clock stays in wall time so the kick isn't delayed when zoomed out
+      // (screen-space motion already slows with zoom via `scale`).
+      animT += dt;
       const canvas = document.getElementById("kick-canvas");
       const ctx = canvas.getContext("2d");
       const dpr = window.devicePixelRatio || 1;
@@ -4507,7 +4506,6 @@
       // Body size tracks zoom (ref ≈ default a=0.5 AU framing) so zoom-out reads as scale
       const scaleRef = Math.min(w, h) * 0.42 / 0.875;
       const bodyScale = clamp(scale / scaleRef, 0.32, 1.35);
-      kickAnimSpeed = clamp(scale / scaleRef, 0.28, 1);
       const cx = w * 0.5, cy = h * 0.52;
       const S = (x, y) => ({ x: cx + x * scale, y: cy - y * scale });
 
