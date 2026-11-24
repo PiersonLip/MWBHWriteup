@@ -22,7 +22,7 @@ Instantaneous post-SN 2-body schematic: pre-SN circular orbit → collapse + kic
   - **NS-like:** full `v_NS`
   - **Zero:** `0`
 - Blaauw mass loss via `dm` + remnant mass; energy test → bound vs disrupted.
-- Timeline: pre ≈2.4s → flash hold ≈1.2s (kick arrow) → post; full cycle ≈8.8s.
+- Timeline: pre ≈2.4s → flash hold ≈1.2s → post → ~1.6s blend back to pre; full cycle ≈9.7s.
 
 ## Defaults (`kickDefaults`)
 
@@ -36,3 +36,4 @@ Instantaneous post-SN 2-body schematic: pre-SN circular orbit → collapse + kic
 - 2026-11-24: Star/BH marker size tracks view zoom for a sense of scale.
 - 2026-11-24: Post-kick zoom eases in/out (~1.2s) instead of jumping.
 - 2026-11-24: Timeline/orbit speed tracks view zoom (slower when zoomed out).
+- 2026-11-24: Loop restart blends post → pre (positions, guides, BH→progenitor).

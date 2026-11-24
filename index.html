@@ -4390,25 +4390,34 @@
       ctx.fillRect(0, 0, w, h);
       if (!sim) return;
 
-      // Timeline — flash beat holds so kick direction/strength can be read
-      const cycle = 8.8;
+      // Timeline — flash hold, then post orbit, then blend back into the next pre loop
+      const cycle = 9.7;
       const tau = animT % cycle;
       const tPre = 2.4, tFlash = 3.6; // ~1.2s kick arrow hold
-      let phase, tPhys;
+      const tBlendStart = 8.05;
+      const tPhysPost = sim.bound ? Math.min(sim.period * 1.05, 5) : 0.12;
+      const smooth01 = (x) => {
+        const t = clamp(x, 0, 1);
+        return t * t * (3 - 2 * t);
+      };
+      let phase, tPhys, blendU = 0;
       if (tau < tPre) {
         phase = "pre";
         tPhys = (tau / tPre - 1) * (2 * Math.PI / sim.n); // one full pre orbit ending at SN
       } else if (tau < tFlash) {
         phase = "flash";
         tPhys = 0;
-      } else {
+      } else if (tau < tBlendStart) {
         phase = "post";
-        const frac = (tau - tFlash) / (cycle - tFlash);
-        // Bound: show ~1 orbit. Unbound: stay near the hyperbolic bend (short physical time).
-        tPhys = frac * (sim.bound ? Math.min(sim.period * 1.05, 5) : 0.12);
+        const frac = (tau - tFlash) / (tBlendStart - tFlash);
+        tPhys = frac * tPhysPost;
+      } else {
+        phase = "blend";
+        blendU = smooth01((tau - tBlendStart) / (cycle - tBlendStart));
+        tPhys = tPhysPost;
       }
 
-      // Pre framing vs post framing; ease zoom out after the flash (and back before loop)
+      // Pre framing vs post framing; ease zoom out after the flash (and back during blend)
       const maxRPre = Math.max(sim.a * 1.75, 0.35);
       let maxRPost = maxRPre;
       if (sim.bound && sim.aPost) {
@@ -4422,12 +4431,11 @@
         maxRPost = Math.max(maxRPre, Math.min(trailR * 1.1, sim.a * 6));
       }
       const zoomOutDur = 1.2;
-      const zoomInStart = cycle - 0.75;
       let zoomT = 0; // 0 = pre frame, 1 = post frame
-      if (tau >= tFlash && tau < zoomInStart) {
+      if (tau >= tFlash && tau < tBlendStart) {
         zoomT = clamp((tau - tFlash) / zoomOutDur, 0, 1);
-      } else if (tau >= zoomInStart) {
-        zoomT = 1 - clamp((tau - zoomInStart) / (cycle - zoomInStart), 0, 1);
+      } else if (tau >= tBlendStart) {
+        zoomT = 1 - blendU;
       }
       const zoomEase = zoomT * zoomT * (3 - 2 * zoomT);
       const maxR = maxRPre + (maxRPost - maxRPre) * zoomEase;
@@ -4443,10 +4451,14 @@
       ctx.fillStyle = v.line;
       ctx.beginPath(); ctx.arc(cx, cy, 3 * bodyScale, 0, Math.PI * 2); ctx.fill();
 
+      const preGuideAlpha = phase === "pre" || phase === "flash" ? 1 : phase === "blend" ? blendU : 0;
+      const postGuideAlpha = phase === "post" ? 1 : phase === "blend" ? 1 - blendU : 0;
+
       // Pre-SN orbit guides (primary + companion around shared CM)
-      if (phase !== "post") {
+      if (preGuideAlpha > 0.02) {
         const r1 = sim.a * sim.m2 / sim.Mpre;
         const r2 = sim.a * sim.m1 / sim.Mpre;
+        ctx.globalAlpha = preGuideAlpha;
         ctx.setLineDash([4, 4]);
         ctx.strokeStyle = vizRgba(v.accent, 0.32);
         ctx.lineWidth = 1.5;
@@ -4456,10 +4468,12 @@
         ctx.beginPath(); ctx.arc(cx, cy, r2 * scale, 0, Math.PI * 2); ctx.stroke();
         ctx.setLineDash([]);
         ctx.lineWidth = 1;
+        ctx.globalAlpha = 1;
       }
 
       // Post-SN guides + trails
-      if (phase === "post") {
+      if (postGuideAlpha > 0.02) {
+        ctx.globalAlpha = postGuideAlpha;
         if (sim.bound && sim.aPost) {
           // Analytical ellipses around CM for BH and companion
           const aRel = sim.aPost;
@@ -4510,9 +4524,24 @@
           drawBodyTrail("x1", "y1", vizRgba(v.disrupt, 0.8), 2.2);
           drawBodyTrail("x2", "y2", vizRgba(v.star, 0.65), 1.8);
         }
+        ctx.globalAlpha = 1;
       }
 
-      const pos = phase === "post" ? postPositions(tPhys) : prePositions(tPhys);
+      let pos;
+      if (phase === "blend") {
+        const postHold = postPositions(tPhysPost);
+        const preStart = prePositions(-2 * Math.PI / sim.n);
+        pos = {
+          x1: postHold.x1 + (preStart.x1 - postHold.x1) * blendU,
+          y1: postHold.y1 + (preStart.y1 - postHold.y1) * blendU,
+          x2: postHold.x2 + (preStart.x2 - postHold.x2) * blendU,
+          y2: postHold.y2 + (preStart.y2 - postHold.y2) * blendU,
+        };
+      } else if (phase === "post") {
+        pos = postPositions(tPhys);
+      } else {
+        pos = prePositions(tPhys);
+      }
       const p1 = S(pos.x1, pos.y1);
       const p2 = S(pos.x2, pos.y2);
 
@@ -4556,37 +4585,53 @@
       ctx.fillStyle = v.star;
       ctx.beginPath(); ctx.arc(p2.x, p2.y, rC, 0, Math.PI * 2); ctx.fill();
 
-      // Primary / BH
-      if (phase === "pre") {
+      // Primary / BH (blend crossfades BH → progenitor)
+      const showProgenitor = phase === "pre" || (phase === "blend" && blendU > 0.45);
+      if (showProgenitor) {
+        ctx.globalAlpha = phase === "blend" ? clamp((blendU - 0.45) / 0.35, 0, 1) : 1;
         const rS = (7 + Math.sqrt(sim.m1) * 1.05) * bodyScale;
         ctx.fillStyle = v.primary;
         ctx.beginPath(); ctx.arc(p1.x, p1.y, rS, 0, Math.PI * 2); ctx.fill();
-      } else {
-        const rB = (4.5 + Math.sqrt(sim.mBH) * 0.8) * bodyScale;
-        ctx.fillStyle = v.bh;
-        ctx.beginPath(); ctx.arc(p1.x, p1.y, rB, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = vizRgba(v.accent, 0.7);
-        ctx.lineWidth = 2 * bodyScale;
-        ctx.beginPath(); ctx.arc(p1.x, p1.y, rB + 3.5 * bodyScale, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      if (phase !== "pre") {
+        ctx.globalAlpha = phase === "blend" ? clamp(1 - (blendU - 0.35) / 0.35, 0, 1) : 1;
+        if (ctx.globalAlpha > 0.02) {
+          const rB = (4.5 + Math.sqrt(sim.mBH) * 0.8) * bodyScale;
+          ctx.fillStyle = v.bh;
+          ctx.beginPath(); ctx.arc(p1.x, p1.y, rB, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = vizRgba(v.accent, 0.7);
+          ctx.lineWidth = 2 * bodyScale;
+          ctx.beginPath(); ctx.arc(p1.x, p1.y, rB + 3.5 * bodyScale, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
       }
 
       ctx.fillStyle = v.soft;
       ctx.font = "500 12px Schibsted Grotesk";
-      ctx.fillText(phase === "pre" ? `Progenitor ${sim.m1.toFixed(1)} M☉` : `BH ${sim.mBH.toFixed(1)} M☉`, p1.x + 12, p1.y - 10);
+      const primaryLabel = phase === "pre" || (phase === "blend" && blendU > 0.5)
+        ? `Progenitor ${sim.m1.toFixed(1)} M☉`
+        : `BH ${sim.mBH.toFixed(1)} M☉`;
+      ctx.fillText(primaryLabel, p1.x + 12, p1.y - 10);
       ctx.fillText(`Companion ${sim.m2.toFixed(1)} M☉`, p2.x + 12, p2.y - 10);
 
-      const banner = sim.bound ? "BOUND" : "DISRUPTED";
-      ctx.font = "600 12px IBM Plex Mono";
-      const tw = ctx.measureText(banner).width;
-      ctx.fillStyle = sim.bound ? v.bound : v.disrupt;
-      roundRect(ctx, w - tw - 26, 12, tw + 14, 26, 6); ctx.fill();
-      ctx.fillStyle = themeIsDark() ? "#12161e" : "#fff";
-      ctx.fillText(banner, w - tw - 19, 30);
+      if (phase === "post" || phase === "flash" || (phase === "blend" && blendU < 0.85)) {
+        const banner = sim.bound ? "BOUND" : "DISRUPTED";
+        ctx.globalAlpha = phase === "blend" ? 1 - blendU : 1;
+        ctx.font = "600 12px IBM Plex Mono";
+        const tw = ctx.measureText(banner).width;
+        ctx.fillStyle = sim.bound ? v.bound : v.disrupt;
+        roundRect(ctx, w - tw - 26, 12, tw + 14, 26, 6); ctx.fill();
+        ctx.fillStyle = themeIsDark() ? "#12161e" : "#fff";
+        ctx.fillText(banner, w - tw - 19, 30);
+        ctx.globalAlpha = 1;
+      }
 
       ctx.fillStyle = v.muted;
       ctx.font = "500 11px IBM Plex Mono";
       const phaseLabel = phase === "pre" ? "pre-SN circular orbit"
         : phase === "flash" ? "core collapse + kick"
+        : phase === "blend" ? "looping back to pre-SN"
         : (sim.bound ? "post-SN bound orbit" : "post-SN unbound escape");
       ctx.fillText(phaseLabel, 14, 24);
     }
