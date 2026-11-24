@@ -4191,6 +4191,7 @@
     const kickDefaults = { mode: "fiducial", vns: 200, mbh: 8, m2: 10, a: 0.5, theta: 45, dm: 5 };
     const kickUI = { ...kickDefaults };
     let animT = 0;
+    let kickPostOrbitT = 0; // physical post-SN time; advances with view scale
     let sim = null; // rebuilt when params change
 
     function kickSpeedKms() {
@@ -4278,6 +4279,7 @@
         ffb: clamp((kickUI.mbh - 2.5) / 17.5, 0, 0.95),
       };
       animT = 0;
+      kickPostOrbitT = 0;
       updateStatus();
     }
 
@@ -4439,8 +4441,7 @@
     }
 
     function drawKick(dt) {
-      // Phase clock stays in wall time so the kick isn't delayed when zoomed out
-      // (screen-space motion already slows with zoom via `scale`).
+      // Phase clock is always wall time — kick / flash / blend stay on schedule
       animT += dt;
       const canvas = document.getElementById("kick-canvas");
       const ctx = canvas.getContext("2d");
@@ -4466,21 +4467,13 @@
         const t = clamp(x, 0, 1);
         return t * t * (3 - 2 * t);
       };
-      let phase, tPhys, blendU = 0;
-      if (tau < tPre) {
-        phase = "pre";
-        tPhys = (tau / tPre - 1) * (2 * Math.PI / sim.n); // one full pre orbit ending at SN
-      } else if (tau < tFlash) {
-        phase = "flash";
-        tPhys = 0;
-      } else if (tau < tBlendStart) {
-        phase = "post";
-        const frac = (tau - tFlash) / (tBlendStart - tFlash);
-        tPhys = frac * tPhysPost;
-      } else {
+      let phase, blendU = 0;
+      if (tau < tPre) phase = "pre";
+      else if (tau < tFlash) phase = "flash";
+      else if (tau < tBlendStart) phase = "post";
+      else {
         phase = "blend";
         blendU = smooth01((tau - tBlendStart) / (cycle - tBlendStart));
-        tPhys = tPhysPost;
       }
 
       // Pre framing vs post framing; ease zoom out after the flash (and back during blend)
@@ -4509,6 +4502,23 @@
       // Body size tracks zoom (ref ≈ default a=0.5 AU framing) so zoom-out reads as scale
       const scaleRef = Math.min(w, h) * 0.42 / 0.875;
       const bodyScale = clamp(scale / scaleRef, 0.32, 1.35);
+      // Orbit motion slows with zoom; phase boundaries stay on wall time
+      const orbitSpeed = clamp(scale / scaleRef, 0.28, 1);
+      let tPhys;
+      if (phase === "pre") {
+        // Still arrive at SN at tPre; zoomed-out ⇒ shorter, slower arc into the kick
+        tPhys = (tau / tPre - 1) * orbitSpeed * (2 * Math.PI / sim.n);
+        kickPostOrbitT = 0;
+      } else if (phase === "flash") {
+        tPhys = 0;
+        kickPostOrbitT = 0;
+      } else if (phase === "post") {
+        const postDur = tBlendStart - tFlash;
+        kickPostOrbitT += dt * orbitSpeed * (tPhysPost / postDur);
+        tPhys = Math.min(kickPostOrbitT, tPhysPost);
+      } else {
+        tPhys = tPhysPost;
+      }
       const cx = w * 0.5, cy = h * 0.52;
       const S = (x, y) => ({ x: cx + x * scale, y: cy - y * scale });
 
