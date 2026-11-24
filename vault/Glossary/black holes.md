@@ -4,6 +4,8 @@ aliases:
   - black hole
   - BH
   - BHs
+# Inline chapter tips only — not nested inside other tip bubbles
+nest: false
 ---
 
 # black holes

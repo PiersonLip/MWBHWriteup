@@ -3452,9 +3452,12 @@
         return anchor.getAttribute("data-tip") || "";
       }
 
+      // Inline-only: never nest these inside other tip bubbles
+      const TIP_NO_NEST = new Set(["black holes", "black hole", "bh", "bhs"]);
+
       function linkify(text, skipKey) {
         const terms = [...glossary.keys()]
-          .filter((k) => k !== skipKey)
+          .filter((k) => k !== skipKey && !TIP_NO_NEST.has(k))
           .sort((a, b) => b.length - a.length);
         if (!terms.length) return escHtml(text);
         const re = new RegExp(
