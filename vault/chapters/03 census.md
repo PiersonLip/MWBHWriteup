@@ -4,14 +4,14 @@ label: 03 · Milky way demographics
 title: Most Galactic black holes are alone (but they weren't born that way)
 ---
 
-# Most Galactic[^1] black holes are alone (but they weren't born that way)
+# Most Galactic black holes are alone (but they weren't born that way)
 
 *03 · Demographics*
 
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-In the baseline solar-metallicity run, we found about **400,000,000** stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, with the rest still having their binary partners.
+In our baseline solar-metallicity run, we found about **400,000,000** stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, with the rest still having their binary partners.
 :::
 
 :::stats
@@ -30,9 +30,9 @@ The mass spectra keep showing two fingerprints: a low-mass bump near ~2.5 to 5 M
 
 :::figure
 id: flow
-cap: Figure · Formation-channel map (fiducial solar Z)
+cap: Formation channels map (solar metallicity)
 title: How do Galactic black holes form?
 hint: Click a path or endpoint. Highlighted route shows how that present-day channel is reached.
 :::
 
-[^1]: In our gala
+
