@@ -4260,8 +4260,10 @@
       const ey = (-vxr * hz) / mu - ryr / r;
       const periArg = Math.atan2(ey, ex);
 
-      // Integrate post-SN trajectories for drawing
-      const trail = integrate2Body(bh0, c0, mBH, m2, bound ? period * 1.02 : 4.0);
+      // Same path for guides + bodies: analytic Kepler when bound (clear e), else dense Verlet
+      const trail = bound && aPost && ecc >= 0.04 && ecc < 0.995
+        ? keplerBoundTrail(bh0, c0, mBH, m2, aPost, ecc, ex, ey, periArg, mu, hz, period)
+        : integrate2Body(bh0, c0, mBH, m2, bound ? Math.max(period || 1, 0.5) * 1.05 : 4.0, bound ? 1600 : 800);
 
       sim = {
         m1, m2, mBH, a, n, Mpre, Mpost, nu,
@@ -4269,7 +4271,7 @@
         vkick_kms: kickSpeedKms(),
         kx, ky, tx, ty, rx, ry,
         p1, p2, bh0, c0,
-        eps, ecc, bound, aPost, period, mu, hz, periArg,
+        eps, ecc, bound, aPost, period, mu, hz, periArg, ex, ey,
         trail,
         ffb: clamp((kickUI.mbh - 2.5) / 17.5, 0, 0.95),
       };
@@ -4278,7 +4280,60 @@
       updateStatus();
     }
 
-    function integrate2Body(bh, comp, mBH, m2, tMax) {
+    function keplerBoundTrail(bh, comp, mBH, m2, aPost, ecc, ex, ey, periArg, mu, hz, period) {
+      const fBH = m2 / (mBH + m2);
+      const fC = mBH / (mBH + m2);
+      const x0 = bh.x - comp.x;
+      const y0 = bh.y - comp.y;
+      const r0 = Math.hypot(x0, y0) || 1e-12;
+      const eSafe = Math.max(ecc, 1e-10);
+      // Orbit basis from eccentricity vector (periapsis) and h×e (prograde)
+      const sH = Math.sign(hz || 1);
+      const eHx = ex / eSafe;
+      const eHy = ey / eSafe;
+      const pHx = -sH * ey / eSafe;
+      const pHy = sH * ex / eSafe;
+      const cosNu0 = clamp((ex * x0 + ey * y0) / (eSafe * r0), -1, 1);
+      const sinNu0 = sH * (ex * y0 - ey * x0) / (eSafe * r0);
+      const nu0 = Math.atan2(sinNu0, cosNu0);
+      const den0 = 1 + ecc * Math.cos(nu0);
+      const cosE0 = clamp((ecc + Math.cos(nu0)) / den0, -1, 1);
+      const sinE0 = (Math.sqrt(Math.max(0, 1 - ecc * ecc)) * Math.sin(nu0)) / den0;
+      const E0 = Math.atan2(sinE0, cosE0);
+      const M0 = E0 - ecc * Math.sin(E0);
+      const nOrb = Math.sqrt(mu / (aPost ** 3));
+      const tMax = period * 1.02;
+      const nPts = 720;
+      const pts = [];
+      for (let i = 0; i <= nPts; i++) {
+        const t = (i / nPts) * tMax;
+        let M = M0 + nOrb * t;
+        M = Math.atan2(Math.sin(M), Math.cos(M));
+        let E = M;
+        for (let k = 0; k < 14; k++) {
+          const dE = (E - ecc * Math.sin(E) - M) / (1 - ecc * Math.cos(E));
+          E -= dE;
+          if (Math.abs(dE) < 1e-13) break;
+        }
+        const cosE = Math.cos(E);
+        const sinE = Math.sin(E);
+        const rr = aPost * (1 - ecc * cosE);
+        const cosNu = (cosE - ecc) / (1 - ecc * cosE);
+        const sinNu = (Math.sqrt(Math.max(0, 1 - ecc * ecc)) * sinE) / (1 - ecc * cosE);
+        const X = rr * cosNu * eHx + rr * sinNu * pHx;
+        const Y = rr * cosNu * eHy + rr * sinNu * pHy;
+        pts.push({
+          t,
+          x1: fBH * X,
+          y1: fBH * Y,
+          x2: -fC * X,
+          y2: -fC * Y,
+        });
+      }
+      return pts;
+    }
+
+    function integrate2Body(bh, comp, mBH, m2, tMax, nSteps = 800) {
       // Relative formulation + CM fixed at 0
       let x = bh.x - comp.x;
       let y = bh.y - comp.y;
@@ -4287,26 +4342,35 @@
       const mu = G * (mBH + m2);
       const fBH = m2 / (mBH + m2);
       const fC = mBH / (mBH + m2);
-
-      const dt = tMax / 400;
+      const steps = Math.max(200, nSteps | 0);
+      const dtBase = tMax / steps;
       const pts = [];
-      for (let i = 0; i <= 400; i++) {
+      let t = 0;
+      for (let i = 0; i <= steps; i++) {
         pts.push({
-          t: i * dt,
+          t,
           x1: fBH * x, y1: fBH * y,
           x2: -fC * x, y2: -fC * y,
         });
-        // Velocity Verlet on relative orbit: a = -μ r / |r|³
+        if (i === steps) break;
+        // Adaptive substeps near periapsis / strong acceleration
         const R = Math.hypot(x, y) || 1e-12;
-        const a0 = -mu / (R * R * R);
-        const ax = a0 * x, ay = a0 * y;
-        x += vx * dt + 0.5 * ax * dt * dt;
-        y += vy * dt + 0.5 * ay * dt * dt;
-        const R2 = Math.hypot(x, y) || 1e-12;
-        const a1s = -mu / (R2 * R2 * R2);
-        const ax2 = a1s * x, ay2 = a1s * y;
-        vx += 0.5 * (ax + ax2) * dt;
-        vy += 0.5 * (ay + ay2) * dt;
+        const aMag = mu / (R * R);
+        const sub = clamp(Math.ceil(aMag / (mu / (Math.max(R, 0.05) ** 2)) * 2), 1, 12);
+        const dt = dtBase / sub;
+        for (let s = 0; s < sub; s++) {
+          const R0 = Math.hypot(x, y) || 1e-12;
+          const a0 = -mu / (R0 * R0 * R0);
+          const ax = a0 * x, ay = a0 * y;
+          x += vx * dt + 0.5 * ax * dt * dt;
+          y += vy * dt + 0.5 * ay * dt * dt;
+          const R1 = Math.hypot(x, y) || 1e-12;
+          const a1s = -mu / (R1 * R1 * R1);
+          const ax2 = a1s * x, ay2 = a1s * y;
+          vx += 0.5 * (ax + ax2) * dt;
+          vy += 0.5 * (ay + ay2) * dt;
+          t += dt;
+        }
       }
       return pts;
     }
@@ -4471,59 +4535,44 @@
         ctx.globalAlpha = 1;
       }
 
-      // Post-SN guides + trails
+      // Post-SN guides from the same trail the bodies follow (never disagree)
       if (postGuideAlpha > 0.02) {
         ctx.globalAlpha = postGuideAlpha;
-        if (sim.bound && sim.aPost) {
-          // Analytical ellipses around CM for BH and companion
-          const aRel = sim.aPost;
-          const ca = Math.cos(sim.periArg), sa = Math.sin(sim.periArg);
-          const fBH = sim.m2 / sim.Mpost;
-          const fC = sim.mBH / sim.Mpost;
-          const drawEll = (frac, color, width) => {
-            ctx.beginPath();
-            for (let i = 0; i <= 128; i++) {
-              const ang = (i / 128) * Math.PI * 2;
-              const rr = aRel * (1 - sim.ecc * sim.ecc) / (1 + sim.ecc * Math.cos(ang));
-              const xr = rr * Math.cos(ang), yr = rr * Math.sin(ang);
-              const X = ca * xr - sa * yr;
-              const Y = sa * xr + ca * yr;
-              const p = S(frac * X, frac * Y);
-              if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
-            }
-            ctx.strokeStyle = color;
-            ctx.lineWidth = width;
-            ctx.setLineDash([6, 4]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-          };
-          drawEll(fBH, vizRgba(v.bound, 0.75), 2);
-          drawEll(-fC, vizRgba(v.star, 0.55), 1.5);
-        } else {
-          // Hyperbolic paths near SN (bodies stay in-frame thanks to short tPhys)
-          const drawBodyTrail = (xKey, yKey, color, width) => {
-            ctx.beginPath();
-            let started = false;
-            for (let i = 0; i < sim.trail.length; i++) {
-              const p = S(sim.trail[i][xKey], sim.trail[i][yKey]);
-              if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
-              if (Math.hypot(p.x - cx, p.y - cy) > Math.min(w, h) * 0.47) {
-                if (started) break;
-                continue;
+        const drawBodyTrail = (xKey, yKey, color, width) => {
+          ctx.beginPath();
+          let started = false;
+          const lim = Math.min(w, h) * 0.48;
+          for (let i = 0; i < sim.trail.length; i++) {
+            const p = S(sim.trail[i][xKey], sim.trail[i][yKey]);
+            if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+            if (Math.hypot(p.x - cx, p.y - cy) > lim) {
+              if (started) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.setLineDash([6, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                started = false;
               }
-              if (!started) { ctx.moveTo(p.x, p.y); started = true; }
-              else ctx.lineTo(p.x, p.y);
+              continue;
             }
-            if (!started) return;
-            ctx.strokeStyle = color;
-            ctx.lineWidth = width;
-            ctx.setLineDash([6, 4]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-          };
-          drawBodyTrail("x1", "y1", vizRgba(v.disrupt, 0.8), 2.2);
-          drawBodyTrail("x2", "y2", vizRgba(v.star, 0.65), 1.8);
-        }
+            if (!started) {
+              ctx.moveTo(p.x, p.y);
+              started = true;
+            } else ctx.lineTo(p.x, p.y);
+          }
+          if (!started) return;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = width;
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        };
+        const c1 = sim.bound ? vizRgba(v.bound, 0.75) : vizRgba(v.disrupt, 0.8);
+        const c2 = vizRgba(v.star, sim.bound ? 0.55 : 0.65);
+        drawBodyTrail("x1", "y1", c1, sim.bound ? 2 : 2.2);
+        drawBodyTrail("x2", "y2", c2, sim.bound ? 1.5 : 1.8);
         ctx.globalAlpha = 1;
       }
 

@@ -37,3 +37,4 @@ Instantaneous post-SN 2-body schematic: pre-SN circular orbit → collapse + kic
 - 2026-11-24: Post-kick zoom eases in/out (~1.2s) instead of jumping.
 - 2026-11-24: Timeline/orbit speed tracks view zoom (slower when zoomed out).
 - 2026-11-24: Loop restart blends post → pre (positions, guides, BH→progenitor).
+- 2026-11-24: Post guides drawn from the body trail; bound paths use analytic Kepler (guides match stars).
