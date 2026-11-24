@@ -261,6 +261,13 @@ def md_inline_to_html(s: str) -> str:
 
     s = FN_REF_MD_RE.sub(ref_fn_sub, s)
 
+    # Markdown links on pure md BEFORE wikilinks become HTML (or link_sub
+    # would rewrite [label](url) inside data-tip="..." attributes).
+    def link_sub(m: re.Match) -> str:
+        return f'<a href="{esc(m.group(2))}" target="_blank" rel="noopener">{m.group(1)}</a>'
+
+    s = LINK_MD_RE.sub(link_sub, s)
+
     # Obsidian wikilinks → hover tips when the target is a glossary note
     def wiki_sub(m: re.Match) -> str:
         target = m.group(1).strip()
@@ -300,10 +307,6 @@ def md_inline_to_html(s: str) -> str:
 
     s = TIP_MD_RE.sub(tip_sub, s)
 
-    def link_sub(m: re.Match) -> str:
-        return f'<a href="{esc(m.group(2))}" target="_blank" rel="noopener">{m.group(1)}</a>'
-
-    s = LINK_MD_RE.sub(link_sub, s)
     s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"<em>\1</em>", s)
     # nbsp for unit gaps like 10 Gyr stays as normal space unless user writes &nbsp;
