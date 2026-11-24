@@ -6,4 +6,4 @@ aliases:
 
 # Pierson Lipschultz
 
-Author of this interactive explanation. Astrophysics student working on binary stellar evolution and Galactic black holes with POSYDON.
+That's me! :) Thanks for checking this out, if you're curious about other stuff I'm up to check out https://www.piersonl.com/. 

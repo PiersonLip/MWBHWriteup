@@ -207,6 +207,15 @@
       margin-bottom: 0.65rem;
     }
     .byline a { color: var(--accent); }
+    .tip-bubble a {
+      color: var(--tip-link);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      pointer-events: auto;
+    }
+    .tip-bubble a:hover {
+      opacity: 0.9;
+    }
     .meta-row {
       display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem;
       font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--muted);
@@ -1839,7 +1848,7 @@
       </div>
 
 <div class="figure" id="flow">
-        <p class="figure-cap">Figure · Formation-channel map (fiducial solar Z)</p>
+        <p class="figure-cap">Formation channels map (solar metallicity)</p>
         <h3>How do Galactic black holes form?</h3>
         <p class="hint">Click a path or endpoint. Highlighted route shows how that present-day channel is reached.</p>
         <div class="flow-stage">
@@ -3464,8 +3473,9 @@
 
       // Inline-only: never nest these inside other tip bubbles
       const TIP_NO_NEST = new Set(["black holes", "black hole", "bh", "bhs"]);
+      const TIP_MD_LINK_RE = /\[([^\]]+)\]\((https?:[^)\s]+)\)/g;
 
-      function linkify(text, skipKey) {
+      function linkifyGlossary(text, skipKey) {
         const parentViz = skipKey ? tipViz.get(skipKey) : "";
         const terms = [...glossary.keys()]
           .filter((k) => {
@@ -3500,6 +3510,29 @@
         }
         out += escHtml(text.slice(last));
         return out;
+      }
+
+      function linkify(text, skipKey) {
+        // Markdown links first, then glossary nesting on the leftover plain text
+        const chunks = [];
+        let last = 0;
+        let m;
+        TIP_MD_LINK_RE.lastIndex = 0;
+        while ((m = TIP_MD_LINK_RE.exec(text)) !== null) {
+          if (m.index > last) chunks.push({ type: "text", value: text.slice(last, m.index) });
+          chunks.push({ type: "link", label: m[1], url: m[2] });
+          last = m.index + m[0].length;
+        }
+        if (last < text.length) chunks.push({ type: "text", value: text.slice(last) });
+        if (!chunks.length) chunks.push({ type: "text", value: text });
+        return chunks
+          .map((c) => {
+            if (c.type === "link") {
+              return `<a href="${escHtml(c.url)}" target="_blank" rel="noopener">${escHtml(c.label)}</a>`;
+            }
+            return linkifyGlossary(c.value, skipKey);
+          })
+          .join("");
       }
 
       function clearFrom(depth) {
