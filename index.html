@@ -4405,14 +4405,9 @@
         tPhys = frac * (sim.bound ? Math.min(sim.period * 1.05, 5) : 0.12);
       }
 
-      // Frame tightly around the interesting region (ellipse / hyperbolic bend)
-      let maxR = sim.a * 1.55;
-      if (sim.bound && sim.aPost) {
-        maxR = Math.max(maxR, sim.aPost * (1 + sim.ecc) * 1.2);
-      } else {
-        maxR = Math.max(maxR, sim.a * 2.8); // keep hyperbolic bend in view
-      }
-      maxR = Math.max(maxR, 0.4);
+      // Scale from pre-SN separation only — do not reframe on the post-kick orbit
+      // (that made larger kicks look like a tighter pair, and larger a look closer).
+      const maxR = Math.max(sim.a * 1.75, 0.35);
       const scale = Math.min(w, h) * 0.42 / maxR;
       const cx = w * 0.5, cy = h * 0.52;
       const S = (x, y) => ({ x: cx + x * scale, y: cy - y * scale });
