@@ -819,7 +819,8 @@ def parse_hero_footer_from_html(html: str) -> Tuple[dict, str]:
         eye = re.search(r'<p class="eyebrow">(.*?)</p>', inner, re.S)
         h1 = re.search(r"<h1>(.*?)</h1>", inner, re.S)
         lede = re.search(r'<p class="lede">(.*?)</p>', inner, re.S)
-        byline = re.search(r'<p class="byline">(.*?)</p>', inner, re.S)
+        byline = re.search(r'<p class="byline(?![-\w])[^"]*">(.*?)</p>', inner, re.S)
+        written = re.search(r'<p class="byline byline-author">(.*?)</p>', inner, re.S)
         metas = re.findall(r'<div class="meta-row">\s*(.*?)\s*</div>', inner, re.S)
         meta_spans = re.findall(r"<span>(.*?)</span>", metas[0], re.S) if metas else []
         hero = {
@@ -827,6 +828,7 @@ def parse_hero_footer_from_html(html: str) -> Tuple[dict, str]:
             "title": html_inline_to_md(h1.group(1)) if h1 else "",
             "lede": html_inline_to_md(lede.group(1)) if lede else "",
             "byline": html_inline_to_md(byline.group(1)) if byline else "",
+            "written": html_inline_to_md(written.group(1)) if written else "",
             "meta": [html_inline_to_md(x) for x in meta_spans],
         }
     fm = FOOTER_RE.search(html)
@@ -848,8 +850,10 @@ def hero_to_markdown(hero: dict, footer: str) -> str:
         f"title: {hero.get('title', '')}",
         f"lede: {hero.get('lede', '')}",
         f"byline: {hero.get('byline', '')}",
-        "meta:",
     ]
+    if hero.get("written"):
+        lines.append(f"written: {hero['written']}")
+    lines.append("meta:")
     for m in hero.get("meta", []):
         lines.append(f"  - {m}")
     lines += [":::", "", ":::footer", footer, ":::", ""]
@@ -857,7 +861,7 @@ def hero_to_markdown(hero: dict, footer: str) -> str:
 
 
 def parse_home_markdown(text: str) -> Tuple[dict, str]:
-    hero = {"eyebrow": "", "title": "", "lede": "", "byline": "", "meta": []}
+    hero = {"eyebrow": "", "title": "", "lede": "", "byline": "", "written": "", "meta": []}
     footer = ""
     hm = re.search(r":::hero\s*\n(.*?):::", text, re.S)
     if hm:
@@ -898,6 +902,12 @@ def apply_hero_footer(html: str, hero: dict, footer: str) -> str:
             meta = "\n".join(f"        <span>{md_inline_to_html(x)}</span>" for x in hero["meta"])
             meta_block = f'      <div class="meta-row">\n{meta}\n      </div>\n'
         theme_block = f"      {theme}\n" if theme else ""
+        written = (hero.get("written") or "").strip()
+        written_block = (
+            f'      <p class="byline byline-author">\n        {md_inline_to_html(written)}\n      </p>\n'
+            if written
+            else ""
+        )
         inner = f"""
       <p class="eyebrow">{md_inline_to_html(hero['eyebrow'])}</p>
       <h1>{md_inline_to_html(hero['title'])}</h1>
@@ -907,7 +917,7 @@ def apply_hero_footer(html: str, hero: dict, footer: str) -> str:
       <p class="byline">
         {md_inline_to_html(hero['byline'])}
       </p>
-{meta_block}{theme_block}      {toc}
+{written_block}{meta_block}{theme_block}      {toc}
     """
         return m.group(1) + inner + m.group(3)
 

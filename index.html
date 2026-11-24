@@ -202,6 +202,10 @@
     .byline {
       font-size: 0.88rem; color: var(--muted); margin-bottom: 0.5rem;
     }
+    .byline.byline-author {
+      margin-top: -0.15rem;
+      margin-bottom: 0.65rem;
+    }
     .byline a { color: var(--accent); }
     .meta-row {
       display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem;
@@ -1712,6 +1716,9 @@
       <p class="byline">
         Based on <a href="https://arxiv.org/abs/2610.07152" target="_blank" rel="noopener">Kiato, Lipschultz, Kalogera et al.</a> (submitted to ApJ).
       </p>
+      <p class="byline byline-author">
+        Written by <span class="tip" tabindex="0" data-tip="Author of this interactive explanation. Astrophysics student working on binary stellar evolution and Galactic black holes with POSYDON.">Pierson Lipschultz</span>.
+      </p>
       <div class="theme-picker" id="theme-picker" role="group" aria-label="Site theme">
         <span class="theme-lbl">Theme</span>
         <button type="button" data-theme="light" class="active" style="--dot:#1f4f9c"><i></i>Light</button>
@@ -1740,7 +1747,7 @@
           However, that is rapidly changing. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span> should detect hundreds of isolated<sup class="fn-ref" id="fnref-why-3" data-fn-id="3"><a href="#fn-why-3">3</a></sup> ones. <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get here?."</em>
         </p>
         <p>
-          And we can't answer that by just counting the corpses of stars. Most massive stars<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">4</a></sup> grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion, this commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span> kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. A lot of simulation codes approximate these processes, however, we use <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> instead, which allows us to use much more accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations instead.
+          And we can't answer that by just counting the corpses of stars. Most massive<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">4</a></sup> stars grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion, this commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span> kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. A lot of simulation codes approximate these processes, however, we use <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> instead, which allows us to use much more accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations instead.
         </p>
       </div>
 
