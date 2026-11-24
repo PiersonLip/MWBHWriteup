@@ -1,12 +1,12 @@
 ---
 id: channels
-label: "05 · Formation pathways"
+label: "Parked · Formation pathways"
 title: "Two roads to a BH-BH binary (and a ~13 M☉ fingerprint)"
 ---
 
 # Two roads to a BH-BH binary (and a ~13 M☉ fingerprint)
 
-*05 · Formation pathways*
+*Parked · Formation pathways*
 
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 

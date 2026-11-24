@@ -1,0 +1,29 @@
+---
+description: Keep visualization docs in sync when editing interactive figures
+globs: index.html,visualizations/**/*.md,MEMORY.md,vault/chapters/**/*.md
+alwaysApply: false
+---
+
+# Visualization docs
+
+Interactive figures live in `index.html`. Each has a living doc under `visualizations/`.
+
+## Before editing a viz
+
+1. Identify which figure (see `visualizations/README.md`).
+2. **Read** that figure’s `.md` file first.
+3. Prefer matching existing controls, camera, and physics conventions documented there.
+
+## After editing a viz
+
+1. Update the matching `visualizations/<name>.md` (behavior, DOM ids, defaults, changelog date).
+2. Update root `MEMORY.md` if controls, physics constants, removed figures, or scope changed.
+3. Vault figure blocks only sync **cap / title / hint** — do not invent new `:::figure` ids without apply/export awareness.
+
+## Current figures
+
+`flow`, `kick`, `wind`, `ce`, `galaxy`, `micro`, plus page-level **lens** gag (`data-effect="lens"`) — `#demo` demographics stack is removed.
+
+## Themes
+
+Site themes are `light` / `dark` only. Canvas/SVG draws should use `vizColors()` / `--viz-*` (not hard-coded paper/stage hexes) so dark mode recolors figures. Theme switches call `refreshThemeVisuals()`.

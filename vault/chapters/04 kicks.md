@@ -11,24 +11,20 @@ title: "A kick decides who stays together"
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-When a star goes boom, two things mess with the orbit. Symmetric mass loss shifts the center of mass (the [[Blaauw effect]]). Asymmetries can also give the remnant an extra [[natal kick]]. Add those up and you get the post-supernova orbital energy. If that energy is positive, the binary is done. Everyone flies free.
-
-Neutron star kicks are somewhat pinned down by pulsar motions. The fiducial model draws from the Disberg et al. log-normal (peak around 150 to 200 km/s). Black hole kicks? Much mushier. The paper's default assumes the same kick *momentum* as for neutron stars, so heavier remnants get slower kicks:
-:::
-
-:::eq
-*v<sub>BH</sub> = v<sub>NS</sub> · M<sub>NS</sub> / M<sub>BH</sub>* · [[fallback]]: *v<sub>kick</sub> = (1 − f<sub>fb</sub>) · v<sub>NS</sub>*
+When a star in a binary dies in the form of a [[supernova]], two things mess with the orbit. The sudden extreme mass loss shifts the center of mass (the [[Blaauw effect]]) and any sort of asymmetries[^2] can also give the remnant an extra [[natal kick]]. If the combined effect of these is strong enough, the system can become disrupted.
 :::
 
 :::prose
-The extremes are useful bookends. Full NS-like kicks smash most binaries apart. Zero BH kicks keep almost everyone bound and let detached systems stretch out. Fallback-reduced kicks are kinder to massive direct-collapse remnants, which helps the ~13 M☉ wind feature show up among survivors.
-
-Disruption is a big reason so many BHs are single, and why low-mass BHs are especially easy to unbind (they get the bigger kicks under inverse-mass scaling). Play with it below. Widen the orbit, crank the kick, or flip to NS-like kicks and watch the pair come undone.
+This disruption from strong kicks is a big reason so many BHs are single, and why low-mass BHs are especially likely to be isolated[^1]. 
 :::
 
 :::figure
 id: kick-presets
 cap: Interactive · Instantaneous post-SN 2-body orbit
 title: Natal kick: bound or disrupted?
-hint: The loop shows the pre-SN orbit, the collapse, then whatever happens after.
+hint: Show pre-SN orbit, the collapse of one of the components, and the effect on the orbit.
 :::
+
+[^1]: a lower mass means a harder kick
+
+[^2]: When we think of supernovae, we typically think of a radially symmetric explosion coming from the star. However, these explosions are typically stronger in one a direction, causing a kick from the "recoil" in the opposite direction.

@@ -4,4 +4,4 @@ title: "mass transfer"
 
 # mass transfer
 
-One star dumps gas onto the other through the inner Lagrange point when it fills its Roche lobe.
+A process in binary systems where one star transfers its mass to its binary companion, this commonly happens through [[Roche-lobe overflow]] or strong [[Winds]]. 

@@ -1,0 +1,49 @@
+# Single-lens microlensing (`#micro`)
+
+## Purpose
+
+Gaudi-style teaching schematic: how a dark lens (BH) brightens a background source; Roman as observer. Two synced panels — 3D geometry first, then lens-plane + light curve.
+
+## DOM / code
+
+- Figure: `#micro`
+- Controls: `#micro-u0`, `#micro-spd`, `#micro-play`
+- Status: `#micro-A` (whole `A ≈ …` is a tip; live value in `#micro-A-val`), `#micro-meta`
+- 3D stage: `#micro-stage-3d` + `#micro-canvas-3d` + `#micro-fs`
+- 2D: `#micro-canvas`
+- State: `micro` (`u0`, `t`, `spd`, `yaw`, `pitch`, `zoom`, `trail`, …)
+- Core: `microMag(u)`, `microLensMap`, `microImageShapes`, `microState`, `drawMicro`, `drawMicro3D`, `drawMicroCurveInset`
+
+## Layout
+
+- Controls on top (horizontal strip)
+- Stacked full figure-width: **3D above**, 2D lens-plane + light curve below
+- Reference GIF: `laymanPaperWriteup/.../Scott_Gaudi__single_lens_animation.gif`
+
+## 3D panel
+
+- Scene: Roman (observer) → lensing BH → source star on a spacetime grid with gravity well
+- Camera: drag orbit; pitch `0` = edge-on, `π/2` = top-down; scroll zoom `0.75–1.55`
+- Fullscreen on `#micro-stage-3d`; maximize icon button
+- Canvas resizes to stage (incl. fullscreen) via `clientWidth/Height` + DPR
+- Inset light curve (bottom-right) mirrors the main brightness curve
+- Roman icon (compact): dark hex aperture + silver barrel; **flat SASS** on barrel top; **single DAC** panel hinged open (not V-wings); spider + HGA
+
+## 2D panel
+
+- Einstein ring + true source + major (blue) / minor (red) mapped arcs (finite-source samples)
+- Light curve: axes labeled **brightness** / **time**
+- Gaudi-style visual fraction in light-curve corner:
+  `A = (major + minor) / source`
+  Numerator uses **live mini copies** of `limbPlus` / `limbMinus` at a shared Einstein px-scale (same scale as the yellow source disk), so glyph area tracks magnification as the event evolves.
+
+## Labels
+
+- “lensing black hole”, “source star”, “Roman”
+
+## Changelog
+
+- 2026-11-23: 3D-first stacked layout; orbit + zoom + fullscreen; larger grid; Roman redraw; brightness axis; Gaudi fraction in light-curve corner; maximize icon; inset curve on 3D.
+- 2026-11-23: Roman scaled down; shield fixed to flat SASS + single hinged DAC (removed V-wings).
+- 2026-11-23: Fraction glyphs are live image limbs (not fixed ellipses) so major/minor size updates with the event.
+- 2026-11-23: Start farther out (`tmax` 5.2); minor image/ray fades in only as `|u|` drops; clock advances only while `#micro` is in view (resets to early single-path frame on enter).

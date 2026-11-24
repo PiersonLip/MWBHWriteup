@@ -1,0 +1,1 @@
+A neutron star or black hole.

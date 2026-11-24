@@ -45,6 +45,10 @@ def parse_glossary_note(path: Path) -> dict:
     aliases: List[str] = []
     body = raw
     title = path.stem
+    deep = ""
+    effect = ""
+    image = ""
+    viz = ""
     if raw.startswith("---"):
         end = raw.find("\n---", 3)
         if end != -1:
@@ -54,6 +58,18 @@ def parse_glossary_note(path: Path) -> dict:
             for line in fm.splitlines():
                 if line.strip().startswith("title:"):
                     title = line.split(":", 1)[1].strip().strip("'\"") or title
+                    continue
+                if line.strip().startswith("deep:"):
+                    deep = line.split(":", 1)[1].strip().strip("'\"")
+                    continue
+                if line.strip().startswith("effect:"):
+                    effect = line.split(":", 1)[1].strip().strip("'\"")
+                    continue
+                if line.strip().startswith("image:"):
+                    image = line.split(":", 1)[1].strip().strip("'\"")
+                    continue
+                if line.strip().startswith("viz:"):
+                    viz = line.split(":", 1)[1].strip().strip("'\"")
                     continue
                 if line.strip().startswith("aliases:"):
                     in_aliases = True
@@ -70,8 +86,19 @@ def parse_glossary_note(path: Path) -> dict:
 
     # strip leading heading
     body = re.sub(r"^\s*#\s+.+\n+", "", body.lstrip())
-    tip = re.sub(r"\s+", " ", body).strip()
-    return {"path": path, "title": title, "tip": tip, "aliases": aliases}
+    # [[Note|display]] / [[Note]] → plain words so nested tip linkify works
+    tip = WIKILINK_RE.sub(lambda m: (m.group(2) or m.group(1)).strip(), body)
+    tip = re.sub(r"\s+", " ", tip).strip()
+    return {
+        "path": path,
+        "title": title,
+        "tip": tip,
+        "aliases": aliases,
+        "deep": deep,
+        "effect": effect,
+        "image": image,
+        "viz": viz,
+    }
 
 
 _GLOSSARY_CACHE: Optional[dict] = None
@@ -90,7 +117,15 @@ def load_glossary(force: bool = False) -> dict:
             note = parse_glossary_note(path)
             if not note["tip"]:
                 continue
-            entry = {"title": note["title"], "tip": note["tip"], "stem": path.stem}
+            entry = {
+                "title": note["title"],
+                "tip": note["tip"],
+                "stem": path.stem,
+                "deep": note.get("deep") or "",
+                "effect": note.get("effect") or "",
+                "image": note.get("image") or "",
+                "viz": note.get("viz") or "",
+            }
             keys = {path.stem.lower(), note["title"].lower()}
             for a in note["aliases"]:
                 keys.add(a.lower())
@@ -169,6 +204,7 @@ def html_inline_to_md(s: str) -> str:
         return tip_wikilink(display, tip)
 
     s = TIP_HTML_RE.sub(tip_to_wiki, s)
+    s = FN_REF_HTML_RE.sub(lambda m: f"[^{m.group(1)}]", s)
     s = re.sub(r"<strong>(.*?)</strong>", r"**\1**", s, flags=re.S)
     s = re.sub(r"<em>(.*?)</em>", r"*\1*", s, flags=re.S)
     s = re.sub(r"<a href=\"([^\"]+)\"[^>]*>(.*?)</a>", r"[\2](\1)", s, flags=re.S)
@@ -192,6 +228,35 @@ def md_inline_to_html(s: str) -> str:
     """Convert vault inline markdown back to site HTML fragment."""
     gloss = load_glossary()
 
+    # Inline Obsidian footnotes ^[text] → numbered refs
+    def inline_fn_sub(m: re.Match) -> str:
+        if not _FN:
+            return m.group(0)
+        fid, num = _FN.add_inline(m.group(1))
+        cid = fn_slug(_FN.chapter_id)
+        sid = fn_slug(fid)
+        return (
+            f'<sup class="fn-ref" id="fnref-{cid}-{sid}" data-fn-id="{esc(fid)}">'
+            f'<a href="#fn-{cid}-{sid}">{num}</a></sup>'
+        )
+
+    s = FN_INLINE_MD_RE.sub(inline_fn_sub, s)
+
+    # Reference footnotes [^id]
+    def ref_fn_sub(m: re.Match) -> str:
+        if not _FN:
+            return m.group(0)
+        fid = m.group(1)
+        num = _FN.mark_used(fid)
+        cid = fn_slug(_FN.chapter_id)
+        sid = fn_slug(fid)
+        return (
+            f'<sup class="fn-ref" id="fnref-{cid}-{sid}" data-fn-id="{esc(fid)}">'
+            f'<a href="#fn-{cid}-{sid}">{num}</a></sup>'
+        )
+
+    s = FN_REF_MD_RE.sub(ref_fn_sub, s)
+
     # Obsidian wikilinks → hover tips when the target is a glossary note
     def wiki_sub(m: re.Match) -> str:
         target = m.group(1).strip()
@@ -201,7 +266,23 @@ def md_inline_to_html(s: str) -> str:
         display = (m.group(2) or target).strip()
         entry = gloss.get(target.lower()) or gloss.get(display.lower())
         if entry and entry["tip"]:
-            return f'<span class="tip" tabindex="0" data-tip="{esc(entry["tip"])}">{display}</span>'
+            deep = entry.get("deep") or ""
+            effect = entry.get("effect") or ""
+            image = entry.get("image") or ""
+            viz = entry.get("viz") or ""
+            deep_attr = f' data-deep="{esc(deep)}"' if deep else ""
+            effect_attr = f' data-effect="{esc(effect)}"' if effect else ""
+            image_attr = f' data-image="{esc(image)}"' if image else ""
+            viz_attr = f' data-viz="{esc(viz)}"' if viz else ""
+            cls = "tip tip-deep" if deep else "tip"
+            if image:
+                cls += " tip-image"
+            if viz:
+                cls += " tip-viz"
+            return (
+                f'<span class="{cls}" tabindex="0" data-tip="{esc(entry["tip"])}"'
+                f"{deep_attr}{effect_attr}{image_attr}{viz_attr}>{display}</span>"
+            )
         # unresolved wikilink: leave readable plain text
         return display
 
@@ -225,6 +306,51 @@ def md_inline_to_html(s: str) -> str:
     s = s.replace(" M☉", "&nbsp;M☉").replace(" km/s", "&nbsp;km/s")
     s = s.replace(" Z☉", "&nbsp;Z☉").replace(" Gyr", "&nbsp;Gyr")
     return s
+
+
+def render_footnotes_html(state: FootnoteState) -> str:
+    if not state.order:
+        return ""
+    global _FN
+    saved = _FN
+    _FN = None  # footnote bodies shouldn't spawn new footnotes
+    cid = state.chapter_id
+    lines = [
+        f'      <section class="footnotes" id="footnotes-{fn_slug(cid)}">',
+        "        <h3>Notes</h3>",
+        "        <ol>",
+    ]
+    try:
+        cid_s = fn_slug(cid)
+        for i, fid in enumerate(state.order, start=1):
+            text = state.defs.get(fid, "")
+            body = md_inline_to_html(text) if text else ""
+            sid = fn_slug(fid)
+            lines.append(
+                f'          <li id="fn-{cid_s}-{sid}" value="{i}" data-fn-id="{esc(fid)}">'
+                f'<span class="fn-text">{body}</span> '
+                f'<a href="#fnref-{cid_s}-{sid}" class="fn-back" title="Back to text">↩</a>'
+                f"</li>"
+            )
+    finally:
+        _FN = saved
+    lines += ["        </ol>", "      </section>", ""]
+    return "\n".join(lines)
+
+
+def extract_footnotes_from_html(article_inner: str) -> dict:
+    """Pull footnote id → text from a chapter footnotes section."""
+    defs = {}
+    sec = FN_SECTION_HTML_RE.search(article_inner)
+    if not sec:
+        return defs
+    for m in re.finditer(
+        r'<li[^>]*data-fn-id="([^"]+)"[^>]*>\s*<span class="fn-text">(.*?)</span>',
+        sec.group(0),
+        re.S,
+    ):
+        defs[unescape(m.group(1))] = html_inline_to_md(m.group(2))
+    return defs
 
 
 def wrap_prose_paragraphs(paragraphs: List[str]) -> str:
@@ -256,6 +382,70 @@ class Chapter:
     label: str
     title: str
     blocks: List[Block] = field(default_factory=list)
+    footnotes: dict = field(default_factory=dict)  # id -> markdown text
+
+
+class FootnoteState:
+    """Per-chapter footnote render state (appearance order → numbers)."""
+
+    def __init__(self, chapter_id: str, defs: Optional[dict] = None):
+        self.chapter_id = chapter_id or "ch"
+        self.defs = dict(defs or {})
+        self.order: List[str] = []  # ids in first-appearance order
+        self._inline_i = 0
+
+    def ensure(self, fid: str, text: str = "") -> None:
+        if text and fid not in self.defs:
+            self.defs[fid] = text
+        if fid not in self.order and fid in self.defs:
+            self.order.append(fid)
+
+    def mark_used(self, fid: str) -> int:
+        if fid not in self.defs:
+            self.defs[fid] = ""
+        if fid not in self.order:
+            self.order.append(fid)
+        return self.order.index(fid) + 1
+
+    def add_inline(self, text: str) -> Tuple[str, int]:
+        self._inline_i += 1
+        fid = f"inline-{self._inline_i}"
+        self.defs[fid] = text.strip()
+        self.order.append(fid)
+        return fid, len(self.order)
+
+
+_FN: Optional[FootnoteState] = None
+
+
+def begin_footnotes(chapter_id: str, defs: Optional[dict] = None) -> FootnoteState:
+    global _FN
+    _FN = FootnoteState(chapter_id, defs)
+    return _FN
+
+
+def end_footnotes() -> Optional[FootnoteState]:
+    global _FN
+    state = _FN
+    _FN = None
+    return state
+
+
+FN_REF_MD_RE = re.compile(r"\[\^([^\]]+)\]")
+FN_INLINE_MD_RE = re.compile(r"\^\[([^\]]+)\]")
+FN_DEF_MD_RE = re.compile(r"(?m)^\[\^([^\]]+)\]:\s*(.+)$")
+FN_REF_HTML_RE = re.compile(
+    r'<sup class="fn-ref"[^>]*data-fn-id="([^"]+)"[^>]*>.*?</sup>',
+    re.S,
+)
+FN_SECTION_HTML_RE = re.compile(
+    r'<section class="footnotes"[^>]*>.*?</section>',
+    re.S,
+)
+
+
+def fn_slug(s: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9_-]+", "-", s).strip("-") or "note"
 
 
 def extract_inner(tag_html: str, open_pat: str) -> Optional[str]:
@@ -264,12 +454,16 @@ def extract_inner(tag_html: str, open_pat: str) -> Optional[str]:
 
 
 def parse_article_html(article_inner: str, chapter_id: str) -> Chapter:
+    footnotes = extract_footnotes_from_html(article_inner)
+    article_inner = FN_SECTION_HTML_RE.sub("", article_inner)
+
     label_m = re.search(r'<p class="ch-label">(.*?)</p>', article_inner, re.S)
     title_m = re.search(r"<h2>(.*?)</h2>", article_inner, re.S)
     ch = Chapter(
         id=chapter_id,
         label=html_inline_to_md(label_m.group(1)) if label_m else chapter_id,
         title=html_inline_to_md(title_m.group(1)) if title_m else "",
+        footnotes=footnotes,
     )
 
     # Walk top-level-ish chunks by splitting on major block opens
@@ -415,6 +609,11 @@ def chapter_to_markdown(ch: Chapter) -> str:
             lines.append(f"hint: {b.hint}")
             lines.append(":::")
             lines.append("")
+    if ch.footnotes:
+        lines.append("")
+        for fid, text in ch.footnotes.items():
+            lines.append(f"[^{fid}]: {text}")
+        lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -430,10 +629,16 @@ def parse_chapter_markdown(text: str) -> Chapter:
                     fm[k.strip()] = v.strip().strip('"').strip("'")
             body = text[end + 4 :]
 
+    # Collect Obsidian footnote definitions ([^id]: text)
+    footnotes = {}
+    for m in FN_DEF_MD_RE.finditer(body):
+        footnotes[m.group(1)] = m.group(2).strip()
+    body_wo_defs = FN_DEF_MD_RE.sub("", body)
+
     blocks: List[Block] = []
     # strip leading title noise until first :::
     fence_re = re.compile(r":::(\w+)\s*\n(.*?):::", re.S)
-    for m in fence_re.finditer(body):
+    for m in fence_re.finditer(body_wo_defs):
         kind = m.group(1)
         content = m.group(2).strip()
         if kind == "prose":
@@ -487,6 +692,7 @@ def parse_chapter_markdown(text: str) -> Chapter:
         label=fm.get("label", ""),
         title=fm.get("title", ""),
         blocks=blocks,
+        footnotes=footnotes,
     )
 
 
@@ -560,31 +766,44 @@ def patch_figure_html(fig_html: str, block: Block) -> str:
 
 
 def rebuild_article_inner(ch: Chapter, old_inner: str) -> str:
+    old_inner = FN_SECTION_HTML_RE.sub("", old_inner)
     old_figs = extract_figures(old_inner)
     fig_i = 0
+    begin_footnotes(ch.id, ch.footnotes)
     parts = [
         f'      <p class="ch-label">{md_inline_to_html(ch.label)}</p>',
         f"      <h2>{md_inline_to_html(ch.title)}</h2>",
         "",
     ]
-    for b in ch.blocks:
-        if b.kind == "figure":
-            if fig_i >= len(old_figs):
-                raise ValueError(
-                    f"Chapter {ch.id}: vault has more :::figure blocks than the site. "
-                    "Don't add/remove figures in the vault; only edit cap/title/hint."
-                )
-            parts.append(patch_figure_html(old_figs[fig_i], b))
-            parts.append("")
-            fig_i += 1
-        else:
-            parts.append(render_block_html(b))
-            parts.append("")
-    if fig_i != len(old_figs):
-        raise ValueError(
-            f"Chapter {ch.id}: vault has {fig_i} figures but site has {len(old_figs)}. "
-            "Keep the same number/order of :::figure blocks."
-        )
+    try:
+        for b in ch.blocks:
+            if b.kind == "figure":
+                if fig_i >= len(old_figs):
+                    raise ValueError(
+                        f"Chapter {ch.id}: vault has more :::figure blocks than the site. "
+                        "Don't add/remove figures in the vault; only edit cap/title/hint."
+                    )
+                parts.append(patch_figure_html(old_figs[fig_i], b))
+                parts.append("")
+                fig_i += 1
+            else:
+                parts.append(render_block_html(b))
+                parts.append("")
+        if fig_i != len(old_figs):
+            raise ValueError(
+                f"Chapter {ch.id}: vault has {fig_i} figures but site has {len(old_figs)}. "
+                "Keep the same number/order of :::figure blocks."
+            )
+        state = end_footnotes()
+        if state:
+            # keep used footnotes on the chapter for export round-trips
+            ch.footnotes = {fid: state.defs.get(fid, "") for fid in state.order}
+            fn_html = render_footnotes_html(state)
+            if fn_html:
+                parts.append(fn_html)
+    except Exception:
+        end_footnotes()
+        raise
     return "\n".join(parts).rstrip() + "\n"
 
 
@@ -661,10 +880,20 @@ def parse_home_markdown(text: str) -> Tuple[dict, str]:
 
 def apply_hero_footer(html: str, hero: dict, footer: str) -> str:
     def hero_repl(m: re.Match) -> str:
-        meta = "\n".join(f"        <span>{md_inline_to_html(x)}</span>" for x in hero["meta"])
-        # rebuild toc from chapters on disk order? keep existing toc links
+        # Preserve theme picker + toc; only rebuild eyebrow/title/lede/byline/meta
         toc_m = re.search(r'<nav class="toc">.*?</nav>', m.group(2), re.S)
         toc = toc_m.group(0) if toc_m else '<nav class="toc"></nav>'
+        theme_m = re.search(
+            r'<div class="theme-picker"[^>]*>.*?</div>',
+            m.group(2),
+            re.S,
+        )
+        theme = theme_m.group(0) if theme_m else ""
+        meta_block = ""
+        if hero.get("meta"):
+            meta = "\n".join(f"        <span>{md_inline_to_html(x)}</span>" for x in hero["meta"])
+            meta_block = f'      <div class="meta-row">\n{meta}\n      </div>\n'
+        theme_block = f"      {theme}\n" if theme else ""
         inner = f"""
       <p class="eyebrow">{md_inline_to_html(hero['eyebrow'])}</p>
       <h1>{md_inline_to_html(hero['title'])}</h1>
@@ -674,10 +903,7 @@ def apply_hero_footer(html: str, hero: dict, footer: str) -> str:
       <p class="byline">
         {md_inline_to_html(hero['byline'])}
       </p>
-      <div class="meta-row">
-{meta}
-      </div>
-      {toc}
+{meta_block}{theme_block}      {toc}
     """
         return m.group(1) + inner + m.group(3)
 

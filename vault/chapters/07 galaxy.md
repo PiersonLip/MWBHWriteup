@@ -1,21 +1,32 @@
 ---
 id: galaxy
-label: "07 · Galactic embedding"
+label: "05 · Galactic embedding"
 title: "Drop the black holes into a real Galaxy"
 ---
 
 # Drop the black holes into a real Galaxy
 
-*07 · Galactic embedding*
+*05 · Galactic embedding*
 
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-Binary evolution alone tells you what a system *is*. To talk about Gaia or Roman, you also need to know *where* it is. The paper takes POSYDON survivors and seeds them into a Milky Way model (low-α disk, high-α disk, central component), each with its own star-formation history and metallicity mix.
+[[POSYDON]]'s simulation of binary evolution tells you what a system *is*. To actually talk about [[Gaia]] or [[Roman]], we need to know *where* it is. To do that, we take the systems from POSYDON and put them into a Milky Way model with multiple parts that each have their rate of star-formation and metallicity[^1].
 
-For every birth site they draw a formation time, position, and metallicity, then match it to the nearest POSYDON metallicity track. The system starts on a roughly circular orbit with a bit of random velocity scatter. From there, [[gala]] integrates the path forward in time.
+What we do is first draw a random birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity would be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put in on a roughly circular orbit around our Milky Way and use [[gala]] to integrate the orbit.
+:::
 
-Whenever POSYDON says a compact object forms, the Galactic velocity gets updated for mass loss and the [[natal kick]] (rotated from the binary frame into Galactocentric coordinates). If the binary stays bound, the pair keeps moving together. If it disrupts, the two pieces fly on their own from that moment on.
+:::timeline
+- **Birth place & time**: Draw a random location and birth time in our model MW.
+- **Metallicity from place**: Predict the local [[metallicity]] for that birth site and time.
+- **Match a POSYDON binary**: Match a simulated binary whose evolution fits the metallicity.
+- **Seat it on a Galactic orbit**: Put the binary onto a roughly circular Milky Way orbit and integrate with [[gala]].
+- **Kick when a compact object forms**: At [[core collapse]], update the velocity for mass loss and the [[natal kick]].
+- **Bound or disrupted**: If the pair stays bound, keep integrating them together; if the kick unbinds them, follow each star on its own.
+:::
+
+:::prose
+Whenever a compact object forms in our POSYDON simulation[^2], the systems velocity gets updated both for the mass loss and the [[natal kick]]. If the binary stays bound, the pair keeps moving together. If the system is disrupted, we then treat each stars as its own thing.
 :::
 
 :::callout
@@ -25,6 +36,10 @@ Whenever POSYDON says a compact object forms, the Galactic velocity gets updated
 :::figure
 id: gal-figure
 cap: Interactive · Schematic of paper §II.3
-title: One disrupted binary through the Milky Way
-hint: Pick an example, then drag to orbit (tilt for edge-on) and scroll to zoom a bit. Phases: birth → pre-SN → kick → BH and companion paths.
+title: A disrupted binary through the Milky Way
+hint: Pick an example, then drag to orbit and scroll to zoom a bit. Phases: birth → pre-SN → kick → BH and companion paths.
 :::
+
+[^1]: To model the milky way we split it into three components, these are different then the standard 3 components of the MW (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exlude the halo, as while there *are* stars there, they form an incredibly small fraction of the whole population
+
+[^2]: i.e. one of the stars in the binary goes supernova

@@ -1,12 +1,12 @@
 ---
 id: takeaways
-label: "09 · Conclusions"
+label: "07 · Conclusions"
 title: "What to take home"
 ---
 
 # What to take home
 
-*09 · Conclusions*
+*07 · Conclusions*
 
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 

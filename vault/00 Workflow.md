@@ -15,6 +15,10 @@ Obsidian hotkeys, community plugins, themes, and snippets were copied from `~/no
    `[[POSYDON]]` · `[[XrB]]` · `[[common envelope|common envelopes]]`
 
    The note body (under the title) is the hover text on the site. Short aliases like `XrB` / `CE` live in each note’s frontmatter.
+   Optional frontmatter `deep: some-id` marks a tip as expandable (site hosts the full panel + viz for that id — see [[binary stars]]).
+   Optional `effect: lens` marks a tip that triggers a page-wide visual gag (see [[weird things with light]] inside [[black holes]]).
+   Optional `image: path/to.jpg` shows a photo in the tip bubble (see [[incredibly pretty nebulae]] inside [[Wolf-Rayet]]).
+   Optional `viz: gw` / `viz: envelope` shows a tip canvas (see [[Gravitational-wave]], [[envelope]]).
 4. When a chunk of writing feels right, from the project root:
 
 ```bash
@@ -45,3 +49,18 @@ python3 scripts/export_to_vault.py
 | `:::figure` cap/title/hint | figure caption, h3, hint only |
 | `00 Home` hero/footer | header + footer |
 | `[[Glossary note]]` | hover tip from that note’s body |
+| `[^id]` + `[^id]: …` | chapter footnotes (also `^[inline note]`) |
+
+## Footnotes
+
+Obsidian-style footnotes sync both ways:
+
+```md
+POSYDON seeds binaries into a Galaxy model.[^gala]
+
+[^gala]: Orbits are integrated with the `gala` package.
+```
+
+Inline form also works: `text^[short aside].`
+
+After `apply_vault.py`, the site shows numbered superscripts and a **Notes** list at the end of that chapter. Export brings them back as `[^id]` definitions.

@@ -1,0 +1,1 @@
+The abrupt, violent end of the lives of the massive stars. Commonly leaves behind a [[NS|neutron star|]] or black hole.

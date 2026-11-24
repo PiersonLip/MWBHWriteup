@@ -1,8 +1,9 @@
 ---
 title: "X-ray binaries"
 aliases:
-  - XrB
+  - X-ray binary
   - XRBs
+image: assets/xrb.jpg
 ---
 
 # X-ray binaries
