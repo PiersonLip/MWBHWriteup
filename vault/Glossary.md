@@ -21,7 +21,8 @@ Hover text on the site comes from the note body (after the title).
 - [[Gravitational-wave]] — tip canvas: 3D spacetime mesh (`viz: gw`)
 - [[mass transfer]]
 - [[MESA]]
-- [[metallicity]]
+- [[metallicity]] — nests [[everything heavier than helium]] (astronomer periodic-table gag image)
+- [[everything heavier than helium]] — image tip (`assets/astronomer-periodic-table.png`)
 - [[microlens]]
 - [[natal kick]]
 - [[neutron star]]

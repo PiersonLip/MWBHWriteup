@@ -92,7 +92,7 @@ See [visualizations/lens.md](visualizations/lens.md) for full detail.
 
 - Casual copy, no em dashes.
 - Hover glossary tips via `.tip[data-tip]`. Rich tips use glossary frontmatter `deep: id` → `.tip-deep`: **large hover tip** with live orbit viz + full note; top-right maximize icon opens the focus panel (see `binary stars` / `visualizations/binary-stars.md`).
-- Tip frontmatter `effect: lens` wires the BH lens gag (see [lens.md](visualizations/lens.md)); `image:` tips show a figure in the bubble (e.g. Crescent Nebula under Wolf-Rayet; XRB under X-ray binaries); `viz: gw` shows the pannable 3D GW mesh (Gravitational-wave — [gw-tip.md](visualizations/gw-tip.md)); `viz: envelope` shows a stellar core+envelope cutaway ([envelope-tip.md](visualizations/envelope-tip.md)).
+- Tip frontmatter `effect: lens` wires the BH lens gag (see [lens.md](visualizations/lens.md)); `image:` tips show a figure in the bubble (e.g. Crescent Nebula under Wolf-Rayet; XRB under X-ray binaries; astronomer periodic table under metallicity → “everything heavier than helium”); `viz: gw` shows the pannable 3D GW mesh (Gravitational-wave — [gw-tip.md](visualizations/gw-tip.md)); `viz: envelope` shows a stellar core+envelope cutaway ([envelope-tip.md](visualizations/envelope-tip.md)).
 - Teaching-faithful schematics, not raw POSYDON dumps.
 - Fullscreen controls use maximize / exit icons (not the word “Fullscreen”).
 
