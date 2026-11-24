@@ -23,7 +23,7 @@ Click no longer pins — focus is dwell-only on the lens tip itself (not the par
 | `#bh-core` | Cursor BH: soft outer falloff, event horizon (`::before`), photon ring (`::after` + rim shadow). |
 | `#bh-ghost` | Ghost words/blocks from `.wrap` (z ~3150). |
 | `#bh-ghost-ui` | Ghosts for the exit button label (z 5250, above hint chrome). |
-| `#bh-lens-hint` | “go back to normal” — solid panel; text transparent when lifted so ghosts show. |
+| `#bh-lens-hint` | “Go back to normal” — solid panel; text transparent when lifted so ghosts show. |
 | `#bh-lens-rude` | “well that was awfully rude” when every ghost item is eaten. |
 | `html.is-lensing` | Cursor none (auto when pinned), scroll lock, tip-layer stacking. |
 | `html.bh-lens-lifted` | Page copy → transparent; chrome (buttons etc.) stays; ghosts visible. |
