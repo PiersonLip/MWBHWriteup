@@ -4643,7 +4643,8 @@
           title: c.name,
           sub: sub || `${c.pct}% · ${c.group === "binary" ? "binary" : "isolated"}`,
           fill: col,
-          stroke: col,
+          // Visible rim like the earlier hub steps (fill alone hid the stroke)
+          stroke: dark ? "rgba(232,236,242,0.55)" : "rgba(20,24,32,0.32)",
           kind: "end",
           channel: c.id,
         };

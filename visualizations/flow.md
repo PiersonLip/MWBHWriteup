@@ -27,3 +27,4 @@ Map how present-day Galactic BHs get to each demographic channel (mergers, disru
 
 - 2026-11-23: `#demo` bar chart removed; flowchart is sole demographics interactive.
 - 2026-11-24: Single-star path inserts **Supernova** between Born single and Initially single.
+- 2026-11-24: Today endpoint boxes get a light/dark rim so borders read like the hub steps.
