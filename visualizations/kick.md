@@ -35,3 +35,4 @@ Instantaneous post-SN 2-body schematic: pre-SN circular orbit → collapse + kic
 - 2026-11-24: Pre/flash framed on pre-SN `a`; post phase zooms out so the new orbit fits.
 - 2026-11-24: Star/BH marker size tracks view zoom for a sense of scale.
 - 2026-11-24: Post-kick zoom eases in/out (~1.2s) instead of jumping.
+- 2026-11-24: Timeline/orbit speed tracks view zoom (slower when zoomed out).
