@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Tip-bubble cutaway of a star: dense **core** inside a larger hydrogen **envelope**, with labels. Soft glow pulse only.
+Tip-bubble concentric star: dense **core** inside a larger hydrogen **envelope**, with labels. Soft glow pulse only.
 
 ## Wiring
 

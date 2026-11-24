@@ -2405,26 +2405,6 @@
       ctx.arc(cx, cy, rEnv, 0, Math.PI * 2);
       ctx.fill();
 
-      // Cutaway wedge (right side) so the core is visible in section
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, rEnv + 1, -0.55, 0.55, false);
-      ctx.closePath();
-      ctx.clip();
-      ctx.fillStyle = "#0a0e16";
-      ctx.fill();
-      // Envelope rim on the cut faces
-      ctx.strokeStyle = "rgba(240, 170, 100, 0.55)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(-0.55) * rEnv, cy + Math.sin(-0.55) * rEnv);
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(0.55) * rEnv, cy + Math.sin(0.55) * rEnv);
-      ctx.stroke();
-      ctx.restore();
-
       // Core
       const coreGrad = ctx.createRadialGradient(cx - rCore * 0.25, cy - rCore * 0.3, 0, cx, cy, rCore);
       coreGrad.addColorStop(0, "#fff8e8");
@@ -2440,16 +2420,6 @@
       ctx.beginPath();
       ctx.arc(cx, cy, rCore, 0, Math.PI * 2);
       ctx.stroke();
-
-      // Core / envelope boundary dashed arc in the open wedge
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, rCore, -0.55, 0.55);
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-      ctx.setLineDash([3, 3]);
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.restore();
 
       // Labels
       ctx.font = '600 0.72rem "Fraunces", Georgia, serif';
