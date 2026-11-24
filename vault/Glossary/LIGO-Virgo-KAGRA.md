@@ -1,6 +1,5 @@
 ---
 title: "LIGO/Virgo/KAGRA"
-viz: gw
 ---
 
 # LIGO/Virgo/KAGRA

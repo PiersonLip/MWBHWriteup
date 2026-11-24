@@ -17,7 +17,7 @@ Hover text on the site comes from the note body (after the title).
 - [[gala]]
 - [[IMF]]
 - [[incredibly pretty nebulae]] — image tip (Crescent Nebula) nested under [[Wolf-Rayet]]
-- [[LIGO-Virgo-KAGRA]] — tip nests [[Gravitational-wave]] (`viz: gw`)
+- [[LIGO-Virgo-KAGRA]] — tip nests [[Gravitational-wave]]
 - [[Gravitational-wave]] — tip canvas: 3D spacetime mesh (`viz: gw`)
 - [[mass transfer]]
 - [[MESA]]

@@ -6,7 +6,7 @@ Tip-bubble **3D spacetime mesh** (microlensing-style wire grid): twin BH wells +
 
 ## Wiring
 
-- Glossary: `vault/Glossary/Gravitational-wave.md` (`viz: gw`) and `LIGO-Virgo-KAGRA.md` (`viz: gw`)
+- Glossary: `vault/Glossary/Gravitational-wave.md` (`viz: gw` only — not on LIGO/Virgo/KAGRA)
 - Tip system: `tipViz` map + `data-viz="gw"` → `.tip-has-viz` / `.tip-gw-viz` / `.gw-tip-canvas` / `.tip-gw-fs`
 - State: `gwTipState` (yaw / pitch / zoom / drag); `paintGwTip` / `bindGwTipCanvas` / `ensureGwTipAnim`
 
