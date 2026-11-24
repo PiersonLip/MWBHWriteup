@@ -1,10 +1,10 @@
 ---
 id: census
-label: "03 · Demographics"
-title: "Most Galactic black holes are alone (but they usually weren't born that way)"
+label: 03 · Milky way demographics
+title: Most Galactic black holes are alone (but they weren't born that way)
 ---
 
-# Most Galactic black holes are alone (but they weren't born that way)
+# Most Galactic[^1] black holes are alone (but they weren't born that way)
 
 *03 · Demographics*
 
@@ -21,7 +21,7 @@ In the baseline solar-metallicity run, we found about **400,000,000** stellar-ma
 :::
 
 :::prose
-For the solo stars, **stellar mergers** are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed [[common envelope]]), the merger product later collapsing into a BH. **Disrupted binaries** come next (27%): these are black holes where a [[natal kick]] and/or sudden mass loss rips the binary apart. This can happen at the first or second [[core collapse]]. Single born stars, BH+star mergers, and rare [[DCO]] mergers make up the rest.
+For the solo stars, **stellar mergers** are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed [[common envelope]]), the merger product later collapsing into a black hole. **Disrupted binaries** come next (27%): these are black holes where a [[natal kick]] and/or sudden mass loss rips the binary apart. This can happen at the first or second [[core collapse]]. Single born stars, BH+star mergers, and rare [[DCO]] mergers make up the rest.
 
 The binary systems that survive look lopsided. [[Detached]] **BH-BH** systems alone are ~19% of all BHs. BH+NS, BH+WD, and BH+star systems together are only a few percent. Interestingly, this few percent are really the only ones we've observed so far.
 
@@ -34,3 +34,5 @@ cap: Figure · Formation-channel map (fiducial solar Z)
 title: How do Galactic black holes form?
 hint: Click a path or endpoint. Highlighted route shows how that present-day channel is reached.
 :::
+
+[^1]: In our gala

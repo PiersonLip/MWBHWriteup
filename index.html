@@ -1730,17 +1730,17 @@
 
     <article class="chapter" id="why">
       <p class="ch-label">01 · Motivation</p>
-      <h2>We're about to find a lot more black holes</h2>
+      <h2>We're about to find a whole lot more black holes</h2>
 
       <div class="prose">
         <p>
-          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="an incredibly dense remnant of a massive star. Also does weird things with light">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole (or neutron star) steals gas from a companion. This in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> (a few dozen with solid mass measurements), plus the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses — a tight black-hole binary wrings the fabric as it spirals in. LIGO/Virgo/KAGRA listen for the chirp when they merge." data-viz="gw">gravitational waves</span> by <span class="tip tip-viz" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy." data-viz="gw">LIGO/Virgo/KAGRA</span>.
+          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="an incredibly dense remnant of a massive star. Also does weird things with light">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> and the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses — a tight black-hole binary wrings the fabric as it spirals in. LIGO/Virgo/KAGRA listen for the chirp when they merge." data-viz="gw">gravitational waves</span> by <span class="tip tip-viz" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy." data-viz="gw">LIGO/Virgo/KAGRA</span>.
         </p>
         <p>
-          However, that is soon to change. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span> should detect hundreds. <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get here?."</em>
+          However, that is rapidly changing. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span> should detect hundreds of isolated<sup class="fn-ref" id="fnref-why-3" data-fn-id="3"><a href="#fn-why-3">3</a></sup> ones. <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get here?."</em>
         </p>
         <p>
-          And we can't answer that by just counting the corpses of stars. Most massive stars<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">3</a></sup> grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion, this commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of the massive stars. Commonly leaves behind a neutron star| or black hole.">supernova</span> kicks all deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. A lot of simulation codes approximate these processes, however, we use <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> instead, which allows us to use incredibly accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations.
+          And we can't answer that by just counting the corpses of stars. Most massive stars<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">4</a></sup> grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion, this commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span> kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. A lot of simulation codes approximate these processes, however, we use <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> instead, which allows us to use much more accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations instead.
         </p>
       </div>
 
@@ -1753,14 +1753,15 @@
         <ol>
           <li id="fn-why-1" value="1" data-fn-id="1"><span class="fn-text">Whenever I say "stellar" it simply means "star-like." Here it means black holes that have masses that are on the same scale/order of magnitude as stars</span> <a href="#fnref-why-1" class="fn-back" title="Back to text">↩</a></li>
           <li id="fn-why-census" value="2" data-fn-id="census"><span class="fn-text">Order-of-magnitude census estimates the amount stellar-mass black holes in the Milky Way to land around ~10⁸, we specifically find 4×10⁸ (or 400 million).</span> <a href="#fnref-why-census" class="fn-back" title="Back to text">↩</a></li>
-          <li id="fn-why-2" value="3" data-fn-id="2"><span class="fn-text">largely considered as 8 or more times the mass of our sun</span> <a href="#fnref-why-2" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-why-3" value="3" data-fn-id="3"><span class="fn-text">meaning that they dont have a companion</span> <a href="#fnref-why-3" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-why-2" value="4" data-fn-id="2"><span class="fn-text">largely considered as 8 or more times the mass of our sun</span> <a href="#fnref-why-2" class="fn-back" title="Back to text">↩</a></li>
         </ol>
       </section>
     </article>
 
     <article class="chapter" id="how">
-      <p class="ch-label">02 · Methods</p>
-      <h2>Fancy binaries, simple Galaxy</h2>
+      <p class="ch-label">02 · Methodology</p>
+      <h2>Fancy binaries in a simple Galaxy</h2>
 
       <div class="prose">
         <p>
@@ -1784,12 +1785,14 @@
           <strong><span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">Natal Kicks</span></strong>
           <span></span>
         </div>
-      </div>
-
-      <div class="prose">
-        <p>
-          When we talk about synthetic observations, what we've done is drop the simulated systems into a model of the Milky Way model and simulated their orbits with <em><span class="tip" tabindex="0" data-tip="A Python package for Galactic dynamics. We use it to integrate orbits in a Milky Way potential.">gala</span></em>, updating the systems velocities whenever a <span class="tip" tabindex="0" data-tip="A neutron star or black hole.">compact object</span> is born.
-        </p>
+        <div class="step">
+          <strong><span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">Common envelope</span> efficiency</strong>
+          <span></span>
+        </div>
+        <div class="step">
+          <strong><span class="tip" tabindex="0" data-tip="How metal-rich the gas is (in astronomy, “metals” means everything heavier than helium). More metals means stronger stellar winds.">Metallicity</span></strong>
+          <span></span>
+        </div>
       </div>
 
       <section class="footnotes" id="footnotes-how">
@@ -1801,8 +1804,8 @@
     </article>
 
     <article class="chapter" id="census">
-      <p class="ch-label">03 · Demographics</p>
-      <h2>Most Galactic black holes are alone (but they usually weren't born that way)</h2>
+      <p class="ch-label">03 · Milky way demographics</p>
+      <h2>Most Galactic black holes are alone (but they weren't born that way)</h2>
 
       <div class="prose">
         <p>
@@ -1818,7 +1821,7 @@
 
       <div class="prose">
         <p>
-          For the solo stars, <strong>stellar mergers</strong> are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>), the merger product later collapsing into a BH. <strong>Disrupted binaries</strong> come next (27%): these are black holes where a <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the binary apart. This can happen at the first or second <span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">core collapse</span>. Single born stars, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational waves can merge them.">DCO</span> mergers make up the rest.
+          For the solo stars, <strong>stellar mergers</strong> are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>), the merger product later collapsing into a black hole. <strong>Disrupted binaries</strong> come next (27%): these are black holes where a <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the binary apart. This can happen at the first or second <span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">core collapse</span>. Single born stars, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational waves can merge them.">DCO</span> mergers make up the rest.
         </p>
         <p>
           The binary systems that survive look lopsided. <span class="tip" tabindex="0" data-tip="Not transferring mass right now. The two objects orbit quietly without an accretion disk.">Detached</span> <strong>BH-BH</strong> systems alone are ~19% of all BHs. BH+NS, BH+WD, and BH+star systems together are only a few percent. Interestingly, this few percent are really the only ones we've observed so far.
@@ -1841,23 +1844,17 @@
 
     <article class="chapter" id="kicks">
       <p class="ch-label">04 · Natal kicks & disruption</p>
-      <h2>A kick decides who stays together</h2>
+      <h2>The kick decides who stays together</h2>
 
       <div class="prose">
         <p>
-          When a star in a binary dies in the form of a <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of the massive stars. Commonly leaves behind a neutron star| or black hole.">supernova</span>, two things mess with the orbit. The sudden extreme mass loss shifts the center of mass (the <span class="tip" tabindex="0" data-tip="Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw.">Blaauw effect</span>) and any sort of asymmetries<sup class="fn-ref" id="fnref-kicks-2" data-fn-id="2"><a href="#fn-kicks-2">1</a></sup> can also give the remnant an extra <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span>. If the combined effect of these is strong enough, the system can become disrupted.
-        </p>
-      </div>
-
-      <div class="prose">
-        <p>
-          This disruption from strong kicks is a big reason so many BHs are single, and why low-mass BHs are especially likely to be isolated<sup class="fn-ref" id="fnref-kicks-1" data-fn-id="1"><a href="#fn-kicks-1">2</a></sup>.
+          When a star in a binary dies in the form of a <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span>, two things mess with the orbit. The sudden extreme mass loss shifts the center of mass (the <span class="tip" tabindex="0" data-tip="Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw.">Blaauw effect</span>) and any sort of asymmetries can also give the remnant an extra <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span><sup class="fn-ref" id="fnref-kicks-2" data-fn-id="2"><a href="#fn-kicks-2">1</a></sup>. If the combined effect of these is strong enough, the system becomes <span class="tip" tabindex="0" data-tip="When something is drastic and powerful enough that it causes the stars in a binary to no longer be orbiting each other, becoming isolated stars.">disrupted</span>. This disruption from strong kicks is a big reason so many BHs are single, and why low-mass BHs are especially likely to be isolated<sup class="fn-ref" id="fnref-kicks-1" data-fn-id="1"><a href="#fn-kicks-1">2</a></sup>.
         </p>
       </div>
 
 <div class="figure">
-        <p class="figure-cap">Interactive · Instantaneous post-SN 2-body orbit</p>
-        <h3>Natal kick: bound or disrupted?</h3>
+        <p class="figure-cap">Instantaneous post-SN 2-body orbit</p>
+        <h3>Post natal kick: bound or disrupted?</h3>
         <p class="hint">Show pre-SN orbit, the collapse of one of the components, and the effect on the orbit.</p>
         <div class="grid-2">
           <div class="controls">
@@ -2010,14 +2007,14 @@
 
     <article class="chapter" id="galaxy">
       <p class="ch-label">05 · Galactic embedding</p>
-      <h2>Drop the black holes into a real Galaxy</h2>
+      <h2>Putting the black holes into our Milky Way</h2>
 
       <div class="prose">
         <p>
-          <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span>'s simulation of binary evolution tells you what a system <em>is</em>. To actually talk about <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> or <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span>, we need to know <em>where</em> it is. To do that, we take the systems from POSYDON and put them into a Milky Way model with multiple parts that each have their rate of star-formation and metallicity<sup class="fn-ref" id="fnref-galaxy-1" data-fn-id="1"><a href="#fn-galaxy-1">1</a></sup>.
+          <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span>'s simulation of binary evolution tells you what a system <em>is</em>. To actually talk about observations with <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> or <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span>, we need to know <em>where</em> it is. To do that, we take the systems from POSYDON and put them into a mock Milky Way<sup class="fn-ref" id="fnref-galaxy-1" data-fn-id="1"><a href="#fn-galaxy-1">1</a></sup>.
         </p>
         <p>
-          What we do is first draw a random birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity would be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put in on a roughly circular orbit around our Milky Way and use <span class="tip" tabindex="0" data-tip="A Python package for Galactic dynamics. We use it to integrate orbits in a Milky Way potential.">gala</span> to integrate the orbit.
+          What we do is first draw a birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity would be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put in on a roughly circular orbit around our Milky Way and use <span class="tip" tabindex="0" data-tip="A Python package for Galactic dynamics. We use it to integrate orbits in a Milky Way potential.">gala</span> to integrate the orbit.
         </p>
       </div>
 
@@ -2107,12 +2104,12 @@
     </article>
 
     <article class="chapter" id="observe">
-      <p class="ch-label">06 · Observational links</p>
-      <h2>What Gaia and Roman can actually test</h2>
+      <p class="ch-label">06 · Observational properties</p>
+      <h2>What Gaia and Roman see</h2>
 
       <div class="prose">
         <p>
-          <strong>Gaia BH+star systems.</strong> Quiet black holes with luminous companions are pretty rare in the full census, but they're incredibly useful to measuring the black holes. POSYDON fills the middle ground between tight post-CE systems and wide non-interacting binaries with a solid <span class="tip" tabindex="0" data-tip="Mass transfer that in a state of equilibrium, leading to more long term transfer of mass instead of a merger.">stable mass transfer</span> population. Rapid codes mostly miss that middle. Gaia BH1 and BH2 sit near it, which makes them look a little less like weirdos in mass-period space (matching every observed detail is still tough).
+          Quiet black holes with luminous companions are pretty rare in the full census, but they're incredibly useful to measuring the black holes. POSYDON fills the middle ground between tight post-CE systems and wide non-interacting binaries with a solid <span class="tip" tabindex="0" data-tip="Mass transfer that in a state of equilibrium, leading to more long term transfer of mass instead of a merger.">stable mass transfer</span> population. Rapid codes mostly miss that middle. Gaia BH1 and BH2 sit near it, which makes them look a little less like weirdos in mass-period space (matching every observed detail is still tough).
         </p>
         <p>
           <strong>Microlensing, briefly.</strong> A dark foreground mass — say a quiet black hole — can briefly bend and brighten light from a background bulge star. You usually can't resolve the warp. What you <em>do</em> see is a smooth brightening and fading: the light curve. Closer alignments (smaller impact parameter) make taller peaks. The green circle in the figure is the Einstein ring scale set by the lens mass and geometry; the two colored dots are the lensed images of the source.
@@ -2763,6 +2760,7 @@
       const tipEffects = new Map(); // lower -> effect name
       const tipImages = new Map(); // lower -> image src
       const tipViz = new Map(); // lower -> viz id (e.g. gw)
+      const tipDeep = new Map(); // lower -> deep-note id (never nest these)
       document.querySelectorAll(".tip[data-tip]").forEach((el) => {
         const label = el.textContent.replace(/\s+/g, " ").trim();
         const tip = el.getAttribute("data-tip") || "";
@@ -2774,6 +2772,11 @@
         if (el.dataset.effect) tipEffects.set(key, el.dataset.effect);
         if (el.dataset.image) tipImages.set(key, el.dataset.image);
         if (el.dataset.viz) tipViz.set(key, el.dataset.viz);
+        if (el.dataset.deep) tipDeep.set(key, el.dataset.deep);
+      });
+      // Rich deep-note aliases (avoid nesting mid-phrase e.g. "binary star evolution")
+      ["binary stars", "binary star", "binary systems", "binaries"].forEach((k) => {
+        tipDeep.set(k, "binary-stars");
       });
       // Nested-only gag term (linked from the black holes tip text)
       glossary.set(
@@ -3456,8 +3459,14 @@
       const TIP_NO_NEST = new Set(["black holes", "black hole", "bh", "bhs"]);
 
       function linkify(text, skipKey) {
+        const parentViz = skipKey ? tipViz.get(skipKey) : "";
         const terms = [...glossary.keys()]
-          .filter((k) => k !== skipKey && !TIP_NO_NEST.has(k))
+          .filter((k) => {
+            if (k === skipKey || TIP_NO_NEST.has(k) || tipDeep.has(k)) return false;
+            // don't nest the same canvas viz inside itself (e.g. GW ↔ LIGO)
+            if (parentViz && tipViz.get(k) === parentViz) return false;
+            return true;
+          })
           .sort((a, b) => b.length - a.length);
         if (!terms.length) return escHtml(text);
         const re = new RegExp(

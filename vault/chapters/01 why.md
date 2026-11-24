@@ -1,7 +1,7 @@
 ---
 id: why
-label: "01 · Motivation"
-title: "We're about to find a lot more black holes"
+label: 01 · Motivation
+title: We're about to find a whole lot more black holes
 ---
 # We're about to find a whole lot more black holes
 
@@ -10,11 +10,11 @@ title: "We're about to find a lot more black holes"
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-The Milky Way has **hundreds of millions** of stellar-mass[^1] [[black holes]][^census]. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in [[X-ray binaries]] (a few dozen with solid mass measurements), plus the ones that are detected via [[Glossary/Gravitational-wave|gravitational waves]] by [[LIGO-Virgo-KAGRA|LIGO/Virgo/KAGRA]].
+The Milky Way has **hundreds of millions** of stellar-mass[^1] [[black holes]][^census]. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in [[X-ray binaries]] and the ones that are detected via [[Glossary/Gravitational-wave|gravitational waves]] by [[LIGO-Virgo-KAGRA|LIGO/Virgo/KAGRA]].
 
-However, that is soon to change. So far [[Gaia]] has already confirmed three quiet black holes with bright companions and [[Roman]] should detect hundreds. [[Gaia DR4]] is expected to have dozens more measured BH binaries. Thus the question is quickly shifting from *"can we find them?"* to *"how did they get here?."*
+However, that is rapidly changing. So far [[Gaia]] has already confirmed three quiet black holes with bright companions and [[Roman]] should detect hundreds of isolated[^3] ones. [[Gaia DR4]] is expected to have dozens more measured BH binaries. Thus the question is quickly shifting from *"can we find them?"* to *"how did they get here?."*
 
-And we can't answer that by just counting the corpses of stars. Most massive stars[^2] grow up intertwined with a partner in [[binary stars|binary systems]]. These relationships are tumultuous, with things like [[mass transfer]], [[common envelope]], mergers, and [[supernova]] kicks all deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. A lot of simulation codes approximate these processes, however, we use [[POSYDON]] instead, which allows us to use incredibly accurate [[MESA]] simulations.
+And we can't answer that by just counting the corpses of stars. Most massive[^2] stars grow up intertwined with a partner in [[binary stars|binary systems]]. These relationships are tumultuous, with things like [[mass transfer]], [[common envelope]], mergers, and [[supernova]] kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. A lot of simulation codes approximate these processes, however, we use [[POSYDON]] instead, which allows us to use much more accurate [[MESA]] simulations instead.
 :::
 
 :::callout
@@ -27,3 +27,4 @@ And we can't answer that by just counting the corpses of stars. Most massive sta
 
 [^2]: largely considered as 8 or more times the mass of our sun
 
+[^3]: meaning that they dont have a companion

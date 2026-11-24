@@ -19,7 +19,8 @@ TIP_HTML_RE = re.compile(
     r'<span class="tip" tabindex="0" data-tip="([^"]*)">(.*?)</span>',
     re.S,
 )
-WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]")
+# Display alias stops at | or ]; stray trailing pipes in vault links are ignored
+WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]|]*))?\|*\]\]")
 
 # Optional short Obsidian aliases → note stem
 GLOSSARY_ALIASES = {
@@ -87,7 +88,10 @@ def parse_glossary_note(path: Path) -> dict:
     # strip leading heading
     body = re.sub(r"^\s*#\s+.+\n+", "", body.lstrip())
     # [[Note|display]] / [[Note]] → plain words so nested tip linkify works
-    tip = WIKILINK_RE.sub(lambda m: (m.group(2) or m.group(1)).strip(), body)
+    def _wiki_plain(m: re.Match) -> str:
+        return ((m.group(2) if m.group(2) is not None else m.group(1)) or "").strip().strip("|").strip()
+
+    tip = WIKILINK_RE.sub(_wiki_plain, body)
     tip = re.sub(r"\s+", " ", tip).strip()
     return {
         "path": path,

@@ -17,19 +17,23 @@ Hover text on the site comes from the note body (after the title).
 - [[gala]]
 - [[IMF]]
 - [[incredibly pretty nebulae]] — image tip (Crescent Nebula) nested under [[Wolf-Rayet]]
-- [[LIGO-Virgo-KAGRA]] — tip nests [[Gravitational-wave 1]]
-- [[Gravitational-wave 1]] — tip canvas: orbiting BH binary + ripples (`viz: gw`)
+- [[LIGO-Virgo-KAGRA]] — tip nests [[Gravitational-wave]] (`viz: gw`)
+- [[Gravitational-wave]] — tip canvas: 3D spacetime mesh (`viz: gw`)
 - [[mass transfer]]
 - [[MESA]]
 - [[metallicity]]
 - [[microlens]]
 - [[natal kick]]
+- [[neutron star]]
 - [[pair-instability gap]]
 - [[POSYDON]]
 - [[Roche-lobe overflow]]
 - [[Roman]]
 - [[stable mass transfer]]
+- [[supernova]]
+- [[disrupted]]
 - [[Winds]]
 - [[Wolf-Rayet]]
 - [[X-ray binaries]] — image tip (`assets/xrb.jpg`)
 - [[ZAMS]]
+- [[envelope]] — tip canvas (`viz: envelope`)

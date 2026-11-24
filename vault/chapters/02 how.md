@@ -1,12 +1,12 @@
 ---
 id: how
-label: "02 · Methods"
-title: "Fancy binaries, simple Galaxy"
+label: 02 · Methodology
+title: Fancy binaries in a simple Galaxy
 ---
 
 # Fancy binaries, simple Galaxy
 
-*02 · Methods*
+*02 · Methodology*
 
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
@@ -20,12 +20,8 @@ With these systems there is still a large amount of physics we don't fully under
 - **Initial binary properties**:
 - **Core collapse**:
 - **[[natal kick|Natal Kicks]]**:
-- **[[common envelope|Common envelope]] efficiency**
-- **[[Metallicity]]**
-:::
-
-:::prose
-When we talk about synthetic observations, what we've done is drop the simulated systems into a model of the Milky Way model and simulated their orbits with *[[gala]]*, updating the systems velocities whenever a [[compact object]] is born.
+- **[[common envelope|Common envelope]] efficiency**:
+- **[[Metallicity]]**:
 :::
 
 [^1]: .45,1,2

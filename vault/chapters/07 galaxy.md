@@ -1,19 +1,19 @@
 ---
 id: galaxy
-label: "05 · Galactic embedding"
-title: "Drop the black holes into a real Galaxy"
+label: 05 · Galactic embedding
+title: Putting the black holes into our Milky Way
 ---
 
-# Drop the black holes into a real Galaxy
+# Putting the black holes into a real Galaxy
 
 *05 · Galactic embedding*
 
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-[[POSYDON]]'s simulation of binary evolution tells you what a system *is*. To actually talk about [[Gaia]] or [[Roman]], we need to know *where* it is. To do that, we take the systems from POSYDON and put them into a Milky Way model with multiple parts that each have their rate of star-formation and metallicity[^1].
+[[POSYDON]]'s simulation of binary evolution tells you what a system *is*. To actually talk about observations with [[Gaia]] or [[Roman]], we need to know *where* it is. To do that, we take the systems from POSYDON and put them into a mock Milky Way[^1]. 
 
-What we do is first draw a random birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity would be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put in on a roughly circular orbit around our Milky Way and use [[gala]] to integrate the orbit.
+What we do is first draw a birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity would be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put in on a roughly circular orbit around our Milky Way and use [[gala]] to integrate the orbit.
 :::
 
 :::timeline
