@@ -10,4 +10,4 @@ nest: false
 
 # black holes
 
-an incredibly dense remnant of a massive star. Also does weird things with light
+An incredibly dense remnant of a massive star. Also does [[weird things with light]].

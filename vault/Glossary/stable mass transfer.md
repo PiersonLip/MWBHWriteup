@@ -6,4 +6,4 @@ aliases:
 
 # stable mass transfer
 
-Mass transfer that in a state of equilibrium, leading to more long term transfer of mass instead of a merger.
+Mass transfer that is in a state of equilibrium, leading to more long-term transfer of mass instead of a merger.

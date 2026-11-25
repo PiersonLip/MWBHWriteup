@@ -7,7 +7,7 @@ Gaudi-style teaching schematic: how a dark lens (BH) brightens a background sour
 ## DOM / code
 
 - Figure: `#micro`
-- Controls: `#micro-u0`, `#micro-spd`, `#micro-play`
+- Controls: `#micro-u0`, `#micro-spd`, `#micro-t` (time scrubber, full-width), `#micro-play`
 - Status: `#micro-A` (whole `A ≈ …` is a tip; live value in `#micro-A-val`), `#micro-meta`
 - 3D stage: `#micro-stage-3d` + `#micro-canvas-3d` + `#micro-fs`
 - 2D: `#micro-canvas`
@@ -24,6 +24,7 @@ Gaudi-style teaching schematic: how a dark lens (BH) brightens a background sour
 
 - Scene: Roman (observer) → lensing BH → source star on a spacetime grid with gravity well
 - Camera: drag orbit; pitch `0` = edge-on, `π/2` = top-down; scroll zoom `0.75–1.55`
+- Bent rays: midpoints from the point-lens image positions (track the source past the BH); edge-on boosts the image’s vertical offset so major/minor read above/below
 - Fullscreen on `#micro-stage-3d`; maximize icon button
 - Canvas resizes to stage (incl. fullscreen) via `clientWidth/Height` + DPR
 - Inset light curve (bottom-right) mirrors the main brightness curve
@@ -46,4 +47,9 @@ Gaudi-style teaching schematic: how a dark lens (BH) brightens a background sour
 - 2026-11-23: 3D-first stacked layout; orbit + zoom + fullscreen; larger grid; Roman redraw; brightness axis; Gaudi fraction in light-curve corner; maximize icon; inset curve on 3D.
 - 2026-11-23: Roman scaled down; shield fixed to flat SASS + single hinged DAC (removed V-wings).
 - 2026-11-23: Fraction glyphs are live image limbs (not fixed ellipses) so major/minor size updates with the event.
+- 2026-11-24: Credit line under legend — “amazing diagram” links to Gaudi’s point-lens GIF.
+- 2026-11-24: Space toggles play/pause while `#micro` is in view (or 3D fullscreen).
+- 2026-11-24: Time scrubber (`#micro-t`, units of t_E); pauses play while dragging.
+- 2026-11-24: 3D rays follow lens-map image positions so the major path doesn’t keep warping the wrong way after the source passes the BH.
+- 2026-11-24: Side-on 3D view shows minor (red) below / major above when u₀>0; top-down follows image (x,y).
 - 2026-11-23: Start farther out (`tmax` 5.2); minor image/ray fades in only as `|u|` drops; clock advances only while `#micro` is in view (resets to early single-path frame on enter).

@@ -26,10 +26,10 @@ Drop a binary into a MW-like potential: birth → pre-SN disk arc → SN+kick �
 
 - `KMS_MYR_TO_KPC = 0.001022712165`
 - Flat rotation ~220 km/s; vertical spring `nu2 ≈ 0.005`
-- Easter eggs: ω Cen, M13, M22 on hover; **GC** hover tip → “Galactic center” / “Sag A*”
+- Easter eggs: ω Cen, M13, M22 on hover; **GC** hover tip → “Galactic center” / “Sgr A*”
 
 ## Changelog
 
 - FS control uses maximize icon (shared `.gal-fs-btn` styling with micro).
-- 2026-11-23: Hovering GC shows “Galactic center” + “Sag A*”.
+- 2026-11-23: Hovering GC shows “Galactic center” + “Sgr A*”.
 - 2026-11-23: More gap between stage and controls; “Example system” → “Kick strength”.

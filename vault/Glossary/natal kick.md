@@ -1,5 +1,8 @@
 ---
 title: "natal kick"
+aliases:
+  - Natal kicks
+  - natal kicks
 ---
 
 # natal kick

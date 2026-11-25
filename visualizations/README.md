@@ -27,7 +27,7 @@ Related: rich glossary deep-dive for **binary stars** — [binary-stars.md](./bi
 
 Related: BH lens easter egg — [lens.md](./lens.md) (`effect: lens` on glossary note **weird things with light**).
 
-Related: tip canvases — [gw-tip.md](./gw-tip.md) (`viz: gw`), [envelope-tip.md](./envelope-tip.md) (`viz: envelope`).
+Related: tip canvases — [gw-tip.md](./gw-tip.md) (`viz: gw`), [envelope-tip.md](./envelope-tip.md) (`viz: envelope`), [eccentricity-tip.md](./eccentricity-tip.md) (`viz: eccentricity`).
 
 ## Page themes
 

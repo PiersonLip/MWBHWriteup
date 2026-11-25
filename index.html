@@ -22,6 +22,11 @@
       } catch (e) {
         document.documentElement.setAttribute("data-theme", "light");
       }
+      try {
+        if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 720px)").matches) {
+          document.documentElement.classList.add("touch-ui");
+        }
+      } catch (e) { /* ignore */ }
     })();
   </script>
   <style>
@@ -494,6 +499,9 @@
       gap: 0.75rem 1rem;
       align-items: end;
     }
+    .micro-layout > .controls .micro-time-row {
+      grid-column: 1 / -1;
+    }
     @media (max-width: 720px) {
       .micro-layout > .controls { grid-template-columns: 1fr 1fr; }
     }
@@ -549,6 +557,144 @@
     .micro-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
     .micro-legend i {
       display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    }
+    .micro-credit {
+      margin: 0.65rem 0 0;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+    }
+    .micro-credit a {
+      color: var(--accent);
+      text-underline-offset: 2px;
+    }
+    .micro-credit a:hover { opacity: 0.9; }
+
+    /* —— Mobile layout / tip affordances —— */
+    @media (max-width: 720px) {
+      :root { --figure-measure: 100%; }
+      .wrap { padding: 1.25rem 0.7rem 3.25rem; overflow-x: clip; }
+      nav.toc {
+        gap: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        max-width: 100%;
+        padding-bottom: 0.15rem;
+      }
+      .figure {
+        padding: 0.95rem 0.65rem 1.05rem;
+        margin: 1.15rem auto 1.35rem;
+        border-radius: 10px;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .figure h3 { font-size: 1.05rem; }
+      .figure .hint { font-size: 0.84rem; max-width: none; }
+      .grid-2 { gap: 0.85rem; }
+      .canvas-wrap {
+        min-height: 0;
+        aspect-ratio: 1 / 1;
+        width: 100%;
+        max-width: 100%;
+      }
+      .flow-stage,
+      .channel-stage {
+        padding: 0.4rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+      .flow-svg { min-width: 520px; }
+      .channel-svg { min-width: 560px; }
+      .gal-stage {
+        min-height: 220px;
+        aspect-ratio: 1.1 / 1;
+        max-width: 100%;
+      }
+      .gal-legend {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        gap: 0.3rem 0.55rem;
+        font-size: 0.58rem;
+      }
+      .micro-stage,
+      .micro-stage-3d {
+        min-height: 180px;
+        max-width: 100%;
+      }
+      .micro-legend { gap: 0.45rem 0.75rem; font-size: 0.62rem; }
+      .eq { font-size: 0.68rem; overflow-x: auto; }
+      .tip-bubble {
+        max-width: min(18rem, calc(100vw - 1.25rem));
+        font-size: 0.8rem;
+      }
+      .tip-bubble.tip-has-viz,
+      .tip-bubble.tip-has-image,
+      .tip-bubble.tip-rich {
+        max-width: calc(100vw - 1.1rem);
+      }
+      .tip-bubble.tip-has-viz .tip-gw-viz,
+      .tip-bubble.tip-has-viz .tip-ecc-viz,
+      .tip-bubble.tip-has-viz .tip-env-viz {
+        max-height: min(42vh, 280px);
+      }
+      .tip {
+        padding: 0.12em 0.02em;
+        touch-action: manipulation;
+      }
+      html.touch-ui .tip { cursor: pointer; }
+      html.touch-ui .tip-bubble {
+        /* easier tap targets inside nested glossary links */
+        padding: 0.6rem 0.75rem;
+      }
+    }
+
+    .mobile-notice {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(10, 12, 18, 0.45);
+      box-sizing: border-box;
+    }
+    .mobile-notice[hidden] { display: none !important; }
+    .mobile-notice-card {
+      width: min(26rem, 100%);
+      background: var(--panel);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 1.1rem 1.15rem 1rem;
+      margin-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+    .mobile-notice-card p {
+      margin: 0 0 0.95rem;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: var(--ink-soft);
+    }
+    .mobile-notice-card strong { color: var(--ink); font-weight: 600; }
+    .mobile-notice-card button {
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 0.95rem;
+      background: var(--ink);
+      color: var(--on-ink);
+      cursor: pointer;
+      width: 100%;
+    }
+    .mobile-notice-card button:hover { opacity: 0.92; }
+    @media (min-width: 721px) and (pointer: fine) {
+      .mobile-notice { display: none !important; }
     }
 
     .channel-stage {
@@ -1027,6 +1173,8 @@
       width: 100%;
       height: auto;
       border-radius: 6px;
+    }
+    .tip-bubble.tip-has-image:has(.tip-cap) img {
       margin-bottom: 0.35rem;
     }
     .tip-bubble.tip-has-image .tip-cap {
@@ -1137,6 +1285,23 @@
       width: 100%;
       height: auto;
       aspect-ratio: 1 / 1;
+      vertical-align: top;
+    }
+    .tip-bubble.tip-has-viz .tip-ecc-viz {
+      display: block;
+      position: relative;
+      width: 100%;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #0c1018;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 0.35rem;
+    }
+    .tip-bubble.tip-has-viz .tip-ecc-viz canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
       vertical-align: top;
     }
 
@@ -1720,7 +1885,7 @@
       <p class="eyebrow">Interactive explanation · arXiv:2610.07152</p>
       <h1>Uncovering the physical origins of black holes in the Milky Way</h1>
       <p class="lede">
-        A walkthrough of why a simulation tool like <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> can connect the physics of <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary stars</span> to the modern black holes of our galaxy, what <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> and <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span> might actually see, and why it matters.
+        A walkthrough of why a simulation tool like <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> can connect the physics of <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary stars</span> to the modern black holes of our galaxy, what <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> and <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span> might see, and why it matters.
       </p>
       <p class="byline">
         Based on <a href="https://arxiv.org/abs/2610.07152" target="_blank" rel="noopener">Kiato, Lipschultz, Kalogera et al.</a> (submitted to ApJ).
@@ -1750,26 +1915,26 @@
 
       <div class="prose">
         <p>
-          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="an incredibly dense remnant of a massive star. Also does weird things with light">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> and the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses — a tight black-hole binary wrings the fabric as it spirals in. LIGO/Virgo/KAGRA listen for the chirp when they merge." data-viz="gw">gravitational waves</span> by <span class="tip" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy.">LIGO/Virgo/KAGRA</span>.
+          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="An incredibly dense remnant of a massive star. Also does weird things with light.">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> and the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses." data-viz="gw">gravitational waves</span> by <span class="tip" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy.">LIGO/Virgo/KAGRA</span>.
         </p>
         <p>
-          However, that is rapidly changing. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries. Furthermore, <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span> should detect hundreds more isolated<sup class="fn-ref" id="fnref-why-3" data-fn-id="3"><a href="#fn-why-3">3</a></sup> ones. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get here?."</em>
+          However, that is rapidly changing. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries, <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span> should detect hundreds more isolated<sup class="fn-ref" id="fnref-why-3" data-fn-id="3"><a href="#fn-why-3">3</a></sup> ones. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get there?"</em>
         </p>
         <p>
-          And we can't answer that by just counting the corpses of stars. Most massive<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">4</a></sup> stars grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion, this commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span> kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. A lot of simulation codes approximate these processes, however, we use <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> instead, which allows us to use much more accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations instead.
+          And we can't answer that question just counting the remnants of stars. Most massive stars<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">4</a></sup> grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other. Hover for the full note; Focus for the orbit viz." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion. This commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span> kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. Previous work approximates these processes; we use <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> instead, which lets us use much more accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations.
         </p>
       </div>
 
       <div class="callout">
-        <strong>The basic idea:</strong> model the black holes that we would see today, trace them back to how they formed, vary the physics to see what works best, then predict Gaia and Roman might actually see.
+        <strong>The grand idea:</strong> model the black holes that we would see today, trace them back to how they formed, vary the physics to see what works best, then predict what Gaia and Roman might actually see.
       </div>
 
       <section class="footnotes" id="footnotes-why">
         <h3>Notes</h3>
         <ol>
           <li id="fn-why-1" value="1" data-fn-id="1"><span class="fn-text">Whenever I say "stellar" it simply means "star-like." Here it means black holes that have masses that are on the same scale/order of magnitude as stars.</span> <a href="#fnref-why-1" class="fn-back" title="Back to text">↩</a></li>
-          <li id="fn-why-census" value="2" data-fn-id="census"><span class="fn-text">Order-of-magnitude census estimates the amount stellar-mass black holes in the Milky Way to land around ~10⁸, we specifically find 4×10⁸ (400 million).</span> <a href="#fnref-why-census" class="fn-back" title="Back to text">↩</a></li>
-          <li id="fn-why-3" value="3" data-fn-id="3"><span class="fn-text">Meaning that they don't have a companion.</span> <a href="#fnref-why-3" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-why-census" value="2" data-fn-id="census"><span class="fn-text">Order-of-magnitude census estimates put the number of stellar-mass black holes in the Milky Way around ~10⁸ (100 million).</span> <a href="#fnref-why-census" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-why-3" value="3" data-fn-id="3"><span class="fn-text">I.e. They don't have a companion.</span> <a href="#fnref-why-3" class="fn-back" title="Back to text">↩</a></li>
           <li id="fn-why-2" value="4" data-fn-id="2"><span class="fn-text">Largely considered as 8 or more times the mass of our sun.</span> <a href="#fnref-why-2" class="fn-back" title="Back to text">↩</a></li>
         </ol>
       </section>
@@ -1781,63 +1946,63 @@
 
       <div class="prose">
         <p>
-          In order to model all of these binaries in our galaxy, we use POSYDON, which evolves single stars and binaries from birth (<span class="tip" tabindex="0" data-tip="Zero-age main sequence. The initial common birth-state of a star, when it first begins hydrogen fusion in its core">ZAMS</span>) all the way to their death over the scale of billions of years. We use a selection of simulations of <strong>10 million binaries</strong> at varying <span class="tip" tabindex="0" data-tip="How metal-rich the gas is (in astronomy, “metals” means everything heavier than helium). More metals means stronger stellar winds.">metallicities</span><sup class="fn-ref" id="fnref-how-1" data-fn-id="1"><a href="#fn-how-1">1</a></sup> and scale their results up to a Milky Way-like galaxy.
+          In order to model all of these binaries in our galaxy, we use POSYDON, which evolves single stars and binaries from birth (<span class="tip" tabindex="0" data-tip="Zero-age main sequence. The initial common birth-state of a star, when it first begins hydrogen fusion in its core.">ZAMS</span>) all the way to their death over the scale of billions of years. We use a selection of simulations of <strong>10 million binaries</strong> at varying <span class="tip" tabindex="0" data-tip="How metal-rich the gas is (in astronomy, “metals” means everything heavier than helium). More metals means stronger stellar winds.">metallicities</span><sup class="fn-ref" id="fnref-how-1" data-fn-id="1"><a href="#fn-how-1">1</a></sup> and scale their results up to a Milky Way-like galaxy.
         </p>
         <p>
-          With these systems there is still a large amount of physics we don't fully understand, so we try variations and see what sticks best. However, a good chunk of the physics stays the same between simulations: we use a a Kroupa-like <span class="tip" tabindex="0" data-tip="Initial mass function. How common stars of different birth masses are. Heavier stars are rarer.">IMF</span> for the primary stars, POSYDON's wind and mixing setup, and the usual <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span> with the standard process. The things that we tweak the handling of are:
+          With these systems there is still a large amount of physics we don't fully understand, so we try variations and see what sticks best. The things that we tweak are:
         </p>
       </div>
 
       <div class="timeline">
         <div class="step">
           <strong>Initial binary properties</strong>
-          <span></span>
+          <span>Masses, periods, mass ratios, and <span class="tip tip-viz" tabindex="0" data-tip="How stretched from a circle an orbit is where e = 0 is a perfect circle. Any bound orbit sits between 0 and 1." data-viz="eccentricity">eccentricities</span> drawn for the birth population.</span>
         </div>
         <div class="step">
-          <strong>Core collapse</strong>
-          <span></span>
+          <strong><span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">Core collapse</span></strong>
+          <span>How the remnant mass is assigned when the iron core collapses.</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">Natal Kicks</span></strong>
-          <span></span>
+          <span>Maxwellian scale, fallback, inverse-mass, or zero-kick prescriptions.</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">Common envelope</span> efficiency</strong>
-          <span></span>
+          <span>How much orbital energy unbinds the shared envelope (α<sub>CE</sub>).</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="How metal-rich the gas is (in astronomy, “metals” means everything heavier than helium). More metals means stronger stellar winds.">Metallicity</span></strong>
-          <span></span>
+          <span>The Z grid that sets wind strength and which evolutionary paths are available.</span>
         </div>
       </div>
 
       <section class="footnotes" id="footnotes-how">
         <h3>Notes</h3>
         <ol>
-          <li id="fn-how-1" value="1" data-fn-id="1"><span class="fn-text">specifically 1Z⊙, 0.45Z⊙, 0.2Z⊙, 0.1Z⊙, and 0.01Z⊙</span> <a href="#fnref-how-1" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-how-1" value="1" data-fn-id="1"><span class="fn-text">Specifically 1Z⊙, 0.45Z⊙, 0.2Z⊙, 0.1Z⊙, and 0.01Z⊙</span> <a href="#fnref-how-1" class="fn-back" title="Back to text">↩</a></li>
         </ol>
       </section>
     </article>
 
     <article class="chapter" id="census">
-      <p class="ch-label">03 · Milky way demographics</p>
+      <p class="ch-label">03 · Milky Way demographics</p>
       <h2>Most Galactic black holes are alone (but they weren't born that way)</h2>
 
       <div class="prose">
         <p>
-          In our baseline solar-<span class="tip" tabindex="0" data-tip="How metal-rich the gas is (in astronomy, “metals” means everything heavier than helium). More metals means stronger stellar winds.">metallicity</span> run, we found about <strong>400,000,000</strong> stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, while the rest still have their binary partners.
+          In our baseline solar-<span class="tip" tabindex="0" data-tip="How metal-rich the gas is (in astronomy, “metals” means everything heavier than helium). More metals means stronger stellar winds.">metallicity</span><sup class="fn-ref" id="fnref-census-1" data-fn-id="1"><a href="#fn-census-1">1</a></sup> run, we found about <strong>400,000,000</strong> stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, while the rest still have their binary partners.
         </p>
       </div>
 
       <div class="stat-row">
         <div class="stat"><div class="n">~4×10⁸</div><div class="l">Total Galactic BHs</div></div>
-        <div class="stat"><div class="n">78%</div><div class="l">Isolated</div></div>
+        <div class="stat"><div class="n">78%</div><div class="l">Are isolated</div></div>
         <div class="stat"><div class="n">19%</div><div class="l">In detached BH-BH binaries</div></div>
       </div>
 
       <div class="prose">
         <p>
-          For the solo stars, <strong>stellar mergers</strong> are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>), the merger product later collapsing into a black hole. <strong>Disrupted binaries</strong> come next (27%): these are black holes where a <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the binary apart. This can happen at the first or second <span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">core collapse</span>. Single born stars, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational waves can merge them.">DCO</span> mergers make up the rest.
+          For the isolated black holes, <strong>stellar mergers</strong> are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>), the merger product later collapsing into a black hole. <strong>Disrupted binaries</strong> come next (27%): these are black holes where a <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the binary apart. This can happen at the first or second <span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">core collapse</span>. Stars born single, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational-wave emission can drive them to merge.">DCO</span> mergers make up the rest.
         </p>
         <p>
           The binary systems that survive are unique in their own right. <span class="tip" tabindex="0" data-tip="Not transferring mass right now. The two objects orbit quietly without an accretion disk.">Detached</span> <strong>BH-BH</strong> systems alone are ~19% of all BHs. BH+NS, BH+WD, and BH+star systems together are only a few percent, yet this few percent are really the only ones we've observed so far.
@@ -1845,7 +2010,7 @@
       </div>
 
 <div class="figure" id="flow">
-        <p class="figure-cap">Formation channels map (solar metallicity)</p>
+        <p class="figure-cap">Formation channels map (at solar metallicity)</p>
         <h3>How do Galactic black holes form?</h3>
         <p class="hint">Click a path or endpoint. Highlighted route shows how that present-day channel is reached.</p>
         <div class="flow-stage">
@@ -1853,6 +2018,13 @@
         </div>
         <div class="detail-box" id="flow-detail"></div>
       </div>
+
+      <section class="footnotes" id="footnotes-census">
+        <h3>Notes</h3>
+        <ol>
+          <li id="fn-census-1" value="1" data-fn-id="1"><span class="fn-text">Here "solar" means "sun-like". i.e. Has a metallicity similar to our own sun</span> <a href="#fnref-census-1" class="fn-back" title="Back to text">↩</a></li>
+        </ol>
+      </section>
     </article>
 
     <article class="chapter" id="kicks">
@@ -1861,14 +2033,14 @@
 
       <div class="prose">
         <p>
-          When a star in a binary dies in the form of a <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span>, two things mess with the orbit. The sudden extreme mass loss shifts the center of mass (the <span class="tip" tabindex="0" data-tip="Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw.">Blaauw effect</span>) and any sort of asymmetries can also give the remnant an extra <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span><sup class="fn-ref" id="fnref-kicks-2" data-fn-id="2"><a href="#fn-kicks-2">1</a></sup>. If the combined effect of these is strong enough, the system becomes <span class="tip" tabindex="0" data-tip="When something is drastic and powerful enough that it causes the stars in a binary to no longer be orbiting each other, becoming isolated stars.">disrupted</span>. This disruption from strong kicks is a big reason so many BHs are single, and why low-mass BHs are especially likely to be isolated<sup class="fn-ref" id="fnref-kicks-1" data-fn-id="1"><a href="#fn-kicks-1">2</a></sup>.
+          When a star in a binary dies in the form of a <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span>, two things mess with the orbit. The sudden extreme mass loss shifts the center of mass (referred to as a <span class="tip" tabindex="0" data-tip="Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw.">Blaauw effect</span>/Blaauw kick) and any sort of asymmetries can also give the remnant an extra <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span><sup class="fn-ref" id="fnref-kicks-2" data-fn-id="2"><a href="#fn-kicks-2">1</a></sup>. If the combined effect of these is strong enough, the system becomes <span class="tip" tabindex="0" data-tip="When a kick and/or sudden mass loss unbinds a binary so the components no longer orbit each other.">disrupted</span>. This disruption from strong kicks is a big reason so many BHs are single, and why low-mass BHs are especially likely to be isolated<sup class="fn-ref" id="fnref-kicks-1" data-fn-id="1"><a href="#fn-kicks-1">2</a></sup>.
         </p>
       </div>
 
 <div class="figure">
         <p class="figure-cap">Instantaneous post-SN 2-body orbit</p>
-        <h3>Post natal kick: bound or disrupted?</h3>
-        <p class="hint">Show pre-SN orbit, the collapse of one of the components, and the effect on the orbit.</p>
+        <h3>Post-natal kick: bound or disrupted?</h3>
+        <p class="hint">Shows the pre-supernova orbit, collapse of one component, and how the kick reshapes (or unbinds) the orbit.</p>
         <div class="grid-2">
           <div class="controls">
             <div class="control">
@@ -1885,23 +2057,23 @@
               <input type="range" id="vns" min="0" max="600" step="5" value="200" />
             </div>
             <div class="control">
-              <label>BH remnant mass <span class="val" id="mbh-val">8.0 M☉</span></label>
+              <label>BH remnant mass <span class="val" id="mbh-val">8.0 <span class="tip" tabindex="0" data-tip="Solar masses. E.g. 2 M☉ is twice the mass of the Sun">M☉</span></span></label>
               <input type="range" id="mbh" min="2.5" max="25" step="0.5" value="8" />
             </div>
             <div class="control">
-              <label>Companion mass <span class="val" id="m2-val">10.0 M☉</span></label>
+              <label>Companion mass <span class="val" id="m2-val">10.0 <span class="tip" tabindex="0" data-tip="Solar masses. E.g. 2 M☉ is twice the mass of the Sun">M☉</span></span></label>
               <input type="range" id="m2" min="1" max="40" step="0.5" value="10" />
             </div>
             <div class="control">
-              <label>Pre-SN separation <span class="val" id="a-val">0.50 AU</span></label>
-              <input type="range" id="a" min="0.05" max="5" step="0.05" value="0.5" />
+              <label>Pre-supernova separation <span class="val" id="a-val">0.50 AU</span></label>
+              <input type="range" id="a" min="0.2" max="5" step="0.05" value="0.5" />
             </div>
             <div class="control">
               <label>Kick angle vs orbital velocity <span class="val" id="theta-val">45°</span></label>
               <input type="range" id="theta" min="0" max="180" step="1" value="45" />
             </div>
             <div class="control">
-              <label>Ejected mass (ΔM) <span class="val" id="dm-val">5.0 M☉</span></label>
+              <label>Ejected mass (ΔM) <span class="val" id="dm-val">5.0 <span class="tip" tabindex="0" data-tip="Solar masses. E.g. 2 M☉ is twice the mass of the Sun">M☉</span></span></label>
               <input type="range" id="dm" min="0" max="20" step="0.5" value="5" />
             </div>
             <div class="seg" id="kick-reset-row" style="margin-top:0.15rem">
@@ -1921,8 +2093,8 @@
       <section class="footnotes" id="footnotes-kicks">
         <h3>Notes</h3>
         <ol>
-          <li id="fn-kicks-2" value="1" data-fn-id="2"><span class="fn-text">When people typically think of supernovae, we naively generally think of a radially symmetric explosion coming from the star. However in reality these explosions are typically stronger in one a direction, causing a kick from the "recoil" in the opposite direction.</span> <a href="#fnref-kicks-2" class="fn-back" title="Back to text">↩</a></li>
-          <li id="fn-kicks-1" value="2" data-fn-id="1"><span class="fn-text">less mass to kick means that the BH can be kicked faster.</span> <a href="#fnref-kicks-1" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-kicks-2" value="1" data-fn-id="2"><span class="fn-text">When people typically think of supernovae, we naively generally think of a radially symmetric explosion coming from the star. However in reality these explosions are typically stronger in one direction, causing a kick from the "recoil" in the opposite direction.</span> <a href="#fnref-kicks-2" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-kicks-1" value="2" data-fn-id="1"><span class="fn-text">Lower remnant mass means a larger kick velocity for the same impulse (as in the inverse-mass prescription).</span> <a href="#fnref-kicks-1" class="fn-back" title="Back to text">↩</a></li>
         </ol>
       </section>
     </article>
@@ -1939,7 +2111,7 @@
           <strong>Stable mass transfer</strong> strips the primary, smears final BH masses over a wide range, and likes making lower-mass black holes. It's also the main path to the low-mass bumps you see in disrupted systems and a lot of BH+"other" binaries.
         </p>
         <p>
-          <strong>Wind-driven, non-interacting evolution</strong> takes over for very massive primaries (≳80&nbsp;M☉) at solar metallicity. Strong winds keep the star from puffing up too much, so <span class="tip" tabindex="0" data-tip="When a star expands past the potential which it can fill without dumping mass onto its companion (its Roche-lobe). This causes gas to to be transferred from one star to the other.">Roche-lobe overflow</span> never happens. Then <span class="tip" tabindex="0" data-tip="Hot, helium-rich stars that have already lost their hydrogen envelopes. These stars have incredibly strong winds. They also produce incredibly pretty nebulae.">Wolf-Rayet</span> winds shove a wide range of ZAMS masses toward a narrow final mass, and you get black holes clustered near <strong>~13&nbsp;M☉</strong>. That plateau is especially sharp among detached BH-BH systems.
+          <strong>Wind-driven, non-interacting evolution</strong> takes over for very massive primaries (≳80&nbsp;M☉) at solar metallicity. Strong winds keep the star from puffing up too much, so <span class="tip" tabindex="0" data-tip="When a star expands past the potential which it can fill without dumping mass onto its companion (its Roche-lobe). This causes gas to be transferred from one star to the other.">Roche-lobe overflow</span> never happens. Then <span class="tip" tabindex="0" data-tip="Hot, helium-rich stars that have already lost their hydrogen envelopes. These stars have incredibly strong winds. They also produce incredibly pretty nebulae.">Wolf-Rayet</span> winds shove a wide range of ZAMS masses toward a narrow final mass, and you get black holes clustered near <strong>~13&nbsp;M☉</strong>. That plateau is especially sharp among detached BH-BH systems.
         </p>
         <p>
           Metallicity is the soft underbelly of that fingerprint. Lower Z weakens winds, washes out the plateau, makes BHs heavier, and lets stable mass transfer own the high-mass end. At 0.01&nbsp;Z☉ a few systems even poke past the <span class="tip" tabindex="0" data-tip="A predicted range of BH masses where the star blows itself apart before it can make a remnant.">pair-instability gap</span>.
@@ -2024,10 +2196,10 @@
 
       <div class="prose">
         <p>
-          <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span>'s simulation of binary evolution tells you what a system <em>is</em>. To actually talk about observations with <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> or <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quanties of black holes through gravitational microlensing.">Roman</span>, we need to know <em>where</em> it is. To do that, we take the systems from POSYDON and put them into a mock Milky Way<sup class="fn-ref" id="fnref-galaxy-1" data-fn-id="1"><a href="#fn-galaxy-1">1</a></sup>.
+          <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span>'s simulations of binary evolution tell you what a system <em>is</em>. To actually talk about observations with <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> or <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span>, we need to know <em>where</em> it is. To do that, we take the systems from POSYDON and embed them into a mock Milky Way<sup class="fn-ref" id="fnref-galaxy-1" data-fn-id="1"><a href="#fn-galaxy-1">1</a></sup>.
         </p>
         <p>
-          What we do is first draw a birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity should be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put in on a roughly circular orbit around our Milky Way and use <span class="tip" tabindex="0" data-tip="A Python package for Galactic dynamics. We use it to integrate orbits in a Milky Way potential.">gala</span> to integrate the orbit.
+          What we do is first draw a birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity should be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put it on a roughly circular orbit around our Milky Way and use <span class="tip" tabindex="0" data-tip="A Python package for Galactic dynamics. We use it to integrate orbits in a Milky Way potential.">gala</span> to integrate the orbit.
         </p>
       </div>
 
@@ -2060,7 +2232,7 @@
 
       <div class="prose">
         <p>
-          Whenever a compact object forms<sup class="fn-ref" id="fnref-galaxy-2" data-fn-id="2"><a href="#fn-galaxy-2">2</a></sup> in our POSYDON simulation, the systems velocity gets updated both for the mass loss and the <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span>. If the binary stays bound, the pair keeps moving together. If the system is disrupted, we then treat each stars as its own object with their own orbits.
+          Whenever a <span class="tip" tabindex="0" data-tip="A neutron star or black hole.">compact object</span> forms<sup class="fn-ref" id="fnref-galaxy-2" data-fn-id="2"><a href="#fn-galaxy-2">2</a></sup> in our POSYDON simulation, the system's velocity gets updated for mass loss and the natal kick — that's what seeds the disrupted paths in the figure below.
         </p>
       </div>
 
@@ -2071,7 +2243,7 @@
 <div class="figure" id="gal-figure">
         <p class="figure-cap">Interactive · Schematic of paper §II.3</p>
         <h3>A disrupted binary's path through the Milky Way</h3>
-        <p class="hint">Phases: birth → pre-SN → kick → BH and companion paths.</p>
+        <p class="hint">Phases: birth → pre-supernova → kick → BH and companion paths.</p>
         <div class="gal-layout">
           <div class="gal-stage" id="gal-stage">
             <canvas id="gal-canvas" width="900" height="560"></canvas>
@@ -2110,8 +2282,8 @@
       <section class="footnotes" id="footnotes-galaxy">
         <h3>Notes</h3>
         <ol>
-          <li id="fn-galaxy-1" value="1" data-fn-id="1"><span class="fn-text">To model the milky way we split it into three components, these are different then the standard 3 components of the MW (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exlude the halo, as while there <em>are</em> stars there, they form an incredibly small fraction of the whole population</span> <a href="#fnref-galaxy-1" class="fn-back" title="Back to text">↩</a></li>
-          <li id="fn-galaxy-2" value="2" data-fn-id="2"><span class="fn-text">Meaning one of the stars in the binary goes supernova</span> <a href="#fnref-galaxy-2" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-galaxy-1" value="1" data-fn-id="1"><span class="fn-text">To model the Milky Way we split it into three components; these are different from the standard 3 components of the MW (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exclude the halo, as while there <em>are</em> stars there, they form an incredibly small fraction of the whole population.</span> <a href="#fnref-galaxy-1" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-galaxy-2" value="2" data-fn-id="2"><span class="fn-text">Meaning one of the stars in the binary goes supernova.</span> <a href="#fnref-galaxy-2" class="fn-back" title="Back to text">↩</a></li>
         </ol>
       </section>
     </article>
@@ -2122,10 +2294,10 @@
 
       <div class="prose">
         <p>
-          Quiet black holes with luminous companions are pretty rare in the full census, but they're incredibly useful to measuring the black holes. POSYDON fills the middle ground between tight post-CE systems and wide non-interacting binaries with a solid <span class="tip" tabindex="0" data-tip="Mass transfer that in a state of equilibrium, leading to more long term transfer of mass instead of a merger.">stable mass transfer</span> population. Rapid codes mostly miss that middle. Gaia BH1 and BH2 sit near it, which makes them look a little less like weirdos in mass-period space (matching every observed detail is still tough).
+          Quiet black holes with luminous companions<sup class="fn-ref" id="fnref-observe-1" data-fn-id="1"><a href="#fn-observe-1">1</a></sup> are pretty rare in the full census, but they're incredibly useful for measuring those black holes. POSYDON fills the middle ground between tight post-CE systems and wide non-interacting binaries with a solid <span class="tip" tabindex="0" data-tip="Mass transfer that is in a state of equilibrium, leading to more long-term transfer of mass instead of a merger.">stable mass transfer</span> population. Rapid codes mostly miss that middle. Gaia BH1 and BH2 sit near it, which makes them look a little less like weirdos in mass-period space (matching every observed detail is still tough).
         </p>
         <p>
-          <strong>Microlensing, briefly.</strong> A dark foreground mass — say a quiet black hole — can briefly bend and brighten light from a background bulge star. You usually can't resolve the warp. What you <em>do</em> see is a smooth brightening and fading: the light curve. Closer alignments (smaller impact parameter) make taller peaks. The green circle in the figure is the Einstein ring scale set by the lens mass and geometry; the two colored dots are the lensed images of the source.
+          <strong>Microlensing, briefly.</strong> A dark foreground mass — say a quiet black hole — can briefly bend and brighten light from a background bulge star. You usually can't resolve the warp. What you <em>do</em> see is a smooth brightening and fading: the light curve. Closer alignments (smaller impact parameter) make taller peaks. The green circle in the figure is the Einstein ring scale set by the lens mass and geometry; the blue and red arcs are the two lensed images of the source.
         </p>
       </div>
 
@@ -2148,8 +2320,12 @@
               <button type="button" data-play="0">Pause</button>
             </div>
             <div class="status" id="micro-status" style="background:var(--panel-soft);border-color:var(--line);color:var(--ink-soft)">
-              <strong id="micro-A" class="tip" tabindex="0" data-tip="Relative brightness. I.e. 1 is as bright as the star was beforehand, 2 is twice as bright, 3 is three times, and so on.">A ≈ <span id="micro-A-val">1.00</span></strong>
+              <strong id="micro-A" class="tip" tabindex="0" data-tip="Relative brightness. I.e., 1 is as bright as the star was beforehand, 2 is twice as bright, 3 is three times, and so on.">A ≈ <span id="micro-A-val">1.00</span></strong>
               <span class="meta" id="micro-meta">Source far from the lens · baseline brightness</span>
+            </div>
+            <div class="control micro-time-row">
+              <label>Time <span class="val" id="micro-t-val">−5.20 t<sub>E</sub></span></label>
+              <input type="range" id="micro-t" min="-5.2" max="5.2" step="0.01" value="-5.2" />
             </div>
           </div>
           <div class="micro-duo">
@@ -2178,6 +2354,7 @@
           <span><i style="background:#e35d6a;border-radius:40% / 55%"></i> Minor image (arc)</span>
           <span><i style="background:#7eb6ff;border-radius:2px"></i> Roman (observer)</span>
         </div>
+        <p class="micro-credit">Based on the <a href="https://www.astronomy.ohio-state.edu/gaudi.1/Movies/point.gif" target="_blank" rel="noopener">amazing diagram</a> by Scott Gaudi</p>
       </div>
 
       <div class="prose">
@@ -2192,6 +2369,13 @@
       <div class="callout">
         Across core-collapse variants, the qualitative map holds: <strong>low-mass BH-BH ≈ stable mass transfer</strong>; <strong>narrow high-mass feature ≈ wind-driven non-interacting progenitors</strong>. Metallicity and winds decide where that feature sits, or whether it shows up at all.
       </div>
+
+      <section class="footnotes" id="footnotes-observe">
+        <h3>Notes</h3>
+        <ol>
+          <li id="fn-observe-1" value="1" data-fn-id="1"><span class="fn-text">I.e. a black hole with a companion that is pretty much anything <strong>except</strong> a black hole, neutron star, or white dwarf.</span> <a href="#fnref-observe-1" class="fn-back" title="Back to text">↩</a></li>
+        </ol>
+      </section>
     </article>
 
     <article class="chapter" id="takeaways">
@@ -2220,11 +2404,18 @@
   <div class="bh-overlay" id="bh-overlay" aria-hidden="true"></div>
   <div class="bh-core" id="bh-core" aria-hidden="true"></div>
   <button type="button" class="bh-lens-hint" id="bh-lens-hint" aria-hidden="true">
-    Go back to normal
+    Back to normal
   </button>
   <div class="bh-ghost-ui" id="bh-ghost-ui" aria-hidden="true"></div>
   <div class="bh-lens-rude" id="bh-lens-rude" role="status" aria-live="polite" aria-hidden="true">
     well that was awfully rude
+  </div>
+
+  <div class="mobile-notice" id="mobile-notice" hidden role="dialog" aria-modal="true" aria-labelledby="mobile-notice-title">
+    <div class="mobile-notice-card">
+      <p id="mobile-notice-title"><strong>Heads up:</strong> this interactive guide isn’t optimized for phones or small screens. Figures, orbit cams, and glossary tips work best on a laptop or desktop.</p>
+      <button type="button" id="mobile-notice-ok">Got it — continue anyway</button>
+    </div>
   </div>
 
   <div class="deep-root" id="deep-root" hidden aria-hidden="true">
@@ -2473,6 +2664,131 @@
         envTipState.raf = requestAnimationFrame(loop);
       };
       envTipState.raf = requestAnimationFrame(loop);
+    }
+
+    // ═══════════════════════════════════════════
+    // Tip viz: eccentricity — circular vs e=0.5 binary
+    // ═══════════════════════════════════════════
+    const eccTipState = { raf: 0, last: 0, t: 0 };
+
+    function paintEccentricityTip(canvas, t) {
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.clientWidth || 360;
+      const H = canvas.clientHeight || Math.round(W * 9 / 16);
+      if (canvas.width !== Math.floor(W * dpr) || canvas.height !== Math.floor(H * dpr)) {
+        canvas.width = Math.floor(W * dpr);
+        canvas.height = Math.floor(H * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#0a0e16";
+      ctx.fillRect(0, 0, W, H);
+
+      const keplerE = (M, e) => {
+        let E = M;
+        for (let i = 0; i < 8; i++) E = M + e * Math.sin(E);
+        return E;
+      };
+
+      const drawBinaryPanel = (cx, cy, aPx, e, label) => {
+        const M = t * 1.15;
+        const E = keplerE(M, e);
+        const cosE = Math.cos(E);
+        const sinE = Math.sin(E);
+        const a1 = aPx; // equal-mass: each star's semi-major around COM
+        const bFac = Math.sqrt(Math.max(0, 1 - e * e));
+        // Primary path: ellipse with COM at the right-hand focus (center at -a e)
+        // Secondary: point-reflected through COM → separate ellipse, COM at left focus
+        const orbitPoint = (Ei, sign) => {
+          const ox = sign * a1 * (Math.cos(Ei) - e);
+          const oy = sign * a1 * bFac * Math.sin(Ei);
+          return [cx + ox, cy + oy];
+        };
+        const drawOrbit = (sign, stroke) => {
+          ctx.beginPath();
+          for (let i = 0; i <= 96; i++) {
+            const [ox, oy] = orbitPoint((i / 96) * Math.PI * 2, sign);
+            if (i === 0) ctx.moveTo(ox, oy);
+            else ctx.lineTo(ox, oy);
+          }
+          ctx.closePath();
+          ctx.strokeStyle = stroke;
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+        };
+        drawOrbit(1, "rgba(240, 193, 74, 0.4)");   // primary (gold)
+        drawOrbit(-1, "rgba(126, 182, 255, 0.45)"); // secondary (blue)
+
+        // COM
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(232, 236, 242, 0.7)";
+        ctx.fill();
+
+        // Stars
+        const rStar = Math.max(5, aPx * 0.14);
+        const drawStar = (sx, sy, color) => {
+          const g = ctx.createRadialGradient(sx - rStar * 0.3, sy - rStar * 0.3, 0, sx, sy, rStar);
+          g.addColorStop(0, "#fff8e0");
+          g.addColorStop(0.45, color);
+          g.addColorStop(1, "rgba(0,0,0,0.35)");
+          ctx.beginPath();
+          ctx.arc(sx, sy, rStar, 0, Math.PI * 2);
+          ctx.fillStyle = g;
+          ctx.fill();
+        };
+        const [x1, y1] = orbitPoint(E, 1);
+        const [x2, y2] = orbitPoint(E, -1);
+        drawStar(x1, y1, "#f0c14a");
+        drawStar(x2, y2, "#7eb6ff");
+
+        // Separation line
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.font = '600 0.78rem "Fraunces", Georgia, serif';
+        ctx.fillStyle = "rgba(232, 236, 242, 0.92)";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(label, cx, cy + aPx * (1 + e) + rStar + 10);
+      };
+
+      const mid = W * 0.5;
+      const cy = H * 0.42;
+      const aPx = Math.min(W * 0.16, H * 0.28);
+      drawBinaryPanel(W * 0.26, cy, aPx, 0, "e = 0");
+      drawBinaryPanel(W * 0.74, cy, aPx, 0.5, "e = 0.5");
+
+      // Divider
+      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(mid, H * 0.12);
+      ctx.lineTo(mid, H * 0.78);
+      ctx.stroke();
+    }
+
+    function ensureEccTipAnim() {
+      if (eccTipState.raf) return;
+      eccTipState.last = performance.now();
+      const loop = (now) => {
+        const canvases = document.querySelectorAll(".ecc-tip-canvas");
+        if (!canvases.length) {
+          eccTipState.raf = 0;
+          return;
+        }
+        const dt = Math.min(0.05, (now - (eccTipState.last || now)) / 1000);
+        eccTipState.last = now;
+        eccTipState.t += dt;
+        canvases.forEach((c) => paintEccentricityTip(c, eccTipState.t));
+        eccTipState.raf = requestAnimationFrame(loop);
+      };
+      eccTipState.raf = requestAnimationFrame(loop);
     }
 
     // ═══════════════════════════════════════════
@@ -2804,27 +3120,32 @@
       );
       tipImages.set("incredibly pretty nebulae", "assets/crescent-nebula.jpg");
       tipImages.set("x-ray binaries", "assets/xrb.jpg");
-      // Nested gag image tip inside metallicity
-      glossary.set(
-        "everything heavier than helium",
-        "In astronomy, “metals” means anything that isn’t hydrogen or helium. Chemists hate this chart."
-      );
+      // Nested gag image tip inside metallicity (image only — no caption)
+      glossary.set("everything heavier than helium", "");
       tipImages.set("everything heavier than helium", "assets/astronomer-periodic-table.png");
-      // Nested / inline GW viz tip (Gravitational-wave only — not LIGO/Virgo/KAGRA)
-      const gwTip =
-        "Ripples in spacetime from accelerating masses — a tight black-hole binary wrings the fabric as it spirals in. LIGO/Virgo/KAGRA listen for the chirp when they merge.";
-      ["gravitational-wave", "gravitational wave", "gravitational waves"].forEach((k) => {
-        glossary.set(k, gwTip);
-        tipViz.set(k, "gw");
-      });
-      // Nested envelope viz (from common-envelope tip text)
+      // Nested-only glossary tips (not chapter wikilinks; seeded from vault)
       if (!glossary.has("envelope")) {
         glossary.set(
           "envelope",
-          "The outer shell of a star — the gas layers outside the core, where fusion is not running. In giants this envelope can be huge compared with the dense core inside."
+          "The outer shell of a star. Specifically the gas layers outside the core, where fusion is not occurring. In giants this envelope can be particularly huge when compared to the dense core."
         );
       }
+      if (!glossary.has("esa")) {
+        glossary.set("esa", "European Space Agency — Europe's NASA equivalent.");
+      }
+      if (!glossary.has("roche-lobe")) {
+        glossary.set(
+          "roche-lobe",
+          "The radius around a star in a binary where it can hold onto its own mass. Past this radius, mass will no longer be bound to that star."
+        );
+      }
+      // Nested / inline GW viz tip (Gravitational-wave only — not LIGO/Virgo/KAGRA)
+      // Tip text comes from the vault / data-tip; only wire the canvas here.
+      ["gravitational-wave", "gravitational wave", "gravitational waves"].forEach((k) => {
+        tipViz.set(k, "gw");
+      });
       tipViz.set("envelope", "envelope");
+      ["eccentricity", "eccentricities", "eccentric"].forEach((k) => tipViz.set(k, "eccentricity"));
 
       if (!glossary.size && !document.querySelector(".fn-ref")) return;
 
@@ -3060,6 +3381,17 @@
         lens.feedTarget = Math.min(lens.feedMax, lens.feedTarget + lens.perEat);
       }
 
+      function swallowWord(w, cx, cy) {
+        w.eaten = true;
+        w.eatX = cx - (w.rw || 0);
+        w.eatY = cy - (w.rh || 0);
+        feedFromWord();
+        w.el.style.transition = "opacity 0.14s ease, transform 0.14s ease";
+        w.el.style.opacity = "0";
+        w.el.style.transform = `translate3d(${w.eatX}px, ${w.eatY}px, 0) scale(0.15)`;
+        maybeShowRudePopup();
+      }
+
       function placeGhostItems(pull, now) {
         const cx = pointer.x;
         const cy = pointer.y;
@@ -3084,22 +3416,37 @@
           core.style.transform = `translate3d(${cx}px, ${cy}px, 0) scale(${scale})`;
           core.style.opacity = String(Math.min(1, 0.35 + pull * 1.5 + lens.feed * 0.25));
         }
+        // Exit: resurrect swallowed glyphs so real copy doesn't pop in at the end
+        const exitMs = 900;
+        const exitU = lens.exit
+          ? Math.min(1, Math.max(0, (now - lens.exitT0) / exitMs))
+          : 0;
         // Only the near field really falls in; far words stay put
         const nearR = 220;
         const farR = 520;
         for (const w of lens.items) {
-          if (w.eaten) continue;
+          if (w.eaten) {
+            if (!lens.exit) continue;
+            // Soft stagger so the page rebuilds instead of flashing as one sheet
+            const stagger = ((w.seed % (Math.PI * 2)) / (Math.PI * 2)) * 0.28;
+            const localU = Math.min(1, Math.max(0, (exitU - stagger) / (1 - stagger)));
+            const t = easeInOut(localU);
+            const fromX = w.eatX != null ? w.eatX : cx - (w.rw || 0);
+            const fromY = w.eatY != null ? w.eatY : cy - (w.rh || 0);
+            const x = fromX + (w.x0 - fromX) * t;
+            const y = fromY + (w.y0 - fromY) * t;
+            const s = 0.15 + 0.85 * t;
+            w.el.style.transition = "none";
+            w.el.style.opacity = String(t);
+            w.el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
+            continue;
+          }
           const dx = cx - w.cx;
           const dy = cy - w.cy;
           const dist = Math.hypot(dx, dy) || 1;
-          // BH passed over this word → swallow it
-          if (dist < swallowR + (w.rw || 4)) {
-            w.eaten = true;
-            feedFromWord();
-            w.el.style.transition = "opacity 0.14s ease, transform 0.14s ease";
-            w.el.style.opacity = "0";
-            w.el.style.transform = `translate3d(${cx - (w.rw || 0)}px, ${cy - (w.rh || 0)}px, 0) scale(0.15)`;
-            maybeShowRudePopup();
+          // BH passed over this word → swallow it (not during exit)
+          if (!lens.exit && dist < swallowR + (w.rw || 4)) {
+            swallowWord(w, cx, cy);
             continue;
           }
           const ux = dx / dist;
@@ -3124,13 +3471,8 @@
           // Also swallow if the moved glyph has crossed the horizon
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
-          if (Math.hypot(cx - curCx, cy - curCy) < swallowR) {
-            w.eaten = true;
-            feedFromWord();
-            w.el.style.transition = "opacity 0.14s ease, transform 0.14s ease";
-            w.el.style.opacity = "0";
-            w.el.style.transform = `translate3d(${cx - (w.rw || 0)}px, ${cy - (w.rh || 0)}px, 0) scale(0.15)`;
-            maybeShowRudePopup();
+          if (!lens.exit && Math.hypot(cx - curCx, cy - curCy) < swallowR) {
+            swallowWord(w, cx, cy);
             continue;
           }
           w.el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg)`;
@@ -3551,8 +3893,24 @@
         }
       }
 
+      function isTouchUi() {
+        return (
+          window.matchMedia("(pointer: coarse)").matches ||
+          window.matchMedia("(max-width: 720px)").matches
+        );
+      }
+      function syncTouchUiClass() {
+        document.documentElement.classList.toggle("touch-ui", isTouchUi());
+      }
+      syncTouchUiClass();
+      try {
+        window.matchMedia("(pointer: coarse)").addEventListener("change", syncTouchUiClass);
+        window.matchMedia("(max-width: 720px)").addEventListener("change", syncTouchUiClass);
+      } catch (_) { /* older browsers */ }
+
       function scheduleHide(fromDepth) {
         clearHide();
+        if (isTouchUi()) return; // tap mode: tips stay until dismiss
         const richOpen = open.some((o) => o.bubble.classList.contains("tip-rich"));
         hideTimer = setTimeout(() => {
           // Cursor may still be bridging into a bubble / nested tip
@@ -3563,13 +3921,16 @@
 
       function placeBubble(bubble, anchor, depth) {
         const ar = anchor.getBoundingClientRect();
-        const pad = 10;
+        const pad = isTouchUi() ? 12 : 10;
         const hasImg = bubble.classList.contains("tip-has-image");
         const hasViz = bubble.classList.contains("tip-has-viz");
         const isRich = bubble.classList.contains("tip-rich");
         const maxW = isRich
-          ? Math.min(512, window.innerWidth * 0.92)
-          : Math.min(hasImg ? 300 : hasViz ? 460 : 272, window.innerWidth * (hasImg || hasViz ? 0.92 : 0.72));
+          ? Math.min(512, window.innerWidth - pad * 2)
+          : Math.min(
+              hasImg ? 300 : hasViz ? 460 : 272,
+              window.innerWidth * (hasImg || hasViz ? 0.94 : isTouchUi() ? 0.88 : 0.72)
+            );
         bubble.style.maxWidth = `${maxW}px`;
         bubble.style.width = isRich || hasViz ? `${maxW}px` : "max-content";
         bubble.style.visibility = "hidden";
@@ -3617,18 +3978,21 @@
       function showTip(anchor) {
         const tipText = tipTextFor(anchor);
         const deepId = anchor.getAttribute && anchor.getAttribute("data-deep");
-        if (!tipText && !deepId) return;
-        const depth = depthOf(anchor);
-        const skipKey = anchor.classList.contains("fn-ref")
+        const imgSrcEarly = anchor.getAttribute && anchor.getAttribute("data-image");
+        const skipKeyEarly = anchor.classList.contains("fn-ref")
           ? ""
           : anchor.textContent.replace(/\s+/g, " ").trim().toLowerCase();
+        const imgFromMap = tipImages.get(skipKeyEarly);
+        if (!tipText && !deepId && !imgSrcEarly && !imgFromMap) return;
+        const depth = depthOf(anchor);
+        const skipKey = skipKeyEarly;
         clearHide();
         if (open.length && open[open.length - 1].anchor === anchor) return;
         clearFrom(depth);
         const bubble = document.createElement("div");
         bubble.className = "tip-bubble";
         bubble.dataset.depth = String(depth);
-        const imgSrc = anchor.getAttribute && anchor.getAttribute("data-image");
+        const imgSrc = imgSrcEarly || imgFromMap || "";
         const vizId =
           (anchor.getAttribute && anchor.getAttribute("data-viz")) ||
           tipViz.get(skipKey) ||
@@ -3669,10 +4033,14 @@
           bubble.classList.add("tip-has-viz");
           html += `<div class="tip-env-viz"><canvas class="env-tip-canvas" width="320" height="320" aria-hidden="true"></canvas></div>`;
           html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
+        } else if (vizId === "eccentricity") {
+          bubble.classList.add("tip-has-viz");
+          html += `<div class="tip-ecc-viz"><canvas class="ecc-tip-canvas" width="420" height="236" aria-hidden="true"></canvas></div>`;
+          html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
         } else if (imgSrc) {
           bubble.classList.add("tip-has-image");
           html += `<img src="${escHtml(imgSrc)}" alt="" loading="eager" decoding="async"/>`;
-          html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
+          if (tipText) html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
         } else {
           html = linkify(tipText, skipKey);
         }
@@ -3695,6 +4063,9 @@
         if (vizId === "envelope" && typeof ensureEnvTipAnim === "function") {
           requestAnimationFrame(() => ensureEnvTipAnim());
         }
+        if (vizId === "eccentricity" && typeof ensureEccTipAnim === "function") {
+          requestAnimationFrame(() => ensureEccTipAnim());
+        }
       }
 
       // Rich tips: maximize icon opens the focus panel; click/keyboard on .tip-deep does too
@@ -3712,6 +4083,26 @@
           e.preventDefault();
           clearFrom(0);
           if (typeof openDeepNote === "function") openDeepNote(deepTip.getAttribute("data-deep"));
+          return;
+        }
+
+        // Touch / narrow screens: tap to toggle tips (hover is unreliable)
+        if (!isTouchUi()) return;
+        if (e.target.closest && e.target.closest(".tip-fs, .tip-gw-fs, a[href]")) return;
+        const t = e.target.closest && e.target.closest(TIP_ANCHOR);
+        if (t) {
+          e.preventDefault();
+          clearHide();
+          const existing = open.findIndex((o) => o.anchor === t);
+          if (existing >= 0) {
+            clearFrom(open[existing].depth);
+            return;
+          }
+          showTip(t);
+          return;
+        }
+        if (!(e.target.closest && e.target.closest(".tip-bubble"))) {
+          clearFrom(0);
         }
       });
       document.addEventListener("keydown", (e) => {
@@ -3735,6 +4126,7 @@
       document.addEventListener(
         "pointerover",
         (e) => {
+          if (isTouchUi()) return;
           if (e.target.closest && e.target.closest(".tip-bubble")) clearHide();
           const t = e.target.closest && e.target.closest(TIP_ANCHOR);
           if (!t) return;
@@ -3750,6 +4142,7 @@
       document.addEventListener(
         "pointerout",
         (e) => {
+          if (isTouchUi()) return;
           const leaving = e.target.closest && e.target.closest(`${TIP_ANCHOR}, .tip-bubble`);
           if (!leaving) return;
           const to = e.relatedTarget;
@@ -3766,16 +4159,27 @@
       );
 
       document.addEventListener("focusin", (e) => {
+        if (isTouchUi()) return;
         const t = e.target.closest && e.target.closest(TIP_ANCHOR);
         if (t) showTip(t);
       });
       document.addEventListener("focusout", (e) => {
+        if (isTouchUi()) return;
         const t = e.target.closest && e.target.closest(TIP_ANCHOR);
         if (!t) return;
         const to = e.relatedTarget;
         if (isTipUi(to)) return;
         scheduleHide(depthOf(t));
       });
+
+      // Reposition open tips on rotate / resize (mobile keyboard etc.)
+      window.addEventListener(
+        "resize",
+        () => {
+          open.forEach((o) => placeBubble(o.bubble, o.anchor, o.depth));
+        },
+        { passive: true }
+      );
     })();
 
     // ═══════════════════════════════════════════
@@ -4406,13 +4810,16 @@
       };
     }
 
+    const msunTip =
+      '<span class="tip" tabindex="0" data-tip="Solar masses. E.g. 2 M☉ is twice the mass of the Sun">M☉</span>';
+
     function updateLabels() {
       document.getElementById("vns-val").textContent = `${kickUI.vns} km/s`;
-      document.getElementById("mbh-val").textContent = `${kickUI.mbh.toFixed(1)} M☉`;
-      document.getElementById("m2-val").textContent = `${kickUI.m2.toFixed(1)} M☉`;
+      document.getElementById("mbh-val").innerHTML = `${kickUI.mbh.toFixed(1)} ${msunTip}`;
+      document.getElementById("m2-val").innerHTML = `${kickUI.m2.toFixed(1)} ${msunTip}`;
       document.getElementById("a-val").textContent = `${kickUI.a.toFixed(2)} AU`;
       document.getElementById("theta-val").textContent = `${kickUI.theta}°`;
-      document.getElementById("dm-val").textContent = `${kickUI.dm.toFixed(1)} M☉`;
+      document.getElementById("dm-val").innerHTML = `${kickUI.dm.toFixed(1)} ${msunTip}`;
     }
 
     function updateStatus() {
@@ -4696,9 +5103,9 @@
 
       ctx.fillStyle = v.muted;
       ctx.font = "500 11px IBM Plex Mono";
-      const phaseLabel = phase === "pre" ? "pre-SN circular orbit"
+      const phaseLabel = phase === "pre" ? "pre-supernova circular orbit"
         : phase === "flash" ? "core collapse + kick"
-        : phase === "blend" ? "looping back to pre-SN"
+        : phase === "blend" ? "looping back to pre-supernova"
         : (sim.bound ? "post-SN bound orbit" : "post-SN unbound escape");
       ctx.fillText(phaseLabel, 14, 24);
     }
@@ -4748,7 +5155,7 @@
       { id: "bhstar-m", name: "BH+star mergers", pct: 4, color: "#8a6b3d", colorDark: "#c4a06a", group: "isolated",
         detail: "The BH survives the kick, then later merges with its companion after unstable MT or a failed CE." },
       { id: "dco-m", name: "DCO mergers", pct: 1, color: "#6e7686", colorDark: "#9aa3b2", group: "isolated",
-        detail: "Rare double-compact mergers within 10 Gyr. Only channel reaching ≳30-50 M☉ remnants at solar Z." },
+        detail: "Rare double-compact mergers within 10 Gyr. Among the channels that can reach ≳30–50 M☉ remnants at solar Z." },
       { id: "bhbh", name: "Detached BH-BH", pct: 19, color: "#141820", colorDark: "#c5ccd8", group: "binary",
         detail: "Dominant surviving binary class: stable-MT (broad, lower-mass) plus the wind-driven ~13 M☉ channel." },
       { id: "otherbin", name: "BH + other", pct: 3, color: "#3d7a5c", colorDark: "#5cb88a", group: "binary",
@@ -4992,14 +5399,14 @@
       const yTicks = zLevel === 0 ? [0, 30, 60, 90, 120] : zLevel === 1 ? [0, 15, 30, 45, 60] : [0, 8, 16, 24, 32];
       const plateau = (zLevel === 2 && showWind) ? `
         <line x1="${xScale(80)}" y1="${yScale(13)}" x2="${xScale(140)}" y2="${yScale(13)}" stroke="${v.accent}" stroke-width="1.7" stroke-dasharray="5 4" opacity="0.7"/>
-        <text x="${xScale(108)}" y="${yScale(13) - 8}" fill="${v.accent}" font-family="IBM Plex Mono" font-size="11">~13 Msun plateau</text>` : "";
+        <text x="${xScale(108)}" y="${yScale(13) - 8}" fill="${v.accent}" font-family="IBM Plex Mono" font-size="11">~13 M☉ plateau</text>` : "";
       svg.innerHTML = `
         <rect width="${W}" height="${H}" fill="${v.paperDeep}"/>
         ${yTicks.map((t) => `<line x1="${pad.l}" y1="${yScale(t)}" x2="${W - pad.r}" y2="${yScale(t)}" stroke="${grid}"/>
           <text x="${pad.l - 8}" y="${yScale(t) + 4}" text-anchor="end" fill="${v.muted}" font-family="IBM Plex Mono" font-size="11">${t}</text>`).join("")}
         ${[20,40,60,80,100,120,140].map((t) => `<text x="${xScale(t)}" y="${H - pad.b + 18}" text-anchor="middle" fill="${v.muted}" font-family="IBM Plex Mono" font-size="11">${t}</text>`).join("")}
-        <text x="16" y="${H / 2}" fill="${v.soft}" font-family="Newsreader" font-size="13" transform="rotate(-90 16 ${H / 2})">M_BH,1 / Msun</text>
-        <text x="${W / 2}" y="${H - 8}" text-anchor="middle" fill="${v.soft}" font-family="Newsreader" font-size="13">M_ZAMS,1 / Msun</text>
+        <text x="16" y="${H / 2}" fill="${v.soft}" font-family="Newsreader" font-size="13" transform="rotate(-90 16 ${H / 2})">M_BH,1 / M☉</text>
+        <text x="${W / 2}" y="${H - 8}" text-anchor="middle" fill="${v.soft}" font-family="Newsreader" font-size="13">M_ZAMS,1 / M☉</text>
         <g>${smt}</g><g>${wind}</g>${plateau}
         <g font-family="Schibsted Grotesk" font-size="12" fill="${v.soft}">
           <rect x="${W - 196}" y="16" width="11" height="11" rx="2" fill="${smtCol}"/><text x="${W - 178}" y="26">Stable mass transfer</text>
@@ -5045,7 +5452,7 @@
         { name: "BH+star mergers", v: 1 + t * 0.35, color: themeIsDark() ? "#7eb0e0" : "#3d74c4" },
         { name: "DCO mergers", v: 1 + t * 1.1, color: themeIsDark() ? "#c5ccd8" : "#141820" },
         { name: "Detached BH-BH", v: 1 + t * 0.15, color: themeIsDark() ? "#8a93a3" : "#5c6575" },
-        { name: "Unequal detached", v: 1 - t * 0.35, color: v.disrupt },
+        { name: "Detached BH+NS/WD/star", v: 1 - t * 0.35, color: v.disrupt },
       ];
       document.getElementById("ce-bars").innerHTML = bars.map((b) => `
         <div style="margin-bottom:0.48rem">
@@ -5482,7 +5889,7 @@
         ctx.stroke();
       }
 
-      // galactic center (hover → full name + Sag A*)
+      // galactic center (hover → full name + Sgr A*)
       const gc = galProject(0, 0, 0, w, h);
       ctx.fillStyle = "#e8b15a";
       ctx.beginPath(); ctx.arc(gc.X, gc.Y, 4, 0, Math.PI * 2); ctx.fill();
@@ -5492,7 +5899,7 @@
       const gcHit = Math.hypot(gal.mouseX - gc.X, gal.mouseY - gc.Y) < 16;
       if (gcHit && !gal.hoverCluster) {
         const label = "Galactic center";
-        const hint = "Sag A*";
+        const hint = "Sgr A*";
         ctx.font = "600 12px IBM Plex Mono";
         const tw = ctx.measureText(label).width;
         ctx.font = "500 10px Schibsted Grotesk";
@@ -5613,10 +6020,10 @@
 
     rebuildGalPath();
     document.getElementById("gal-legend").innerHTML = `
-      <span><i style="background:#3db8c5"></i>birth / pre-SN</span>
+      <span><i style="background:#3db8c5"></i>birth / pre-supernova</span>
       <span><i style="background:#c2472a"></i>supernova</span>
       <span><i style="background:#e8eaef"></i>BH path</span>
-      <span><i style="background:#c9a227"></i>companion</span>`;
+      <span><i style="background:#c9a227"></i>Companion path</span>`;
 
     const galCanvas = document.getElementById("gal-canvas");
     function galPointerPos(e) {
@@ -5705,9 +6112,21 @@
       const tag = (e.target && e.target.tagName) || "";
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if (e.code === "Space" || e.key === " ") {
-        if (!galIsFullscreen()) return;
-        e.preventDefault();
-        setGalPlaying(!gal.playing);
+        if (galIsFullscreen()) {
+          e.preventDefault();
+          setGalPlaying(!gal.playing);
+          return;
+        }
+        // Microlensing play/pause when that section (or its fullscreen stage) is active
+        const microStage = document.getElementById("micro-stage-3d");
+        const microFs =
+          microStage &&
+          (document.fullscreenElement === microStage ||
+            document.webkitFullscreenElement === microStage);
+        if (typeof micro !== "undefined" && (micro.inView || microFs)) {
+          e.preventDefault();
+          if (typeof setMicroPlaying === "function") setMicroPlaying(!micro.playing);
+        }
         return;
       }
       if (e.code === "KeyR" || e.key === "r" || e.key === "R") {
@@ -5771,6 +6190,7 @@
       t: -5.2,      // time in Einstein-crossing units
       spd: 1,
       playing: true,
+      scrubbing: false, // true while dragging the time slider
       inView: false, // only advance while #micro is on screen (keeps the early start)
       trail: [],    // sampled light-curve points for the current pass
       // orbit camera for the 3D panel (radians)
@@ -6128,12 +6548,13 @@
         const srcR = MICRO_RHO * fracS;
         const srcX = (barLeft + barRight) * 0.5;
         const srcY = barY + 3 + srcR;
+        // Match the sky-panel source star (solid disk, not a hollow ring)
         ctx.beginPath();
         ctx.arc(srcX, srcY, srcR, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(240,193,74,0.3)";
+        ctx.fillStyle = "rgba(240,193,74,0.85)";
         ctx.fill();
         ctx.strokeStyle = "#f0c14a";
-        ctx.lineWidth = 1.8;
+        ctx.lineWidth = 1.4;
         ctx.stroke();
       }
 
@@ -6338,14 +6759,38 @@
         ctx.stroke();
       }
 
-      // Bent light rays — major always; minor only once the source is close enough
-      // that a second path is pedagogically meaningful (far away ≈ one path).
+      // Bent light rays through the true image positions (lens map), not a fixed
+      // ±side. A fixed +major/−minor bend looked fine on approach and wrong once
+      // the source passed the BH (ray still warped off the opposite side).
       const rayAlpha = 0.35 + 0.5 * Math.min(1, (st.A - 1) / 5);
-      const drawRay = (side, color, alphaScale = 1) => {
-        const bend = 0.75 + 0.3 * Math.min(1.3, 1 / Math.max(0.15, st.u));
+      const edgeOn = 1 - clamp(pitch / (Math.PI * 0.5), 0, 1);
+      const img = microLensMap(st.source[0], st.source[1]);
+      // Undeflected pierce of source→Roman at the lens plane (for far-source straightness)
+      const fLens = (src.z - lens.z) / Math.max(1e-6, src.z - obs.z);
+      const straightMid = {
+        x: src.x + (obs.x - src.x) * fLens,
+        y: src.y + (obs.y - src.y) * fLens,
+        z: lens.z,
+      };
+      const drawRayToImage = (imgXY, color, alphaScale = 1, { exaggerate = 1, straightMix = 0 } = {}) => {
+        // Same lateral scales as source placement so far-away paths go nearly straight
+        const sx = 0.45;
+        const sy = 0.38;
+        const ix = imgXY[0] * exaggerate;
+        const iy = imgXY[1] * exaggerate;
+        const bentX = lens.x + ix * sx;
+        // Edge-on: boost the image's own vertical offset (major above / minor below
+        // when u0>0); top-down: trust the lens-plane (x,y) as drawn.
+        const bentY =
+          lens.y +
+          0.06 +
+          iy * sy * (0.45 + 0.9 * edgeOn) +
+          ix * sx * 0.05 * (1 - edgeOn) +
+          wellY(bentX, lens.z) * 0.1;
+        const mix = clamp(straightMix, 0, 1);
         const mid = {
-          x: lens.x + side * bend,
-          y: lens.y + 0.18 + wellY(lens.x + side * 0.5, lens.z) * 0.2,
+          x: bentX * (1 - mix) + straightMid.x * mix,
+          y: bentY * (1 - mix) + straightMid.y * mix,
           z: lens.z,
         };
         const a = project(src);
@@ -6360,10 +6805,13 @@
         ctx.stroke();
         ctx.globalAlpha = 1;
       };
-      drawRay(1, "#5b9cff");
+      // Major: mostly straight when far; only bends in as |u| drops
+      const majorStraight = clamp((st.u - 0.55) / 2.6, 0, 1);
+      drawRayToImage(img.plus, "#5b9cff", 1, { straightMix: majorStraight });
       // Fade the minor image path in as |u| drops below ~2.2 Einstein radii
       const minorFade = st.u >= 2.2 ? 0 : Math.min(1, (2.2 - st.u) / 0.9);
-      if (minorFade > 0.02) drawRay(-1, "#e35d6a", minorFade);
+      // Slightly more exaggerated bend than the true image radius (readability)
+      if (minorFade > 0.02) drawRayToImage(img.minus, "#e35d6a", minorFade, { exaggerate: 1.49 });
 
       // Source star
       {
@@ -6625,25 +7073,66 @@
       micro.trail = [];
     }
 
+    function microRebuildTrailToNow() {
+      microResetTrail();
+      for (let t = -micro.tmax; t <= micro.t + 1e-9; t += 0.04) {
+        micro.trail.push({ t, A: microMag(Math.hypot(t, micro.u0)) });
+      }
+    }
+
+    function syncMicroTimeUI() {
+      const el = document.getElementById("micro-t");
+      const val = document.getElementById("micro-t-val");
+      if (el && !micro.scrubbing) el.value = String(micro.t);
+      if (val) {
+        const sign = micro.t < 0 ? "−" : "";
+        val.innerHTML = `${sign}${Math.abs(micro.t).toFixed(2)} t<sub>E</sub>`;
+      }
+    }
+
+    function setMicroTime(t, { pause = false } = {}) {
+      micro.t = clamp(t, -micro.tmax, micro.tmax);
+      if (pause) setMicroPlaying(false);
+      microRebuildTrailToNow();
+      syncMicroTimeUI();
+      drawMicro();
+    }
+
     document.getElementById("micro-u0").addEventListener("input", (e) => {
       micro.u0 = parseFloat(e.target.value);
       document.getElementById("micro-u0-val").textContent = micro.u0.toFixed(2);
-      microResetTrail();
-      // keep current t; rebuild trail up to now
-      for (let t = -micro.tmax; t <= micro.t; t += 0.04) {
-        micro.trail.push({ t, A: microMag(Math.hypot(t, micro.u0)) });
-      }
+      microRebuildTrailToNow();
       drawMicro();
     });
     document.getElementById("micro-spd").addEventListener("input", (e) => {
       micro.spd = parseFloat(e.target.value);
       document.getElementById("micro-spd-val").textContent = `${micro.spd.toFixed(2)}×`;
     });
+    {
+      const tSlider = document.getElementById("micro-t");
+      if (tSlider) {
+        tSlider.min = String(-micro.tmax);
+        tSlider.max = String(micro.tmax);
+        tSlider.value = String(micro.t);
+        const beginScrub = () => { micro.scrubbing = true; };
+        const endScrub = () => { micro.scrubbing = false; syncMicroTimeUI(); };
+        tSlider.addEventListener("pointerdown", beginScrub);
+        tSlider.addEventListener("pointerup", endScrub);
+        tSlider.addEventListener("pointercancel", endScrub);
+        tSlider.addEventListener("input", (e) => {
+          setMicroTime(parseFloat(e.target.value), { pause: true });
+        });
+      }
+    }
+    function setMicroPlaying(on) {
+      micro.playing = !!on;
+      document.querySelectorAll("#micro-play button").forEach((b) => {
+        b.classList.toggle("active", b.dataset.play === (on ? "1" : "0"));
+      });
+    }
     document.querySelectorAll("#micro-play button").forEach((btn) => {
       btn.addEventListener("click", () => {
-        micro.playing = btn.dataset.play === "1";
-        document.querySelectorAll("#micro-play button").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
+        setMicroPlaying(btn.dataset.play === "1");
       });
     });
 
@@ -6728,7 +7217,8 @@
     })();
 
     function stepMicro(dt) {
-      if (!micro.playing || !micro.inView) {
+      if (!micro.playing || !micro.inView || micro.scrubbing) {
+        syncMicroTimeUI();
         drawMicro();
         return;
       }
@@ -6740,6 +7230,7 @@
       const st = microState(micro.t, micro.u0);
       const last = micro.trail[micro.trail.length - 1];
       if (!last || micro.t - last.t > 0.03) micro.trail.push({ t: micro.t, A: st.A });
+      syncMicroTimeUI();
       drawMicro();
     }
 
@@ -6755,7 +7246,8 @@
           if (nowIn && !micro.inView) {
             // Arrive at the section on the early single-path frame
             micro.t = -micro.tmax;
-            microResetTrail();
+            microRebuildTrailToNow();
+            syncMicroTimeUI();
           }
           micro.inView = nowIn;
         }
@@ -6764,9 +7256,8 @@
     })();
 
     // seed trail from start to current t
-    for (let t = -micro.tmax; t <= micro.t; t += 0.04) {
-      micro.trail.push({ t, A: microMag(Math.hypot(t, micro.u0)) });
-    }
+    microRebuildTrailToNow();
+    syncMicroTimeUI();
     drawMicro();
 
     let last = performance.now();
@@ -6793,6 +7284,43 @@
     }
     requestAnimationFrame(frame);
     window.addEventListener("resize", () => { drawCE(); drawGalaxy(); drawMicro(); });
+
+    // Mobile “not optimized” notice (once per session)
+    (function initMobileNotice() {
+      const el = document.getElementById("mobile-notice");
+      const btn = document.getElementById("mobile-notice-ok");
+      if (!el || !btn) return;
+      const mq = window.matchMedia("(max-width: 720px), (pointer: coarse)");
+      function shouldShow() {
+        if (!mq.matches) return false;
+        try {
+          return sessionStorage.getItem("mobileNoticeDismissed") !== "1";
+        } catch (_) {
+          return true;
+        }
+      }
+      function show() {
+        if (!shouldShow()) return;
+        el.hidden = false;
+      }
+      function dismiss() {
+        el.hidden = true;
+        try {
+          sessionStorage.setItem("mobileNoticeDismissed", "1");
+        } catch (_) { /* private mode */ }
+      }
+      btn.addEventListener("click", dismiss);
+      el.addEventListener("click", (e) => {
+        if (e.target === el) dismiss();
+      });
+      show();
+      try {
+        mq.addEventListener("change", () => {
+          if (mq.matches) show();
+          else el.hidden = true;
+        });
+      } catch (_) { /* older browsers */ }
+    })();
   
 </script>
 </body>

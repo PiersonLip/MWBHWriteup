@@ -119,7 +119,14 @@ def load_glossary(force: bool = False) -> dict:
             if path.name.startswith("."):
                 continue
             note = parse_glossary_note(path)
-            if not note["tip"]:
+            # Allow image/viz/deep-only notes (empty tip body)
+            if not (
+                note["tip"]
+                or note.get("image")
+                or note.get("viz")
+                or note.get("deep")
+                or note.get("effect")
+            ):
                 continue
             entry = {
                 "title": note["title"],
@@ -276,7 +283,13 @@ def md_inline_to_html(s: str) -> str:
             target = target.split("/", 1)[1]
         display = (m.group(2) or target).strip()
         entry = gloss.get(target.lower()) or gloss.get(display.lower())
-        if entry and entry["tip"]:
+        if entry and (
+            entry["tip"]
+            or entry.get("image")
+            or entry.get("viz")
+            or entry.get("deep")
+            or entry.get("effect")
+        ):
             deep = entry.get("deep") or ""
             effect = entry.get("effect") or ""
             image = entry.get("image") or ""

@@ -23,7 +23,7 @@ Click no longer pins — focus is dwell-only on the lens tip itself (not the par
 | `#bh-core` | Cursor BH: soft outer falloff, event horizon (`::before`), photon ring (`::after` + rim shadow). |
 | `#bh-ghost` | Ghost words/blocks from `.wrap` (z ~3150). |
 | `#bh-ghost-ui` | Ghosts for the exit button label (z 5250, above hint chrome). |
-| `#bh-lens-hint` | “Go back to normal” — solid panel; text transparent when lifted so ghosts show. |
+| `#bh-lens-hint` | “Back to normal” — solid panel; text transparent when lifted so ghosts show. |
 | `#bh-lens-rude` | “well that was awfully rude” when every ghost item is eaten. |
 | `html.is-lensing` | Cursor none (auto when pinned), scroll lock, tip-layer stacking. |
 | `html.bh-lens-lifted` | Page copy → transparent; chrome (buttons etc.) stays; ghosts visible. |
@@ -48,6 +48,7 @@ Size = **natural plateau** + **feed bonus** from eaten words.
 - On pin, `ghostifyExitHint()` clones the exit-button label into `#bh-ghost-ui`.
 - Near-field pull toward cursor + light turbulence; far words stay put.
 - BH overlapping a word → `eaten` (fade/scale into core); triggers feed + maybe rude popup.
+- On soft exit, eaten ghosts ease back to home (opacity/scale/position, slight stagger) so page copy doesn’t pop in.
 - UI chrome (button boxes, toc pills, etc.) stays; only **text** lifts off (`color: transparent` under `.bh-lens-lifted`).
 
 ## Scroll / input
@@ -65,4 +66,5 @@ While lensing: `overflow: hidden` on html/body, non-passive `wheel` / `touchmove
 
 ## Changelog
 
+- **2026-11-24** — Soft exit resurrects eaten ghosts (fade/scale home) instead of popping page text.
 - **2026-11-24** — Word-ghost lens; pin + Esc/click exit; cursor BH with photon ring; natural grow then feed-on-eat; exit-button ghosts; rude popup; scroll lock; dwell-to-focus (not click); chrome stays / text lifts.

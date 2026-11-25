@@ -11,7 +11,6 @@ Hover text on the site comes from the note body (after the title).
 - [[core collapse]]
 - [[DCO]]
 - [[Detached]]
-- [[envelope]]
 - [[fallback]]
 - [[Gaia]]
 - [[gala]]
@@ -21,8 +20,9 @@ Hover text on the site comes from the note body (after the title).
 - [[Gravitational-wave]] — tip canvas: 3D spacetime mesh (`viz: gw`)
 - [[mass transfer]]
 - [[MESA]]
+- [[M☉]] — solar masses (aliases: solar mass, Msun)
 - [[metallicity]] — nests [[everything heavier than helium]] (astronomer periodic-table gag image)
-- [[everything heavier than helium]] — image tip (`assets/astronomer-periodic-table.png`)
+- [[everything heavier than helium]] — image-only tip (`assets/astronomer-periodic-table.png`, no caption)
 - [[microlens]]
 - [[natal kick]]
 - [[neutron star]]
@@ -38,3 +38,8 @@ Hover text on the site comes from the note body (after the title).
 - [[X-ray binaries]] — image tip (`assets/xrb.jpg`)
 - [[ZAMS]]
 - [[envelope]] — tip canvas (`viz: envelope`)
+- [[eccentricity]] — tip canvas (`viz: eccentricity`): e=0 vs e=0.5 binary orbits
+- [[ESA]]
+- [[compact object]]
+- [[Roche-lobe]]
+- [[Gaia DR4]]

@@ -6,4 +6,4 @@ aliases:
 
 # disrupted
 
-When something is drastic and powerful enough that it causes the stars in a binary to no longer be orbiting each other, becoming isolated stars.
+When a kick and/or sudden mass loss unbinds a binary so the components no longer orbit each other.

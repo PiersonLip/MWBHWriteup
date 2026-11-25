@@ -9,6 +9,17 @@ python3 -m http.server 8765
 # → http://127.0.0.1:8765/
 ```
 
+### Deploy (VPS `rack`)
+
+Live: https://arxiv261007152.piersonl.com/
+
+```bash
+./deploy/setup-domain.sh   # once (nginx + TLS)
+./deploy/deploy.sh         # after content changes
+```
+
+Files land in `/var/www/arxiv261007152` on `rack`.
+
 ### Edit copy in Obsidian
 
 Open the `vault/` folder as an Obsidian vault. When prose is ready:
