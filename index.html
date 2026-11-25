@@ -1797,6 +1797,19 @@
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
     }
+    @media (max-width: 720px), (pointer: coarse) {
+      .bh-lens-hint {
+        left: 0.85rem;
+        right: 0.85rem;
+        bottom: max(0.85rem, env(safe-area-inset-bottom));
+        max-width: none;
+        z-index: 12000;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 0.75rem 0.95rem;
+      }
+    }
     /* Exit-button glyphs sit above the button chrome */
     .bh-ghost-ui {
       position: fixed;
@@ -3764,17 +3777,21 @@
         if (lens.pinned || lens.reduceMotion) return;
         if (fromEl) lens.dwellFrom = fromEl;
         if (lens.dwellTimer) return;
+        // Touch can't sustain hover; pin after a short beat without requiring
+        // the finger to still be over the tip.
+        const touch = isTouchUi();
         lens.dwellTimer = setTimeout(() => {
           lens.dwellTimer = null;
           if (lens.pinned || !lens.on) return;
-          // Still over the lens tip?
-          const stack = document.elementsFromPoint(pointer.x, pointer.y) || [];
-          const still = stack.some(
-            (n) => n.getAttribute && n.getAttribute("data-effect") === "lens"
-          );
-          if (!still) return;
+          if (!touch) {
+            const stack = document.elementsFromPoint(pointer.x, pointer.y) || [];
+            const still = stack.some(
+              (n) => n.getAttribute && n.getAttribute("data-effect") === "lens"
+            );
+            if (!still) return;
+          }
           pinLens(lens.dwellFrom);
-        }, 1200);
+        }, touch ? 450 : 1200);
       }
 
       function hideRudePopup() {
@@ -3888,7 +3905,7 @@
         exitPinnedLens();
       });
 
-      // Drive lensing from pointer; focus only after 3s on the lens tip itself
+      // Drive lensing from pointer; pin after dwell (desktop) or short delay (touch)
       document.addEventListener(
         "pointerover",
         (e) => {
@@ -3902,6 +3919,9 @@
       document.addEventListener(
         "pointerout",
         (e) => {
+          // On touch, finger-up would cancel the gag before it can pin — keep it on
+          // until "Back to normal" (or Escape).
+          if (isTouchUi()) return;
           const el = e.target.closest && e.target.closest('[data-effect="lens"]');
           if (!el) return;
           const to = e.relatedTarget;
@@ -4225,6 +4245,8 @@
         // Touch / narrow screens: tap to toggle tips (hover is unreliable)
         if (!isTouchUi()) return;
         if (e.target.closest && e.target.closest(".tip-fs, .tip-gw-fs, a[href]")) return;
+        // Exit lens gag takes priority over tip dismiss
+        if (e.target.closest && e.target.closest("#bh-lens-hint")) return;
         const t = e.target.closest && e.target.closest(TIP_ANCHOR);
         if (t) {
           e.preventDefault();
@@ -4235,6 +4257,11 @@
             return;
           }
           showTip(t);
+          // BH lens gag: tap path (pointerout would otherwise cancel hover dwell)
+          if (t.getAttribute && t.getAttribute("data-effect") === "lens") {
+            setLensing(true, t);
+            armLensDwell(t);
+          }
           return;
         }
         if (!(e.target.closest && e.target.closest(".tip-bubble"))) {
