@@ -574,13 +574,28 @@
       :root { --figure-measure: 100%; }
       .wrap { padding: 1.25rem 0.7rem 3.25rem; overflow-x: clip; }
       nav.toc {
-        gap: 0.35rem 0.55rem;
-        font-size: 0.78rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        flex-wrap: nowrap;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
         max-width: 100%;
-        padding-bottom: 0.15rem;
+        margin-top: 1.35rem;
+        padding-top: 1rem;
+      }
+      nav.toc a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 0.74rem;
+        line-height: 1.25;
+        padding: 0.55rem 0.5rem;
+        border-radius: 8px;
+        white-space: normal;
+        min-height: 2.6rem;
+        box-sizing: border-box;
+      }
+      nav.toc a:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
       }
       .figure {
         padding: 0.95rem 0.65rem 1.05rem;
