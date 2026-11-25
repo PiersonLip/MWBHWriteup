@@ -883,6 +883,7 @@
       min-height: 360px;
       aspect-ratio: 1.55 / 1;
       cursor: grab;
+      touch-action: none;
     }
     .gal-stage:active { cursor: grabbing; }
     .gal-stage canvas { width: 100%; height: 100%; display: block; }
@@ -2304,7 +2305,7 @@
 <div class="figure" id="micro">
         <p class="figure-cap">Interactive · Single-lens microlensing (schematic)</p>
         <h3>How a dark lens brightens a background star</h3>
-        <p class="hint">Both views share the same event. Drag the 3D panel to orbit, scroll to zoom, or open fullscreen. Blue/red arcs are the lensed images.</p>
+        <p class="hint">Both views share the same event. Drag the 3D panel to orbit, pinch or scroll to zoom, or open fullscreen. Blue/red arcs are the lensed images.</p>
         <div class="micro-layout">
           <div class="controls">
             <div class="control">
@@ -2474,6 +2475,143 @@
     const KMS_TO_AUYR = YR_S / AU_KM;
     const MNS = 1.4;
     const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+    /**
+     * Shared orbit + pinch-zoom for 3D stages.
+     * Touch vertical orbit is inverted vs mouse (grab-the-sphere feel on phones).
+     */
+    function bindOrbitCamera(el, opts) {
+      if (!el || el.dataset.orbitBound) return;
+      el.dataset.orbitBound = "1";
+      const pointers = new Map();
+      let mode = null; // "orbit" | "pinch"
+      let orbit = null;
+      let pinch = null;
+      const pitchMin = opts.pitchMin ?? 0.02;
+      const pitchMax = opts.pitchMax ?? Math.PI / 2 - 0.02;
+      const zoomMin = opts.zoomMin ?? 0.7;
+      const zoomMax = opts.zoomMax ?? 1.6;
+      const yawSense = opts.yawSense ?? 0.008;
+      const pitchSense = opts.pitchSense ?? 0.007;
+      const yawSign = opts.yawSign ?? 1;
+      const invertPitchTouch = opts.invertPitchTouch !== false;
+      const wheelSense = opts.wheelSense ?? 0.0012;
+
+      function pinchDist() {
+        const pts = [...pointers.values()];
+        if (pts.length < 2) return 0;
+        return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      }
+      function isTouchPtr(e) {
+        return (
+          e.pointerType === "touch" ||
+          (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+        );
+      }
+      function beginOrbit(pointerId, pt, invert) {
+        mode = "orbit";
+        pinch = null;
+        orbit = {
+          x: pt.x,
+          y: pt.y,
+          yaw0: opts.getYaw(),
+          pitch0: opts.getPitch(),
+          pointerId,
+          invert,
+        };
+      }
+      function beginPinch() {
+        mode = "pinch";
+        orbit = null;
+        pinch = { dist0: Math.max(1, pinchDist()), zoom0: opts.getZoom() };
+      }
+
+      el.addEventListener(
+        "pointerdown",
+        (e) => {
+          if (opts.ignoreTarget && e.target.closest && e.target.closest(opts.ignoreTarget)) return;
+          e.preventDefault();
+          pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          try {
+            el.setPointerCapture?.(e.pointerId);
+          } catch (_) { /* ignore */ }
+          if (pointers.size >= 2) {
+            beginPinch();
+            opts.onDragStart?.("pinch");
+          } else {
+            beginOrbit(e.pointerId, pointers.get(e.pointerId), invertPitchTouch && isTouchPtr(e));
+            opts.onDragStart?.("orbit");
+          }
+        },
+        { passive: false }
+      );
+
+      el.addEventListener(
+        "pointermove",
+        (e) => {
+          if (!pointers.has(e.pointerId)) {
+            opts.onHover?.(e);
+            return;
+          }
+          pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          if (mode === "pinch" && pointers.size >= 2 && pinch) {
+            e.preventDefault();
+            const d = Math.max(1, pinchDist());
+            opts.setZoom(clamp(pinch.zoom0 * (d / pinch.dist0), zoomMin, zoomMax));
+            opts.onChange?.();
+            return;
+          }
+          if (mode === "orbit" && orbit && e.pointerId === orbit.pointerId) {
+            e.preventDefault();
+            const dx = e.clientX - orbit.x;
+            const dy = e.clientY - orbit.y;
+            opts.setYaw(orbit.yaw0 + yawSign * dx * yawSense);
+            const pSign = orbit.invert ? -1 : 1;
+            opts.setPitch(clamp(orbit.pitch0 + pSign * dy * pitchSense, pitchMin, pitchMax));
+            opts.onChange?.();
+          }
+        },
+        { passive: false }
+      );
+
+      const endPtr = (e) => {
+        if (e && pointers.has(e.pointerId)) pointers.delete(e.pointerId);
+        if (pointers.size >= 2) {
+          beginPinch();
+        } else if (pointers.size === 1) {
+          const [id, pt] = [...pointers.entries()][0];
+          beginOrbit(
+            id,
+            pt,
+            invertPitchTouch &&
+              (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+          );
+        } else {
+          mode = null;
+          orbit = null;
+          pinch = null;
+          opts.onDragEnd?.();
+        }
+      };
+      el.addEventListener("pointerup", endPtr);
+      el.addEventListener("pointercancel", endPtr);
+      el.addEventListener("pointerleave", (e) => {
+        if (!pointers.size) opts.onHoverEnd?.(e);
+      });
+
+      if (opts.wheel !== false) {
+        el.addEventListener(
+          "wheel",
+          (e) => {
+            e.preventDefault();
+            const factor = Math.exp(-e.deltaY * wheelSense);
+            opts.setZoom(clamp(opts.getZoom() * factor, zoomMin, zoomMax));
+            opts.onChange?.();
+          },
+          { passive: false }
+        );
+      }
+    }
 
     // ═══════════════════════════════════════════
     // Site theme: light | dark (+ viz redraw)
@@ -2861,42 +2999,25 @@
         });
         syncGwTipFsBtn(stage);
       }
-      stage.addEventListener("pointerdown", (e) => {
-        if (e.target.closest && e.target.closest(".tip-gw-fs")) return;
-        e.preventDefault();
-        e.stopPropagation();
-        gwTipState.drag = {
-          x: e.clientX,
-          y: e.clientY,
-          yaw0: gwTipState.yaw,
-          pitch0: gwTipState.pitch,
-        };
-        stage.setPointerCapture?.(e.pointerId);
+      bindOrbitCamera(stage, {
+        ignoreTarget: ".tip-gw-fs",
+        getYaw: () => gwTipState.yaw,
+        setYaw: (v) => { gwTipState.yaw = v; },
+        getPitch: () => gwTipState.pitch,
+        setPitch: (v) => { gwTipState.pitch = v; },
+        getZoom: () => gwTipState.zoom,
+        setZoom: (v) => { gwTipState.zoom = v; },
+        yawSign: -1,
+        yawSense: 0.01,
+        pitchSense: 0.008,
+        pitchMin: 0.08,
+        pitchMax: Math.PI / 2 - 0.08,
+        zoomMin: 0.65,
+        zoomMax: 1.85,
+        wheelSense: 0.0014,
+        onDragStart: () => { gwTipState.drag = { active: true }; },
+        onDragEnd: () => { gwTipState.drag = null; },
       });
-      stage.addEventListener("pointermove", (e) => {
-        if (!gwTipState.drag) return;
-        e.preventDefault();
-        e.stopPropagation();
-        const dx = e.clientX - gwTipState.drag.x;
-        const dy = e.clientY - gwTipState.drag.y;
-        gwTipState.yaw = gwTipState.drag.yaw0 - dx * 0.01;
-        gwTipState.pitch = clamp(gwTipState.drag.pitch0 + dy * 0.008, 0.08, Math.PI / 2 - 0.08);
-      });
-      const endDrag = (e) => {
-        if (e) e.stopPropagation();
-        gwTipState.drag = null;
-      };
-      stage.addEventListener("pointerup", endDrag);
-      stage.addEventListener("pointercancel", endDrag);
-      stage.addEventListener(
-        "wheel",
-        (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          gwTipState.zoom = clamp(gwTipState.zoom * Math.exp(-e.deltaY * 0.0014), 0.65, 1.85);
-        },
-        { passive: false }
-      );
     }
 
     function paintGwTip(canvas, t) {
@@ -4027,7 +4148,7 @@
           }
         } else if (vizId === "gw") {
           bubble.classList.add("tip-has-viz");
-          html += `<div class="tip-gw-viz"><button type="button" class="tip-gw-fs" title="Fullscreen" aria-label="Fullscreen">${GW_FS_MAX}</button><canvas class="gw-tip-canvas" width="480" height="384" aria-hidden="true"></canvas><span class="tip-gw-hud">drag to orbit · scroll zoom</span></div>`;
+          html += `<div class="tip-gw-viz"><button type="button" class="tip-gw-fs" title="Fullscreen" aria-label="Fullscreen">${GW_FS_MAX}</button><canvas class="gw-tip-canvas" width="480" height="384" aria-hidden="true"></canvas><span class="tip-gw-hud">drag to orbit · pinch or scroll to zoom</span></div>`;
           html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
         } else if (vizId === "envelope") {
           bubble.classList.add("tip-has-viz");
@@ -6000,7 +6121,7 @@
       // HUD
       ctx.fillStyle = "rgba(197,204,216,0.85)";
       ctx.font = "500 11px IBM Plex Mono";
-      ctx.fillText("drag to rotate · scroll to zoom · units: kpc", 14, 22);
+      ctx.fillText("drag to rotate · pinch or scroll to zoom · units: kpc", 14, 22);
 
       const info = galPhaseInfo(p);
       const status = document.getElementById("gal-status");
@@ -6031,39 +6152,37 @@
       gal.mouseX = e.clientX - rect.left;
       gal.mouseY = e.clientY - rect.top;
     }
-    galCanvas.addEventListener("pointerdown", (e) => {
-      gal.dragging = true;
-      galInteract();
-      gal.lastX = e.clientX;
-      gal.lastY = e.clientY;
-      galPointerPos(e);
-      galCanvas.setPointerCapture(e.pointerId);
+    bindOrbitCamera(galCanvas, {
+      getYaw: () => gal.yaw,
+      setYaw: (v) => { gal.yaw = v; },
+      getPitch: () => gal.pitch,
+      setPitch: (v) => { gal.pitch = v; },
+      getZoom: () => gal.zoom,
+      setZoom: (v) => { gal.zoom = v; },
+      yawSign: 1,
+      yawSense: 0.008,
+      pitchSense: 0.007,
+      pitchMin: 0.02,
+      pitchMax: Math.PI / 2 - 0.02,
+      zoomMin: 0.72,
+      zoomMax: 1.55,
+      wheelSense: 0.0012,
+      onDragStart: () => {
+        gal.dragging = true;
+        galInteract();
+      },
+      onDragEnd: () => {
+        gal.dragging = false;
+        galInteract();
+      },
+      onChange: () => { galInteract(); },
+      onHover: (e) => { galPointerPos(e); },
+      onHoverEnd: () => {
+        gal.mouseX = -1e9;
+        gal.mouseY = -1e9;
+        gal.hoverCluster = null;
+      },
     });
-    galCanvas.addEventListener("pointermove", (e) => {
-      galPointerPos(e);
-      if (!gal.dragging) return;
-      galInteract();
-      const dx = e.clientX - gal.lastX;
-      const dy = e.clientY - gal.lastY;
-      gal.lastX = e.clientX;
-      gal.lastY = e.clientY;
-      gal.yaw += dx * 0.008;
-      // Allow nearly face-on through nearly edge-on
-      gal.pitch = clamp(gal.pitch + dy * 0.007, 0.02, Math.PI / 2 - 0.02);
-    });
-    galCanvas.addEventListener("pointerup", () => { gal.dragging = false; galInteract(); });
-    galCanvas.addEventListener("pointercancel", () => { gal.dragging = false; galInteract(); });
-    galCanvas.addEventListener("pointerleave", () => {
-      gal.mouseX = -1e9;
-      gal.mouseY = -1e9;
-      gal.hoverCluster = null;
-    });
-    galCanvas.addEventListener("wheel", (e) => {
-      e.preventDefault();
-      galInteract();
-      const factor = Math.exp(-e.deltaY * 0.0012);
-      gal.zoom = clamp(gal.zoom * factor, 0.72, 1.55);
-    }, { passive: false });
 
     document.getElementById("gal-progress").addEventListener("input", (e) => {
       gal.progress = parseFloat(e.target.value) / 1000;
@@ -7066,7 +7185,7 @@
 
       ctx.fillStyle = "rgba(232,236,242,0.4)";
       ctx.font = "500 11px 'IBM Plex Mono', monospace";
-      ctx.fillText("Drag to orbit · scroll to zoom · light bends toward Roman", 14, H - 12);
+      ctx.fillText("Drag to orbit · pinch or scroll to zoom · light bends toward Roman", 14, H - 12);
     }
 
     function microResetTrail() {
@@ -7142,37 +7261,32 @@
       const canvas = document.getElementById("micro-canvas-3d");
       const fsBtn = document.getElementById("micro-fs");
       if (!stage || !canvas) return;
-      const onDown = (e) => {
-        if (e.target.closest && e.target.closest("#micro-fs")) return;
-        e.preventDefault();
-        const pt = e.touches ? e.touches[0] : e;
-        micro.drag = { x: pt.clientX, y: pt.clientY, yaw0: micro.yaw, pitch0: micro.pitch };
-        stage.classList.add("is-dragging");
-      };
-      const onMove = (e) => {
-        if (!micro.drag) return;
-        const pt = e.touches ? e.touches[0] : e;
-        const dx = pt.clientX - micro.drag.x;
-        const dy = pt.clientY - micro.drag.y;
-        micro.yaw = micro.drag.yaw0 - dx * 0.008;
-        // 0 = edge-on, π/2 = directly above
-        micro.pitch = clamp(micro.drag.pitch0 + dy * 0.006, 0, Math.PI / 2);
-        drawMicro();
-      };
-      const onUp = () => {
-        micro.drag = null;
-        stage.classList.remove("is-dragging");
-      };
-      stage.addEventListener("pointerdown", onDown);
-      window.addEventListener("pointermove", onMove);
-      window.addEventListener("pointerup", onUp);
-      window.addEventListener("pointercancel", onUp);
-      stage.addEventListener("wheel", (e) => {
-        e.preventDefault();
-        const factor = Math.exp(-e.deltaY * 0.0012);
-        micro.zoom = clamp(micro.zoom * factor, 0.75, 1.55);
-        drawMicro();
-      }, { passive: false });
+      bindOrbitCamera(stage, {
+        ignoreTarget: "#micro-fs",
+        getYaw: () => micro.yaw,
+        setYaw: (v) => { micro.yaw = v; },
+        getPitch: () => micro.pitch,
+        setPitch: (v) => { micro.pitch = v; },
+        getZoom: () => micro.zoom,
+        setZoom: (v) => { micro.zoom = v; },
+        yawSign: -1,
+        yawSense: 0.008,
+        pitchSense: 0.006,
+        pitchMin: 0,
+        pitchMax: Math.PI / 2,
+        zoomMin: 0.75,
+        zoomMax: 1.55,
+        wheelSense: 0.0012,
+        onDragStart: () => {
+          micro.drag = { active: true };
+          stage.classList.add("is-dragging");
+        },
+        onDragEnd: () => {
+          micro.drag = null;
+          stage.classList.remove("is-dragging");
+        },
+        onChange: () => { drawMicro(); },
+      });
 
       function microIsFullscreen() {
         return document.fullscreenElement === stage || document.webkitFullscreenElement === stage;
