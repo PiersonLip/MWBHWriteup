@@ -5491,6 +5491,7 @@
         const cy = singularity.cy;
         placeSingBh();
         if (
+          singularity.phase !== "birth" &&
           singularity.phase !== "pull" &&
           singularity.phase !== "yank"
         ) {
@@ -5540,24 +5541,22 @@
       }
 
       function beginSingPull() {
-        const root = document.documentElement;
+        // Ghosts already lifting from birth — just continue the ramp
         singularity.phase = "pull";
         singularity.phaseT0 = performance.now();
-        singularity.pull = 0.12;
+        singularity.pull = Math.max(0.14, singularity.pull || 0.14);
         singularity.tips.forEach((t) => {
           if (!t.el || !t.el.isConnected) return;
           t.el.style.opacity = "0";
           t.el.style.pointerEvents = "none";
         });
-        buildSingGhost();
-        root.classList.add("is-sing-lifted");
-        root.classList.remove("is-sing-gather");
       }
 
       function beginSingBirth() {
         const root = document.documentElement;
         singularity.phase = "birth";
         singularity.phaseT0 = performance.now();
+        singularity.pull = 0.03;
         root.classList.remove("is-sing-gather");
         root.classList.add("is-sing-form");
         // Tips are already a speck at the midpoint — BH forms and engulfs them
@@ -5575,7 +5574,10 @@
             t.el.style.opacity = "0";
           });
         });
-        placeSingBh();
+        // Start a weak inward drift the moment the BH appears (avoids a later snap)
+        buildSingGhost();
+        root.classList.add("is-sing-lifted");
+        placeSingItems(performance.now());
       }
 
       function beginSingYank() {
@@ -5647,11 +5649,13 @@
           if (u >= 1) beginSingBirth();
         } else if (singularity.phase === "birth") {
           const u = Math.min(1, (now - singularity.phaseT0) / SING_BIRTH_MS);
-          placeSingBh();
+          // Weak pull from the first frame the BH exists
+          singularity.pull = 0.03 + 0.11 * easeInOut(u);
+          placeSingItems(now);
           if (u >= 1) beginSingPull();
         } else if (singularity.phase === "pull") {
           const u = Math.min(1, (now - singularity.phaseT0) / SING_PULL_MS);
-          singularity.pull = 0.15 + 0.85 * Math.pow(u, 0.7); // ~8s to full engulf
+          singularity.pull = 0.14 + 0.86 * Math.pow(u, 0.7); // continue from birth into ~8s engulf
           placeSingItems(now);
           if (allSingEaten()) {
             beginSingShrink();

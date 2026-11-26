@@ -15,8 +15,8 @@ Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag (
 ## Timeline (motion on)
 
 1. **Gather** (~4.2s) — No BH. Tips ease to midpoint with a slight tilt, shrinking to a speck; cursor stays normal.
-2. **Birth** (~2s) — Only once tips are tiny: BH forms at the midpoint and engulfs them.
-3. **Pull** (~8s) — Gravity + BH size ramp so the visible page is engulfed; shrink continues from live BH size (no pre-shrink size jerk). Shrink only after **all** items are eaten.
+2. **Birth** (~2s) — Only once tips are tiny: BH forms at the midpoint, page lifts into ghosts, and a **weak** inward pull starts immediately.
+3. **Pull** (~8s) — Gravity + BH size continue ramping (no snap) until the visible page is engulfed; shrink continues from live BH size. Shrink only after **all** items are eaten.
 4. **Yank** (if needed, ~2.8s) — Final hard pull so leftovers finish falling in.
 5. **Shrink** (~1.6s) — BH eases to a tiny point and fades (no flash / outward sparks).
 6. **Void + twinkle** — Full black (cursor hides here); **0.85s** later a cartoon 4-point far-away “ding” twinkle; restore after `SING_VOID_MS` (3000).
