@@ -1,1 +1,1 @@
-The process of simulating an entire population (i.e. large and diverse quanity) of stars. 
+The process of simulating a large and diverse quanity (a "population") of stars. 
