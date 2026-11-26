@@ -3,6 +3,7 @@ title: "supernova"
 aliases:
   - supernovae
   - SN
+viz: supernova
 ---
 
 # supernova

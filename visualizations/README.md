@@ -33,7 +33,7 @@ Related: tip-nest singularity — [tip-singularity.md](./tip-singularity.md) (10
 
 Related: small easter eggs — [easter-eggs.md](./easter-eggs.md) (orbital cursor, Sgr stare, super-dark veil, name confetti).
 
-Related: tip canvases — [gw-tip.md](./gw-tip.md) (`viz: gw`), [envelope-tip.md](./envelope-tip.md) (`viz: envelope`), [common-envelope-tip.md](./common-envelope-tip.md) (`viz: common-envelope`), [mw-components-tip.md](./mw-components-tip.md) (`viz: mw-components`), [eccentricity-tip.md](./eccentricity-tip.md) (`viz: eccentricity`).
+Related: tip canvases — [gw-tip.md](./gw-tip.md) (`viz: gw`), [envelope-tip.md](./envelope-tip.md) (`viz: envelope`), [common-envelope-tip.md](./common-envelope-tip.md) (`viz: common-envelope`), [mw-components-tip.md](./mw-components-tip.md) (`viz: mw-components`), [eccentricity-tip.md](./eccentricity-tip.md) (`viz: eccentricity`), [supernova-tip.md](./supernova-tip.md) (`viz: supernova`).
 
 ## Page themes
 
