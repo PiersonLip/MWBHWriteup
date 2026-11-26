@@ -2378,7 +2378,7 @@
 <div class="figure" id="gal-figure">
         <p class="figure-cap">Interactive · Schematic of paper §II.3</p>
         <h3>A disrupted binary's path through the Milky Way</h3>
-        <p class="hint">Phases: birth → pre-supernova → kick → BH and companion paths. Click a globular cluster or the GC to zoom in and orbit; click empty space to return. At the GC you’ll find Sgr&nbsp;A* and a few schematic S-stars.</p>
+        <p class="hint">Phases: birth → pre-supernova → kick → BH and companion paths.</p>
         <div class="gal-layout">
           <div class="gal-stage" id="gal-stage">
             <canvas id="gal-canvas" width="900" height="560"></canvas>
@@ -6468,7 +6468,7 @@
           ctx.strokeStyle = "rgba(220,230,245,0.35)";
           ctx.lineWidth = 1;
           const label = cl.name;
-          const hint = "click";
+          const hint = cl.hint;
           ctx.font = "600 12px IBM Plex Mono";
           const tw = ctx.measureText(label).width;
           ctx.font = "500 10px Schibsted Grotesk";
@@ -6518,7 +6518,7 @@
       gal.hoverGC = gcHit && !gal.hoverCluster;
       if ((gal.hoverGC || gcFocused) && !gal.hoverCluster) {
         const label = "Galactic center";
-        const hint = "click";
+        const hint = "Sgr A*";
         ctx.font = "600 12px IBM Plex Mono";
         const tw = ctx.measureText(label).width;
         ctx.font = "500 10px Schibsted Grotesk";
@@ -6622,8 +6622,8 @@
       ctx.fillStyle = "rgba(197,204,216,0.85)";
       ctx.font = "500 11px IBM Plex Mono";
       const hud = gal.focus
-        ? `focus: ${gal.focus.label} · drag to orbit · click empty space to leave`
-        : "drag to rotate · click GC / clusters to zoom · units: kpc";
+        ? `focus: ${gal.focus.label} · drag to orbit`
+        : "drag to rotate · pinch or scroll to zoom · units: kpc";
       ctx.fillText(hud, 14, 22);
 
       // Cursor affordance
@@ -6642,7 +6642,7 @@
           status.querySelector("span").textContent =
             (gal.focus.cl && gal.focus.cl.hint
               ? `${gal.focus.cl.hint[0].toUpperCase()}${gal.focus.cl.hint.slice(1)}. `
-              : "") + "Camera locked on the cluster — drag to orbit, click empty space to return.";
+              : "") + "Camera locked on the cluster — drag to orbit.";
         } else {
           status.querySelector("strong").textContent = info.title;
           status.querySelector("span").textContent = info.text;
