@@ -2114,10 +2114,15 @@
     }
     html.is-singularity .tip-sing {
       display: block;
+      pointer-events: none; /* keep cursor free until blackout */
+    }
+    html.is-singularity.is-sing-void .tip-sing {
       pointer-events: auto;
     }
     html.is-singularity {
       overflow: hidden;
+    }
+    html.is-singularity.is-sing-void {
       cursor: none;
     }
     html.is-singularity body {
@@ -2306,39 +2311,78 @@
       pointer-events: none;
       overflow: hidden;
     }
+    /* Cartoon far-away “ding” — classic 4-point star twinkle */
     .tip-sing-twinkle {
       position: absolute;
       left: var(--sing-px, 50%);
       top: var(--sing-py, 50%);
-      width: 5px;
-      height: 5px;
-      margin: -2.5px 0 0 -2.5px;
+      width: 6px;
+      height: 6px;
+      margin: -3px 0 0 -3px;
       border-radius: 50%;
-      background: #fff8e8;
+      background: #fff;
       box-shadow:
-        0 0 6px 2px rgba(255, 236, 200, 0.95),
-        0 0 16px 5px rgba(255, 200, 120, 0.4),
-        0 0 28px 10px rgba(255, 170, 80, 0.18);
+        0 0 4px 1px rgba(255, 255, 255, 0.95),
+        0 0 10px 3px rgba(255, 240, 200, 0.7);
       opacity: 0;
-      transform: scale(0.2);
+      transform: scale(0.2) rotate(0deg);
       z-index: 7;
       pointer-events: none;
     }
+    .tip-sing-twinkle::before,
+    .tip-sing-twinkle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        #fff 18%,
+        #fff 82%,
+        transparent 100%
+      );
+      border-radius: 1px;
+      box-shadow: 0 0 6px 1px rgba(255, 248, 220, 0.85);
+    }
+    .tip-sing-twinkle::before {
+      /* horizontal ray */
+      width: 42px;
+      height: 2px;
+      margin: -1px 0 0 -21px;
+    }
+    .tip-sing-twinkle::after {
+      /* vertical ray */
+      width: 2px;
+      height: 42px;
+      margin: -21px 0 0 -1px;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        #fff 18%,
+        #fff 82%,
+        transparent 100%
+      );
+    }
     html.is-singularity.is-sing-twinkle .tip-sing-twinkle {
-      animation: tip-sing-twinkle 1.15s ease-out forwards;
+      animation: tip-sing-twinkle 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
     @keyframes tip-sing-twinkle {
       0% {
         opacity: 0;
-        transform: scale(0.15);
+        transform: scale(0.05) rotate(-12deg);
       }
-      28% {
+      18% {
         opacity: 1;
-        transform: scale(1.35);
+        transform: scale(1.55) rotate(0deg);
+      }
+      42% {
+        opacity: 1;
+        transform: scale(0.85) rotate(8deg);
       }
       100% {
         opacity: 0;
-        transform: scale(0.05);
+        transform: scale(0.02) rotate(18deg);
       }
     }
     .tip-sing-void {
@@ -5362,10 +5406,10 @@
         const t = easeInOut(Math.min(1, Math.max(0, u)));
         for (const tip of singularity.tips) {
           if (!tip.el || !tip.el.isConnected) continue;
-          // Stay fully visible while converging; only a soft shrink at the end
-          const s = 1 - 0.28 * t;
+          // Converge + shrink to a speck — BH waits until they're tiny
+          const s = 1 - 0.97 * t; // → ~0.03
           tip.el.style.opacity = "1";
-          tip.el.style.transform = `translate(${tip.dx * t}px, ${tip.dy * t}px) scale(${s})`;
+          tip.el.style.transform = `translate(${tip.dx * t}px, ${tip.dy * t}px) scale(${Math.max(0.03, s)})`;
         }
       }
 
@@ -5474,12 +5518,10 @@
         singularity.phase = "pull";
         singularity.phaseT0 = performance.now();
         singularity.pull = 0.12;
-        // Tips absorbed into the newborn BH — fade only now, after they've gathered
         singularity.tips.forEach((t) => {
           if (!t.el || !t.el.isConnected) return;
-          t.el.style.transition = "opacity 0.9s ease, transform 1.1s cubic-bezier(0.55, 0.02, 0.9, 0.4)";
-          t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) scale(0.05)`;
           t.el.style.opacity = "0";
+          t.el.style.pointerEvents = "none";
         });
         buildSingGhost();
         root.classList.add("is-sing-lifted");
@@ -5492,11 +5534,19 @@
         singularity.phaseT0 = performance.now();
         root.classList.remove("is-sing-gather");
         root.classList.add("is-sing-form");
-        // Keep tips visible at the midpoint while the BH grows through them
+        // Tips are already a speck at the midpoint — BH forms and engulfs them
         singularity.tips.forEach((t) => {
           if (!t.el || !t.el.isConnected) return;
+          t.el.style.transition =
+            "opacity 1.5s ease, transform 1.8s cubic-bezier(0.55, 0.02, 0.9, 0.4)";
           t.el.style.opacity = "1";
-          t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) scale(0.72)`;
+          t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) scale(0.03)`;
+          // Next frame: get swallowed by the newborn hole
+          requestAnimationFrame(() => {
+            if (!t.el || !t.el.isConnected) return;
+            t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) scale(0.001)`;
+            t.el.style.opacity = "0";
+          });
         });
         placeSingBh();
       }
@@ -5543,18 +5593,20 @@
           cancelAnimationFrame(singularity.raf);
           singularity.raf = 0;
         }
-        // Tiny twinkle on the black field, then restore
+        // Full black → half-second beat → cartoon far-away twinkle → restore
         singLater(() => {
           root.classList.add("is-sing-twinkle");
-        }, 180);
+        }, 500);
         singLater(() => {
           root.classList.remove("is-sing-twinkle");
+        }, 500 + 900);
+        singLater(() => {
           root.classList.add("is-sing-return");
           requestAnimationFrame(() => {
             root.classList.add("is-sing-return-show");
           });
           singLater(finishSingularity, 1400);
-        }, 180 + 1200 + SING_VOID_MS);
+        }, SING_VOID_MS);
       }
 
       function singFrame(now) {

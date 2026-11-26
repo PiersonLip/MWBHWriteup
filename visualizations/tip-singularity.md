@@ -14,12 +14,12 @@ Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag (
 
 ## Timeline (motion on)
 
-1. **Gather** (~7.8s) — No BH. Tips ease to midpoint; stay opaque; tip-layer raised above overlay.
-2. **Birth** (~2s) — BH grows at midpoint through the stacked tips.
+1. **Gather** (~7.8s) — No BH. Tips ease to midpoint and shrink to a speck; cursor stays normal.
+2. **Birth** (~2s) — Only once tips are tiny: BH forms at the midpoint and engulfs them.
 3. **Pull** (~16s) — Strong gravity: ghosts travel nearly the full distance to the hole; large swallow radius + feed growth. Shrink only after **all** items are eaten.
 4. **Yank** (if needed, ~2.8s) — Final hard pull so leftovers finish falling in.
 5. **Shrink** (~1.6s) — BH eases to a tiny point and fades (no flash / outward sparks).
-6. **Void + twinkle** — Black screen; soft twinkle at the point; restore after `SING_VOID_MS` (3000).
+6. **Void + twinkle** — Full black (cursor hides here); **0.5s** later a cartoon 4-point far-away “ding” twinkle; restore after `SING_VOID_MS` (3000).
 
 ## Knobs
 
@@ -33,6 +33,7 @@ Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag (
 
 ## Changelog
 
+- **2026-11-26** — Cursor until blackout; tips shrink to a speck before BH forms; cartoon star twinkle 0.5s after void.
 - **2026-11-26** — 5 deep; stronger pull; tips no longer dismiss mid-gag; shrink-to-point + twinkle (no explode).
 - **2026-11-26** — Tips gather to midpoint before BH; 3s void.
 - **2026-11-26** — Word-ghost pull; earlier 4-deep / 6-deep variants.
