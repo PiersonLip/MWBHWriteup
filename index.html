@@ -730,7 +730,8 @@
       }
       .tip-bubble.tip-has-viz .tip-gw-viz,
       .tip-bubble.tip-has-viz .tip-ecc-viz,
-      .tip-bubble.tip-has-viz .tip-env-viz {
+      .tip-bubble.tip-has-viz .tip-env-viz,
+      .tip-bubble.tip-has-viz .tip-ce-viz {
         max-height: min(42vh, 280px);
       }
       .tip {
@@ -1386,7 +1387,8 @@
       opacity: 0.9;
       padding: 0 0.15rem 0.12rem;
     }
-    .tip-bubble.tip-has-viz .tip-env-viz {
+    .tip-bubble.tip-has-viz .tip-env-viz,
+    .tip-bubble.tip-has-viz .tip-ce-viz {
       display: block;
       position: relative;
       width: 100%;
@@ -1396,7 +1398,8 @@
       border: 1px solid rgba(255,255,255,0.1);
       margin-bottom: 0.35rem;
     }
-    .tip-bubble.tip-has-viz .tip-env-viz canvas {
+    .tip-bubble.tip-has-viz .tip-env-viz canvas,
+    .tip-bubble.tip-has-viz .tip-ce-viz canvas {
       display: block;
       width: 100%;
       height: auto;
@@ -2044,7 +2047,7 @@
       <p class="eyebrow">Interactive explanation · arXiv:2610.07152</p>
       <h1>Uncovering the physical origins of black holes in the Milky Way</h1>
       <p class="lede">
-        A walkthrough of why a simulation tool like <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> can connect the physics of <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other." data-deep="binary-stars">binary stars</span> to the modern black holes of our galaxy, what <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> and <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span> might see, and why it matters.
+        A walkthrough of why a simulation tool like <span class="tip" tabindex="0" data-tip="<strong>PO</strong>pulation <strong>SY</strong>nthesis with <strong>D</strong>etailed binary-evolution simulati<strong>ON</strong>s. A binary population synthesis simulation code made by collaborative team of astrophyiscsists and computer scientists.">POSYDON</span> can connect the physics of <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other." data-deep="binary-stars">binary stars</span> to the modern black holes of our galaxy, what <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> and <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span> might see, and why it matters.
       </p>
       <p class="byline">
         Based on <a href="https://arxiv.org/abs/2610.07152" target="_blank" rel="noopener">Kiato, Lipschultz, Kalogera et al.</a> (submitted to ApJ).
@@ -2080,7 +2083,7 @@
           However, that is rapidly changing. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries, <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span> should detect hundreds more isolated<sup class="fn-ref" id="fnref-why-3" data-fn-id="3"><a href="#fn-why-3">3</a></sup> ones. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get there?"</em>
         </p>
         <p>
-          And we can't answer that question just counting the remnants of stars. Most massive stars<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">4</a></sup> grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion. This commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span> kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. Previous work approximates these processes; we use <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span> instead, which lets us use much more accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations.
+          And we can't answer that question just counting the remnants of stars. Most massive stars<sup class="fn-ref" id="fnref-why-2" data-fn-id="2"><a href="#fn-why-2">4</a></sup> grow up intertwined with a partner in <span class="tip tip-deep" tabindex="0" data-tip="Two stars locked orbiting each other." data-deep="binary-stars">binary systems</span>. These relationships are tumultuous, with things like <span class="tip" tabindex="0" data-tip="A process in binary systems where one star transfers its mass to its binary companion. This commonly happens through Roche-lobe overflow or strong Winds.">mass transfer</span>, <span class="tip tip-viz" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers." data-viz="common-envelope">common envelope</span>, mergers, and <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span> kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. Previous work approximates these processes; we use <span class="tip" tabindex="0" data-tip="<strong>PO</strong>pulation <strong>SY</strong>nthesis with <strong>D</strong>etailed binary-evolution simulati<strong>ON</strong>s. A binary population synthesis simulation code made by collaborative team of astrophyiscsists and computer scientists.">POSYDON</span> instead, which lets us use much more accurate <span class="tip" tabindex="0" data-tip="Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars.">MESA</span> simulations.
         </p>
       </div>
 
@@ -2115,19 +2118,19 @@
       <div class="timeline">
         <div class="step">
           <strong>Initial binary properties</strong>
-          <span>Masses, periods, mass ratios, and <span class="tip tip-viz" tabindex="0" data-tip="How stretched from a circle an orbit is where e = 0 is a perfect circle. Any bound orbit sits between 0 and 1." data-viz="eccentricity">eccentricities</span> drawn for the birth population.</span>
+          <span>Masses, <span class="tip" tabindex="0" data-tip="Orbital period. How long it takes for a orbit to return to the same position. For example, the Earth has a period of 365 days.">periods</span>, mass ratios, and <span class="tip tip-viz" tabindex="0" data-tip="How stretched from a circle an orbit is where e = 0 is a perfect circle. Any bound orbit sits between 0 and 1." data-viz="eccentricity">eccentricities</span> drawn for the birth population.</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">Core collapse</span></strong>
-          <span>How the remnant mass is assigned when the iron core collapses.</span>
+          <span>How the <span class="tip" tabindex="0" data-tip="Whats left behind when a star dies. In high mass stellar evolution, this typicall a black hole or neutron star.">remnant</span> mass is calculated when the iron core collapses.</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">Natal Kicks</span></strong>
-          <span>Maxwellian scale, fallback, inverse-mass, or zero-kick prescriptions.</span>
+          <span>Kick strength, <span class="tip" tabindex="0" data-tip="Material that falls back onto the newborn compact object. More fallback means a weaker kick.">fallback</span> amount, edge cases.</span>
         </div>
         <div class="step">
-          <strong><span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">Common envelope</span> efficiency</strong>
-          <span>How much orbital energy unbinds the shared envelope (α<sub>CE</sub>).</span>
+          <strong><span class="tip tip-viz" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers." data-viz="common-envelope">Common envelope</span> efficiency</strong>
+          <span>How much drag is caused by the cores orbiting through the shared envolope.</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="How metal-rich a star is (in astronomy, “metals” means everything heavier than helium). For example, a star that has a large quanity of gold inside itself would be considered more metal rich then a star which is only Hydrogen and Helium. More metals means stronger stellar winds.">Metallicity</span></strong>
@@ -2149,7 +2152,7 @@
 
       <div class="prose">
         <p>
-          In our baseline solar-<span class="tip" tabindex="0" data-tip="How metal-rich a star is (in astronomy, “metals” means everything heavier than helium). For example, a star that has a large quanity of gold inside itself would be considered more metal rich then a star which is only Hydrogen and Helium. More metals means stronger stellar winds.">metallicity</span><sup class="fn-ref" id="fnref-census-1" data-fn-id="1"><a href="#fn-census-1">1</a></sup> run, we found about <strong>400,000,000</strong> stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, while the rest still have their binary partners.
+          In our baseline solar-<span class="tip" tabindex="0" data-tip="How metal-rich a star is (in astronomy, “metals” means everything heavier than helium). For example, a star that has a large quanity of gold inside itself would be considered more metal rich then a star which is only Hydrogen and Helium. More metals means stronger stellar winds.">metallicity</span><sup class="fn-ref" id="fnref-census-1" data-fn-id="1"><a href="#fn-census-1">1</a></sup> simulation, we found about <strong>400,000,000</strong> stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, while the rest still have their binary comapnions.
         </p>
       </div>
 
@@ -2161,7 +2164,7 @@
 
       <div class="prose">
         <p>
-          For the isolated black holes, <strong>stellar mergers</strong> are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>), the merger product later collapsing into a black hole. <strong>Disrupted binaries</strong> come next (27%): these are black holes where a <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the binary apart. This can happen at the first or second <span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">core collapse</span>. Stars born single, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational-wave emission can drive them to merge.">DCO</span> mergers make up the rest.
+          For the isolated black holes, <strong>stellar mergers</strong> are the most common (42% of all BHs): two stars drift closer and closer together until they merge into one (often after a failed <span class="tip tip-viz" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers." data-viz="common-envelope">common envelope</span>), the merger product later collapsing into a black hole. <strong>Disrupted binaries</strong> come next (27%): these are black holes where a <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the binary apart. This can happen at the first or second <span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">core collapse</span>. Stars born single, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational-wave emission can drive them to merge.">DCO</span> mergers make up the rest.
         </p>
         <p>
           The binary systems that survive are unique in their own right. <span class="tip" tabindex="0" data-tip="Not transfering mass through Roche-lobe overflow currently.">Detached</span> <strong>BH-BH</strong> systems alone are ~19% of all BHs. BH+NS, BH+WD, and BH+star systems together are only a few percent, yet this few percent are really the only ones we've observed so far.
@@ -2314,7 +2317,7 @@
 
       <div class="prose">
         <p>
-          Unstable mass transfer can dunk the binary into a <span class="tip" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.">common envelope</span>. The efficiency α<sub>CE</sub> is the fraction of orbital energy used to blow that envelope off. Lower α means a deeper inspiral: more mergers, tighter survivors, and a harder time for unequal-mass systems.
+          Unstable mass transfer can dunk the binary into a <span class="tip tip-viz" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The drag caused by the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers." data-viz="common-envelope">common envelope</span>. The efficiency α<sub>CE</sub> is the fraction of orbital energy used to blow that envelope off. Lower α means a deeper inspiral: more mergers, tighter survivors, and a harder time for unequal-mass systems.
         </p>
         <p>
           In the paper's runs, dialing α<sub>CE</sub> from 1.0 to 0.5 to 0.1 boosts stellar mergers, BH+star mergers, and especially DCO mergers (BH-BH pulling ahead of BH-NS). Detached BH-BH counts tick up a bit, while BH+NS/WD/star detached systems drop. The BH mass peaks barely budge. CE rearranges <em>who is bound to whom</em>, not how heavy the remnants are.
@@ -2355,7 +2358,7 @@
 
       <div class="prose">
         <p>
-          <span class="tip" tabindex="0" data-tip="A binary population synthesis code built on detailed MESA stellar evolution grids.">POSYDON</span>'s simulations of binary evolution tell you what a system <em>is</em>. To actually talk about observations with <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> or <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span>, we need to know <em>where</em> it is. To do that, we take the systems from POSYDON and embed them into a mock Milky Way<sup class="fn-ref" id="fnref-galaxy-1" data-fn-id="1"><a href="#fn-galaxy-1">1</a></sup>.
+          <span class="tip" tabindex="0" data-tip="<strong>PO</strong>pulation <strong>SY</strong>nthesis with <strong>D</strong>etailed binary-evolution simulati<strong>ON</strong>s. A binary population synthesis simulation code made by collaborative team of astrophyiscsists and computer scientists.">POSYDON</span>'s simulations of binary evolution tell you what a system <em>is</em>. To actually talk about observations with <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> or <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span>, we need to know <em>where</em> it is. To do that, we take the systems from POSYDON and embed them into a mock Milky Way<sup class="fn-ref" id="fnref-galaxy-1" data-fn-id="1"><a href="#fn-galaxy-1">1</a></sup>.
         </p>
         <p>
           What we do is first draw a birth location and time in the Milky Way for the binary. Based on this location and time, we can get an estimate of what the metallicity should be. From this metallicity, we find a suitable match from the POSYDON simulation. After we have our binary, we then put it on a roughly circular orbit around our Milky Way and use <span class="tip" tabindex="0" data-tip="A Python package for Galactic dynamics. We use it to integrate orbits in a Milky Way potential.">gala</span> to integrate the orbit. Then, whenever a <span class="tip" tabindex="0" data-tip="A neutron star or black hole.">compact object</span> forms<sup class="fn-ref" id="fnref-galaxy-2" data-fn-id="2"><a href="#fn-galaxy-2">2</a></sup> in our POSYDON simulation, the system's velocity gets updated for mass loss kick and the natal kick.
@@ -2948,6 +2951,135 @@
       envTipState.raf = requestAnimationFrame(loop);
     }
 
+    // Tip viz: common envelope — two cores inside a shared envelope
+    // ═══════════════════════════════════════════
+    const ceTipState = { raf: 0, last: 0, t: 0 };
+
+    function paintCommonEnvelopeTip(canvas, t) {
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.clientWidth || 280;
+      const H = canvas.clientHeight || 280;
+      if (canvas.width !== Math.floor(W * dpr) || canvas.height !== Math.floor(H * dpr)) {
+        canvas.width = Math.floor(W * dpr);
+        canvas.height = Math.floor(H * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#0a0e16";
+      ctx.fillRect(0, 0, W, H);
+
+      const cx = W * 0.48;
+      const cy = H * 0.54;
+      const rEnvX = Math.min(W, H) * 0.42;
+      const rEnvY = Math.min(W, H) * 0.34;
+      const pulse = 0.5 + 0.5 * Math.sin(t * 1.05);
+      // Slow mutual orbit of the two cores inside the shared envelope
+      const orbit = t * 0.55;
+      const sep = Math.min(W, H) * 0.155;
+      const rA = Math.min(W, H) * 0.095;
+      const rB = Math.min(W, H) * 0.072;
+      const ax = cx + Math.cos(orbit) * sep * 0.55;
+      const ay = cy + Math.sin(orbit) * sep * 0.38;
+      const bx = cx - Math.cos(orbit) * sep * 0.72;
+      const by = cy - Math.sin(orbit) * sep * 0.5;
+
+      // Soft outer glow (elliptical)
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(1, rEnvY / rEnvX);
+      const glow = ctx.createRadialGradient(0, 0, rEnvX * 0.55, 0, 0, rEnvX * 1.4);
+      glow.addColorStop(0, `rgba(255, 130, 70, ${0.14 + 0.06 * pulse})`);
+      glow.addColorStop(1, "rgba(255, 130, 70, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(0, 0, rEnvX * 1.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Shared envelope
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(1, rEnvY / rEnvX);
+      const envGrad = ctx.createRadialGradient(-rEnvX * 0.18, -rEnvX * 0.22, rEnvX * 0.08, 0, 0, rEnvX);
+      envGrad.addColorStop(0, "#f0a060");
+      envGrad.addColorStop(0.4, "#d4783a");
+      envGrad.addColorStop(0.78, "#9a4a28");
+      envGrad.addColorStop(1, "#5c2a18");
+      ctx.fillStyle = envGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, rEnvX, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      function drawCore(x, y, r) {
+        const g = ctx.createRadialGradient(x - r * 0.28, y - r * 0.32, 0, x, y, r);
+        g.addColorStop(0, "#fff8e8");
+        g.addColorStop(0.35, "#ffe08a");
+        g.addColorStop(0.75, "#f0b020");
+        g.addColorStop(1, "#c87810");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255, 230, 160, 0.7)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      drawCore(ax, ay, rA);
+      drawCore(bx, by, rB);
+
+      // Labels
+      ctx.font = '600 0.7rem "Fraunces", Georgia, serif';
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(255, 244, 220, 0.95)";
+      ctx.strokeStyle = "rgba(255, 230, 180, 0.45)";
+      ctx.lineWidth = 1;
+      const labA = { x: ax + rA * 0.2, y: ay - rA * 1.85 };
+      ctx.beginPath();
+      ctx.moveTo(ax + rA * 0.25, ay - rA * 0.55);
+      ctx.lineTo(labA.x + 6, labA.y);
+      ctx.stroke();
+      ctx.fillText("core", labA.x + 10, labA.y);
+
+      const labB = { x: bx - rB * 2.6, y: by + rB * 1.75 };
+      ctx.beginPath();
+      ctx.moveTo(bx - rB * 0.3, by + rB * 0.55);
+      ctx.lineTo(labB.x + 28, labB.y);
+      ctx.stroke();
+      ctx.fillText("core", labB.x, labB.y);
+
+      ctx.fillStyle = "rgba(255, 200, 150, 0.95)";
+      ctx.strokeStyle = "rgba(255, 180, 120, 0.4)";
+      const envLab = { x: cx + rEnvX * 0.62, y: cy - rEnvY * 1.05 };
+      ctx.beginPath();
+      ctx.moveTo(cx + rEnvX * 0.42, cy - rEnvY * 0.55);
+      ctx.lineTo(envLab.x, envLab.y);
+      ctx.stroke();
+      ctx.fillText("shared envelope", envLab.x + 6, envLab.y);
+    }
+
+    function ensureCeTipAnim() {
+      if (ceTipState.raf) return;
+      ceTipState.last = performance.now();
+      const loop = (now) => {
+        const canvases = document.querySelectorAll(".ce-tip-canvas");
+        if (!canvases.length) {
+          ceTipState.raf = 0;
+          return;
+        }
+        const dt = Math.min(0.05, (now - (ceTipState.last || now)) / 1000);
+        ceTipState.last = now;
+        ceTipState.t += dt;
+        canvases.forEach((c) => paintCommonEnvelopeTip(c, ceTipState.t));
+        ceTipState.raf = requestAnimationFrame(loop);
+      };
+      ceTipState.raf = requestAnimationFrame(loop);
+    }
+
     // ═══════════════════════════════════════════
     // Tip viz: eccentricity — circular vs e=0.5 binary
     // ═══════════════════════════════════════════
@@ -3434,6 +3566,7 @@
         tipViz.set(k, "gw");
       });
       tipViz.set("envelope", "envelope");
+      ["common envelope", "common-envelope", "ce"].forEach((k) => tipViz.set(k, "common-envelope"));
       ["eccentricity", "eccentricities", "eccentric"].forEach((k) => tipViz.set(k, "eccentricity"));
 
       if (!glossary.size && !document.querySelector(".fn-ref")) return;
@@ -4396,6 +4529,10 @@
           bubble.classList.add("tip-has-viz");
           html += `<div class="tip-env-viz"><canvas class="env-tip-canvas" width="320" height="320" aria-hidden="true"></canvas></div>`;
           html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
+        } else if (vizId === "common-envelope") {
+          bubble.classList.add("tip-has-viz");
+          html += `<div class="tip-ce-viz"><canvas class="ce-tip-canvas" width="320" height="320" aria-hidden="true"></canvas></div>`;
+          html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
         } else if (vizId === "eccentricity") {
           bubble.classList.add("tip-has-viz");
           html += `<div class="tip-ecc-viz"><canvas class="ecc-tip-canvas" width="420" height="236" aria-hidden="true"></canvas></div>`;
@@ -4425,6 +4562,9 @@
         }
         if (vizId === "envelope" && typeof ensureEnvTipAnim === "function") {
           requestAnimationFrame(() => ensureEnvTipAnim());
+        }
+        if (vizId === "common-envelope" && typeof ensureCeTipAnim === "function") {
+          requestAnimationFrame(() => ensureCeTipAnim());
         }
         if (vizId === "eccentricity" && typeof ensureEccTipAnim === "function") {
           requestAnimationFrame(() => ensureEccTipAnim());

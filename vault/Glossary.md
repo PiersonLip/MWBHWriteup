@@ -7,7 +7,7 @@ Hover text on the site comes from the note body (after the title).
 - [[binary stars]] — rich / expandable note on the site
 - [[black holes]] — nested tip links to [[weird things with light]] (page lens gag)
 - [[Blaauw effect]]
-- [[common envelope]]
+- [[common envelope]] — tip canvas (`viz: common-envelope`): two cores + shared envelope
 - [[core collapse]]
 - [[DCO]]
 - [[Detached]]

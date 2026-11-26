@@ -2,6 +2,7 @@
 title: "common envelope"
 aliases:
   - CE
+viz: common-envelope
 ---
 
 # common envelope
