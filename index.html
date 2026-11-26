@@ -2244,11 +2244,10 @@
         <div class="grid-2">
           <div class="controls">
             <div class="control">
-              <label>Kick prescription</label>
+              <label>Kick handling</label>
               <div class="seg" id="kick-presets">
                 <button type="button" data-mode="fiducial" class="active">Inverse mass</button>
-                <button type="button" data-mode="fallback">Fallback</button>
-                <button type="button" data-mode="ns">NS-like</button>
+                <button type="button" data-mode="fallback"><span class="tip" tabindex="0" data-tip="Material that falls back onto the newborn compact object. More fallback means a weaker kick.">Fallback</span></button>
                 <button type="button" data-mode="zero">Zero kick</button>
               </div>
             </div>
@@ -5148,11 +5147,11 @@
 
     function kickSpeedKms() {
       if (kickUI.mode === "zero") return 0;
-      if (kickUI.mode === "ns") return kickUI.vns;
       if (kickUI.mode === "fallback") {
         const ffb = clamp((kickUI.mbh - 2.5) / 17.5, 0, 0.95);
         return (1 - ffb) * kickUI.vns;
       }
+      // Inverse mass (fiducial default): v ∝ 1/M_BH
       return kickUI.vns * (MNS / kickUI.mbh);
     }
 
