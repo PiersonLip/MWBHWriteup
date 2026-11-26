@@ -18,14 +18,14 @@ A **binary system** is simply two stars bound by gravity, orbiting a common shar
 
 {{orbit-viz}}
 
-“Binary” is also shorthand for the whole family of **multiple-star systems**. There is not reason why you can't have a close binary pair that has a wide teritary which orbits far away[^1], or have two binary pairs orbiting each other 
+“Binary” is also shorthand for the whole family of **multiple-star systems**. There is not reason why you can't have a close binary pair that has a wide teritary which orbits far away[^1], or have two binary pairs orbiting each other. 
 
 
-### They are incredibly common
+### Way more common then you'd think
 
-Among low-mass stars like the Sun, something like half have at least one companion. Climb the mass ladder and the binary fraction shoots up: for O- and early B-type stars — the ones that become black holes and neutron stars — **most are born in binaries or multiples**, with close companions especially common.
+When people think of the icon [[sunsets of tatooine]] they typically think it's some outlandish sci-fi concept, however, among low-mass stars like the Sun, around half have at least one companion and live in binaries. And when you start getting into more massive stars, that percentage rapidly climbs, quickly reaching nearly 100%.  
 
-That is why the bright night sky feels so binary-rich. The stars our eyes notice are often luminous, and luminous stars are disproportionately the ones that formed with partners. Familiar names (Sirius, Alpha Centauri, Castor, and many more) are multiples. A lonely point of light is often a conspiracy of several suns.
+That is why the bright night sky feels so binary-rich. The stars our eyes notice are often luminous, and luminous stars are disproportionately the ones that formed with partners.
 
 {{orion-viz}}
 
