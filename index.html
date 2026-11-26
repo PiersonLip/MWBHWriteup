@@ -5213,10 +5213,13 @@
 
       function linkifyGlossary(text, skipKey, extraNoNest) {
         const parentViz = skipKey ? tipViz.get(skipKey) : "";
+        const parentTip = skipKey ? glossary.get(skipKey) || "" : "";
         const block = extraNoNest || new Set();
         const terms = [...glossary.keys()]
           .filter((k) => {
             if (k === skipKey || TIP_NO_NEST.has(k) || tipDeep.has(k) || block.has(k)) return false;
+            // Don't nest aliases of the open tip (e.g. periods → period)
+            if (parentTip && glossary.get(k) === parentTip) return false;
             // don't nest the same canvas viz inside itself (e.g. GW ↔ LIGO)
             if (parentViz && tipViz.get(k) === parentViz) return false;
             return true;
