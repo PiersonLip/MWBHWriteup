@@ -394,9 +394,9 @@
       position: absolute;
       left: 0;
       top: 0;
-      width: 5px;
-      height: 5px;
-      margin: -2.5px 0 0 -2.5px;
+      width: 9px;
+      height: 9px;
+      margin: -4.5px 0 0 -4.5px;
       background: #fff8e0;
       clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
       opacity: 0;
@@ -6036,11 +6036,11 @@
             -Math.PI * 0.72 +
             (Math.PI * 0.44 * i) / Math.max(1, n - 1) +
             (Math.random() - 0.5) * 0.22;
-          const dist = 34 + Math.random() * 40;
+          const dist = 42 + Math.random() * 52;
           const dx = Math.cos(ang) * dist;
-          const dy = Math.sin(ang) * dist - 10;
+          const dy = Math.sin(ang) * dist - 12;
           const rot = (Math.random() - 0.5) * 70;
-          const size = 4 + Math.random() * 3;
+          const size = 8 + Math.random() * 5;
           s.style.width = `${size}px`;
           s.style.height = `${size}px`;
           s.style.marginLeft = `${-size / 2}px`;
