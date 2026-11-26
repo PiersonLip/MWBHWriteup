@@ -4179,7 +4179,8 @@
         if (isTouchUi()) return; // tap mode: tips stay until dismiss
         const nestedOpen = open.some((o) => o.depth > 0);
         const richOpen = open.some((o) => o.bubble.classList.contains("tip-rich"));
-        const delay = nestedOpen ? 160 : richOpen ? 700 : 420;
+        // Short grace only — just enough to cross the tip→bubble bridge
+        const delay = nestedOpen ? 70 : richOpen ? 160 : 90;
         hideTimer = setTimeout(() => {
           clearFrom(activeTipDepthUnderPointer() + 1);
         }, delay);
