@@ -2050,8 +2050,12 @@
       transform: translateY(0);
       pointer-events: auto;
     }
-    /* Exit control stays readable — not part of the edible ghost field */
+    /* Ghost words lift off the exit label; chrome stays. Label restores after it's eaten. */
     html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint {
+      color: transparent !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+    html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint.is-label-restored {
       color: var(--ink-soft) !important;
       -webkit-text-fill-color: var(--ink-soft) !important;
     }
@@ -4918,6 +4922,8 @@
         if (ghostUi) ghostUi.innerHTML = "";
         lens.items = [];
         lens.hintGhosted = false;
+        const hint = document.getElementById("bh-lens-hint");
+        if (hint) hint.classList.remove("is-label-restored");
       }
 
       function appendGhostWordsFrom(root, frag, { max = 520, forceColor = null, items = lens.items } = {}) {
@@ -5108,7 +5114,17 @@
         w.el.style.transition = "opacity 0.14s ease, transform 0.14s ease";
         w.el.style.opacity = "0";
         w.el.style.transform = `translate3d(${w.eatX}px, ${w.eatY}px, 0) scale(0.15)`;
+        maybeRestoreExitHintLabel();
         maybeShowRudePopup();
+      }
+
+      function maybeRestoreExitHintLabel() {
+        if (!lens.hintGhosted) return;
+        const hintItems = lens.items.filter((w) => w.fromHint);
+        if (!hintItems.length || !hintItems.every((w) => w.eaten)) return;
+        const hint = document.getElementById("bh-lens-hint");
+        if (hint) hint.classList.add("is-label-restored");
+        lens.hintGhosted = false;
       }
 
       function placeGhostItems(pull, now) {
@@ -5159,23 +5175,29 @@
             w.el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
             continue;
           }
-          // Rude-stage grace: stay put / uneatable until the popup has been readable
-          if (w.eatAfter && now < w.eatAfter) {
-            w.el.style.transform = `translate3d(${w.x0}px, ${w.y0}px, 0)`;
-            continue;
+          // Rude-stage: hold briefly, then ease into the pull (no hard snap)
+          let warm = 1;
+          if (w.eatAfter) {
+            const warmMs = 520;
+            const t = (now - w.eatAfter) / warmMs;
+            if (t <= 0) {
+              w.el.style.transform = `translate3d(${w.x0}px, ${w.y0}px, 0)`;
+              continue;
+            }
+            warm = smootherstep(Math.min(1, t));
           }
           const dx = cx - w.cx;
           const dy = cy - w.cy;
           const dist = Math.hypot(dx, dy) || 1;
-          // BH passed over this word → swallow it (not during exit)
-          if (!lens.exit && dist < swallowR + (w.rw || 4)) {
+          // BH passed over this word → swallow it (not during exit; not during warm-in hold)
+          if (!lens.exit && warm > 0.15 && dist < swallowR + (w.rw || 4)) {
             swallowWord(w, cx, cy);
             continue;
           }
           const ux = dx / dist;
           const uy = dy / dist;
           const prox = softR / (softR + dist); // (0, 1] — never hard-cuts to zero
-          const local = Math.max(0.02, pull) * prox;
+          const local = Math.max(0.02, pull) * prox * warm;
           const travel = Math.min(dist * 0.24, 14 + dist * 0.11);
           const turbX = Math.sin(now * 0.0022 + w.seed) * w.amp * 0.2 * local;
           const turbY = Math.cos(now * 0.0018 + w.phase) * w.amp * 0.2 * local;
@@ -5187,7 +5209,7 @@
           // Also swallow if the moved glyph has crossed the horizon
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
-          if (!lens.exit && Math.hypot(cx - curCx, cy - curCy) < swallowR) {
+          if (!lens.exit && warm > 0.15 && Math.hypot(cx - curCx, cy - curCy) < swallowR) {
             swallowWord(w, cx, cy);
             continue;
           }
@@ -5584,8 +5606,16 @@
         // Drop tip bubbles so the cursor can roam freely
         clearFrom(0);
         const hint = document.getElementById("bh-lens-hint");
-        if (hint) hint.setAttribute("aria-hidden", "false");
-        // Keep "Back to normal" solid — not edible, always available to exit
+        if (hint) {
+          hint.classList.remove("is-label-restored");
+          hint.setAttribute("aria-hidden", "false");
+        }
+        // Desktop: ghost the label so the BH can eat it; chrome stays; label restores after
+        if (!isTouchUi()) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => ghostifyExitHint());
+          });
+        }
       }
 
       function exitPinnedLens() {

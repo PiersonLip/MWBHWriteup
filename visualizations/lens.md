@@ -10,7 +10,7 @@ Glossary note: `vault/Glossary/weird things with light.md` (`effect: lens`).
 |--------|--------|
 | Hover `[data-effect="lens"]` | Effect starts **immediately** (tiny BH + word ghosts). |
 | Hold hover **~1.2s** | Pins into **focused** mode (roam freely, exit hint). |
-| Click exit hint / `Esc` | Soft exit; restores page. Exit label stays solid (not edible). |
+| Click exit hint / `Esc` | Soft exit; restores page. Label is edible; chrome stays and label restores after. |
 | Prefers-reduced-motion | Vignette only; no ghosts / BH / scroll lock. |
 
 Click no longer pins — focus is dwell-only on the lens tip itself (not the parent tip bubble).
@@ -46,8 +46,8 @@ Size = **natural plateau** + **feed bonus** from eaten words.
 ## Word ghosts
 
 - Built from text in `.wrap` (+ canvases/images as blocks) via `buildGhost()` / `appendGhostWordsFrom()`.
-- On pin, `ghostifyExitHint()` clones the exit-button label into `#bh-ghost-ui`.
 - Soft global pull toward cursor (falloff with distance, never a hard near/far cutoff) + light turbulence.
+- `#bh-lens-hint` stays on-screen with solid “Back to normal” text (not ghosted / not edible).
 - BH overlapping a word → `eaten` (fade/scale into core); triggers feed + maybe rude chain.
 - When a rude stage’s text is fully eaten, the empty popup chrome slides off-screen, then the next stage slides in. Exit hint stays put.
 - On soft exit, eaten ghosts ease back to home (opacity/scale/position, slight stagger) so page copy doesn’t pop in.
