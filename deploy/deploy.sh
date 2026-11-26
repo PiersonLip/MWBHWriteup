@@ -22,6 +22,7 @@ cp "$ROOT/assets/crescent-nebula.jpg" "$TMP/assets/"
 cp "$ROOT/assets/xrb.jpg" "$TMP/assets/"
 cp "$ROOT/assets/roche-lobe.svg" "$TMP/assets/"
 cp "$ROOT/assets/nancy-grace-roman.jpg" "$TMP/assets/"
+cp "$ROOT/assets/tatooine-binary-sunset.jpg" "$TMP/assets/"
 cp "$ROOT/assets/og-card.jpg" "$TMP/assets/"
 
 echo "Syncing to ${REMOTE_HOST}:${REMOTE_DIR}..."
