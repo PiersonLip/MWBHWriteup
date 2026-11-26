@@ -2971,50 +2971,46 @@
 
       const cx = W * 0.48;
       const cy = H * 0.54;
-      const rEnvX = Math.min(W, H) * 0.42;
-      const rEnvY = Math.min(W, H) * 0.34;
-      const pulse = 0.5 + 0.5 * Math.sin(t * 1.05);
-      // Slow mutual orbit — keep centers ≥ rA+rB+gap apart at every phase
-      const orbit = t * 0.55;
       const s = Math.min(W, H);
+      const rEnv = s * 0.38;
+      const pulse = 0.5 + 0.5 * Math.sin(t * 1.05);
+      // Slow mutual circular orbit — keep centers ≥ rA+rB+gap apart
+      const orbit = t * 0.55;
       const rA = s * 0.08;
       const rB = s * 0.062;
       const gap = s * 0.04;
-      const minHalf = (rA + rB + gap) / 2;
-      const ox = Math.min(rEnvX * 0.48, minHalf * 1.35);
-      const oy = Math.max(minHalf, Math.min(rEnvY * 0.42, ox * 0.78));
-      const ax = cx + Math.cos(orbit) * ox;
-      const ay = cy + Math.sin(orbit) * oy;
-      const bx = cx - Math.cos(orbit) * ox;
-      const by = cy - Math.sin(orbit) * oy;
+      const orbitR = Math.max((rA + rB + gap) / 2, rEnv * 0.32);
+      const ax = cx + Math.cos(orbit) * orbitR;
+      const ay = cy + Math.sin(orbit) * orbitR;
+      const bx = cx - Math.cos(orbit) * orbitR;
+      const by = cy - Math.sin(orbit) * orbitR;
 
-      // Soft outer glow (elliptical)
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.scale(1, rEnvY / rEnvX);
-      const glow = ctx.createRadialGradient(0, 0, rEnvX * 0.55, 0, 0, rEnvX * 1.4);
+      // Soft outer glow
+      const glow = ctx.createRadialGradient(cx, cy, rEnv * 0.7, cx, cy, rEnv * 1.35);
       glow.addColorStop(0, `rgba(255, 130, 70, ${0.14 + 0.06 * pulse})`);
       glow.addColorStop(1, "rgba(255, 130, 70, 0)");
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(0, 0, rEnvX * 1.4, 0, Math.PI * 2);
+      ctx.arc(cx, cy, rEnv * 1.35, 0, Math.PI * 2);
       ctx.fill();
-      ctx.restore();
 
-      // Shared envelope
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.scale(1, rEnvY / rEnvX);
-      const envGrad = ctx.createRadialGradient(-rEnvX * 0.18, -rEnvX * 0.22, rEnvX * 0.08, 0, 0, rEnvX);
+      // Shared envelope (sphere)
+      const envGrad = ctx.createRadialGradient(
+        cx - rEnv * 0.2,
+        cy - rEnv * 0.25,
+        rEnv * 0.08,
+        cx,
+        cy,
+        rEnv
+      );
       envGrad.addColorStop(0, "#f0a060");
       envGrad.addColorStop(0.4, "#d4783a");
       envGrad.addColorStop(0.78, "#9a4a28");
       envGrad.addColorStop(1, "#5c2a18");
       ctx.fillStyle = envGrad;
       ctx.beginPath();
-      ctx.arc(0, 0, rEnvX, 0, Math.PI * 2);
+      ctx.arc(cx, cy, rEnv, 0, Math.PI * 2);
       ctx.fill();
-      ctx.restore();
 
       function drawCore(x, y, r) {
         const g = ctx.createRadialGradient(x - r * 0.28, y - r * 0.32, 0, x, y, r);
