@@ -2050,10 +2050,10 @@
       transform: translateY(0);
       pointer-events: auto;
     }
-    /* Ghost words (in .bh-ghost-ui above) lift off; button chrome stays solid */
+    /* Exit control stays readable — not part of the edible ghost field */
     html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint {
-      color: transparent !important;
-      -webkit-text-fill-color: transparent !important;
+      color: var(--ink-soft) !important;
+      -webkit-text-fill-color: var(--ink-soft) !important;
     }
     @media (max-width: 720px), (pointer: coarse) {
       .bh-lens-hint {
@@ -4878,6 +4878,7 @@
         rudeStage: -1,
         rudeGen: 0,
         rudeTimer: 0,
+        rudeAdvancing: false,
         hintGhosted: false,
         raf: 0,
         t0: 0,
@@ -5584,13 +5585,7 @@
         clearFrom(0);
         const hint = document.getElementById("bh-lens-hint");
         if (hint) hint.setAttribute("aria-hidden", "false");
-        // Desktop: ghost the label so the BH can eat it. Mobile: keep text
-        // visible — the floating glyphs sit under the button chrome.
-        if (!isTouchUi()) {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => ghostifyExitHint());
-          });
-        }
+        // Keep "Back to normal" solid — not edible, always available to exit
       }
 
       function exitPinnedLens() {

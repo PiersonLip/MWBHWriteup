@@ -10,7 +10,7 @@ Glossary note: `vault/Glossary/weird things with light.md` (`effect: lens`).
 |--------|--------|
 | Hover `[data-effect="lens"]` | Effect starts **immediately** (tiny BH + word ghosts). |
 | Hold hover **~1.2s** | Pins into **focused** mode (roam freely, exit hint). |
-| Click exit hint / `Esc` | Soft exit; restores page. |
+| Click exit hint / `Esc` | Soft exit; restores page. Exit label stays solid (not edible). |
 | Prefers-reduced-motion | Vignette only; no ghosts / BH / scroll lock. |
 
 Click no longer pins — focus is dwell-only on the lens tip itself (not the parent tip bubble).
