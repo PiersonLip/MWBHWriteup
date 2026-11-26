@@ -2974,15 +2974,19 @@
       const rEnvX = Math.min(W, H) * 0.42;
       const rEnvY = Math.min(W, H) * 0.34;
       const pulse = 0.5 + 0.5 * Math.sin(t * 1.05);
-      // Slow mutual orbit of the two cores inside the shared envelope
+      // Slow mutual orbit — keep centers ≥ rA+rB+gap apart at every phase
       const orbit = t * 0.55;
-      const sep = Math.min(W, H) * 0.155;
-      const rA = Math.min(W, H) * 0.095;
-      const rB = Math.min(W, H) * 0.072;
-      const ax = cx + Math.cos(orbit) * sep * 0.55;
-      const ay = cy + Math.sin(orbit) * sep * 0.38;
-      const bx = cx - Math.cos(orbit) * sep * 0.72;
-      const by = cy - Math.sin(orbit) * sep * 0.5;
+      const s = Math.min(W, H);
+      const rA = s * 0.08;
+      const rB = s * 0.062;
+      const gap = s * 0.04;
+      const minHalf = (rA + rB + gap) / 2;
+      const ox = Math.min(rEnvX * 0.48, minHalf * 1.35);
+      const oy = Math.max(minHalf, Math.min(rEnvY * 0.42, ox * 0.78));
+      const ax = cx + Math.cos(orbit) * ox;
+      const ay = cy + Math.sin(orbit) * oy;
+      const bx = cx - Math.cos(orbit) * ox;
+      const by = cy - Math.sin(orbit) * oy;
 
       // Soft outer glow (elliptical)
       ctx.save();
