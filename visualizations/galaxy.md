@@ -19,11 +19,11 @@ Drop a binary into a MW-like potential: birth → pre-SN disk arc → SN+kick �
 - Drag orbit (yaw/pitch); scroll/pinch zoom
 - Look-at + `camDist` camera (`galProject`); home view looks at origin from ~28 kpc
 - Default pitch ≈ 16° from edge-on (`π/2 − 16°`; pitch 0 = face-on, π/2 = edge-on)
-- **Click** ω Cen / M13 / M22 or **GC** → animate zoom + orbit that target; Esc or empty-space click returns home
-- GC focus draws schematic **Sgr A*** + eccentric **S-stars** (exaggerated kpc-scale orbits)
+- **Click** ω Cen / M13 / M22 or **GC** → animate zoom + orbit that target; empty-space click returns home
+- GC focus draws schematic **Sgr A*** (small marker) + eccentric **S-stars** (exaggerated kpc-scale orbits)
 - Fullscreen = stage only; icon button (not text label)
 - Idle spin after 5s inactivity (home); while focused, continuous yaw orbit
-- Shortcuts: `R` restart; `1`/`2`/`3` examples; `Space` play/pause only in fullscreen; `Esc` leaves focus
+- Shortcuts: `R` restart; `1`/`2`/`3` examples; `Space` play/pause only in fullscreen
 
 ## Physics notes
 
