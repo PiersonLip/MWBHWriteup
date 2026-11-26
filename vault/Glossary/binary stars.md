@@ -23,16 +23,11 @@ A **binary system** is simply two stars bound by gravity, orbiting a common shar
 
 ### Way more common then you'd think
 
-When people think of the icon [[sunsets of tatooine]] they typically think it's some outlandish sci-fi concept, however, among low-mass stars like the Sun, around half have at least one companion and live in binaries. And when you start getting into more massive stars, that percentage rapidly climbs, quickly reaching nearly 100%.  
+When people think of the iconic [[sunsets of tatooine]] they typically think it's some outlandish sci-fi concept, however, among low-mass stars like the Sun, around half have at least one companion and live in binaries. And when you start getting into more massive stars, that percentage climbs, quickly reaching nearly 100%.  
 
-That is why the bright night sky feels so binary-rich. The stars our eyes notice are often luminous, and luminous stars are disproportionately the ones that formed with partners.
+Because of this relationship the bright night sky is binary-rich. The stars our eyes notice are often luminous, and luminous stars are disproportionately the ones that formed with partners.
 
 {{orion-viz}}
 
-### Why this paper cares
-
-Galactic black holes are the leftovers of massive stars. If those stars usually had partners, then mass transfer, common envelopes, mergers, and supernova kicks are not side plots — they **are** the plot. A “single” black hole today often still has a binary biography: a merger that made one star, or a kick that tore a pair apart.
-
-POSYDON’s job is to follow those intertwined lives with detailed stellar models, then ask what the Galaxy’s quiet black holes should look like for Gaia and Roman. Without binaries, that story does not even start.
 
 [^1]: Note that despite the fact that this is three stars orbiting eachother, it noteably is *not* a three body problem. This is because all three stars are orbiting the same stable common center of mass, whereas in a three body problem there no such consistent center. 
