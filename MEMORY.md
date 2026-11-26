@@ -49,7 +49,7 @@ Two themes via `data-theme` on `<html>` + CSS variables. Light = former slate; d
 | Galactic seeding `#galaxy` | [galaxy.md](visualizations/galaxy.md) | Active |
 | Microlensing `#micro` | [micro.md](visualizations/micro.md) | Active (3D+2D stacked) |
 | BH lens gag (`data-effect="lens"`) | [lens.md](visualizations/lens.md) | Active (glossary easter egg) |
-| Tip-nest singularity (8 deep) | [tip-singularity.md](visualizations/tip-singularity.md) | Active (glossary easter egg) |
+| Tip-nest singularity (10 deep) | [tip-singularity.md](visualizations/tip-singularity.md) | Active (glossary easter egg) |
 | Fiducial demographics `#demo` | — | **Removed** (flowchart replaces it) |
 
 ## Paper concepts covered
@@ -93,7 +93,7 @@ See [visualizations/lens.md](visualizations/lens.md) for full detail.
 
 See [visualizations/tip-singularity.md](visualizations/tip-singularity.md).
 
-- Open glossary tips **8 deep** → tips converge (tilted) + shrink to a speck, then BH forms; page ghost-pull clears the screen in ~**8s**; BH shrinks to a point; black → 0.85s → cartoon twinkle; page returns after **3s** void. Cursor stays until blackout.
+- Open glossary tips **10 deep** → tips converge (tilted) + shrink to a speck, then BH forms; page ghost-pull (~**8s**, stronger near the hole) clears the screen; BH shrinks to a point; black → 0.85s → cartoon twinkle; page returns after **3s** void. Cursor stays until blackout.
 - Separate overlay from the lens gag; exits lens first if both would conflict.
 
 ## Writing / UX conventions
