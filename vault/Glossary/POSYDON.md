@@ -4,4 +4,5 @@ title: "POSYDON"
 
 # POSYDON
 
-A binary population synthesis code built on detailed MESA stellar evolution grids.
+**PO**pulation **SY**nthesis with **D**etailed binary-evolution simulati**ON**s. 
+A binary [[population synthesis]] simulation code made by .
