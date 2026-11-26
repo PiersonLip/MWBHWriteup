@@ -1,7 +1,7 @@
 ---
 id: observe
 label: 06 · Observational properties
-title: What we actually see
+title: What Gaia and Roman see
 ---
 
 # What Gaia and Roman see
