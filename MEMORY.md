@@ -93,7 +93,7 @@ See [visualizations/lens.md](visualizations/lens.md) for full detail.
 
 See [visualizations/tip-singularity.md](visualizations/tip-singularity.md).
 
-- Open glossary tips **4 deep** → tips slowly converge to their midpoint, then a BH forms there; page lifts into word ghosts and falls in, then flash/sparkle, **5s** void, page fades back.
+- Open glossary tips **4 deep** → tips slowly converge to their midpoint, then a BH forms there; page lifts into word ghosts and falls in, then flash/sparkle, **3s** void, page fades back.
 - Separate overlay from the lens gag; exits lens first if both would conflict.
 
 ## Writing / UX conventions

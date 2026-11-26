@@ -1,6 +1,6 @@
 # Tip-nest singularity gag
 
-Easter egg when glossary tips nest **4 deep** (depths `0…3`). Open tip bubbles slowly converge on their shared midpoint; only then does a black hole form there. Page + tip copy lifts into **word ghosts** and drifts into the hole. Finish: flash + sparkles, **5s** black void, page fades back.
+Easter egg when glossary tips nest **4 deep** (depths `0…3`). Open tip bubbles slowly converge on their shared midpoint; only then does a black hole form there. Page + tip copy lifts into **word ghosts** and drifts into the hole. Finish: flash + sparkles, **3s** black void, page fades back.
 
 Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag ([lens.md](./lens.md)); exits lens first if active.
 
@@ -18,7 +18,7 @@ Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag (
 2. **Birth** (~2s) — BH appears at that midpoint (`is-sing-form`); tip bubbles squeeze into the seed and fade.
 3. **Pull** (~14s) — Word/block ghosts from `.wrap` (+ leftover tip media) lift (`is-sing-lifted`) and fall into the fixed BH (ease-in pull + feed-on-eat).
 4. **Finish** (~2.2s) — Remaining glyphs yank in; BH collapses.
-5. **Flash / sparkle / void / return** — same as before (5s void).
+5. **Flash / sparkle / void / return** — same as before (3s void).
 
 BH never follows the cursor; anchor is `--sing-px/py` from the tip midpoint.
 
@@ -42,7 +42,7 @@ BH never follows the cursor; anchor is `--sing-px/py` from the tip midpoint.
 | `SING_BIRTH_MS` | BH form after gather (~2000) |
 | `SING_PULL_MS` | Page ghost-pull (~14000) |
 | `SING_FINISH_MS` | Final yank (~2200) |
-| `SING_VOID_MS` | Black hold (5000) |
+| `SING_VOID_MS` | Black hold (3000) |
 
 ## Changelog
 
