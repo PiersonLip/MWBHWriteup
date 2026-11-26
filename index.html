@@ -4383,6 +4383,7 @@
         tips: [], // { el, cx, cy, dx, dy }
         shrinkFrom: 1,
         liveScale: 1,
+        prevNow: 0,
         reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
       };
       const lens = {
@@ -5527,43 +5528,54 @@
           ? singularity.pull + (1 - singularity.pull) * easeInOut(yankU)
           : singularity.pull;
         const swallowR = Math.max(10, 70 * scale * (yanking ? 1.2 : 1.0));
+        // dt-based fall so progress only increases (never snaps back home)
+        const dt = singularity.prevNow
+          ? Math.min(40, Math.max(0, now - singularity.prevNow))
+          : 16;
+        singularity.prevNow = now;
 
         for (const w of singularity.items) {
           if (w.eaten) continue;
-          const dx = cx - w.cx;
-          const dy = cy - w.cy;
-          const dist = Math.hypot(dx, dy) || 1;
-          if (dist < swallowR + (w.rw || 4)) {
-            singSwallow(w);
-            continue;
-          }
-          const ux = dx / dist;
-          const uy = dy / dist;
-          // Soft distance falloff — near words feel it first, far words catch up as pull grows
-          const prox = 0.12 + 0.88 / (1 + Math.pow(dist / 300, 1.45));
-          // Gravity strength ramps smoothly with pull (higher peak than before)
+          if (w.fall == null) w.fall = 0;
+
+          const homeDist = Math.hypot(cx - w.cx, cy - w.cy) || 1;
+          const prox = 0.12 + 0.88 / (1 + Math.pow(homeDist / 300, 1.45));
           const grav = yanking
             ? 0.55 + 0.45 * smootherstep(yankU)
             : 0.06 + 0.94 * smootherstep(pull);
-          const strength = Math.min(1, grav * (0.35 + 0.65 * prox));
-          const travel = dist * strength;
-          const turbAmp = yanking ? 0.06 : 0.16 * (0.35 + 0.65 * pull);
+
+          // Near words accelerate sooner; far words lag — but fall never decreases
+          const rate =
+            (0.00005 + 0.00072 * grav * (0.18 + 0.82 * prox) * (yanking ? 1.8 : 1)) * dt;
+          w.fall = Math.min(1, w.fall + rate);
+
+          const t = w.fall;
+          const xHome = w.x0;
+          const yHome = w.y0;
+          const xHole = cx - (w.rw || 0);
+          const yHole = cy - (w.rh || 0);
+          const turbAmp = (1 - t) * (yanking ? 0.04 : 0.14 * (0.3 + 0.7 * pull));
           const turbX = Math.sin(now * 0.0011 + w.seed) * w.amp * turbAmp;
           const turbY = Math.cos(now * 0.0009 + w.phase) * w.amp * turbAmp;
           const swirl =
+            (1 - t) *
             Math.sin(now * 0.0007 + w.seed * 1.7) *
-            (1.5 + 9 * grav) *
+            (1.2 + 7 * grav) *
             prox *
-            (yanking ? 0.3 : 1);
-          const x = w.x0 + ux * travel + turbX + (-uy) * swirl;
-          const y = w.y0 + uy * travel + turbY + ux * swirl;
-          const facing = (Math.atan2(dy, dx) * 180) / Math.PI;
-          const rot = facing * strength * 0.28 + Math.sin(now * 0.0012 + w.seed) * 1.6 * grav;
-          const s = Math.max(0.1, 1 - 0.7 * strength);
+            (yanking ? 0.25 : 1);
+          const ang = Math.atan2(yHole - yHome, xHole - xHome);
+          const x = xHome + (xHole - xHome) * t + turbX + Math.sin(ang + Math.PI / 2) * swirl;
+          const y = yHome + (yHole - yHome) * t + turbY - Math.cos(ang + Math.PI / 2) * swirl;
+          const facing = (ang * 180) / Math.PI;
+          const rot = facing * t * 0.22 + Math.sin(now * 0.0012 + w.seed) * 1.4 * grav * (1 - t);
+          const s = Math.max(0.1, 1 - 0.72 * t);
           w.el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${s})`;
+
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
-          if (Math.hypot(cx - curCx, cy - curCy) < swallowR) singSwallow(w);
+          if (t >= 0.97 || Math.hypot(cx - curCx, cy - curCy) < swallowR) {
+            singSwallow(w);
+          }
         }
       }
 
@@ -5584,6 +5596,7 @@
         singularity.phase = "birth";
         singularity.phaseT0 = performance.now();
         singularity.growT0 = singularity.phaseT0;
+        singularity.prevNow = 0;
         singularity.pull = 0.03;
         root.classList.remove("is-sing-gather");
         root.classList.add("is-sing-form");
@@ -5755,6 +5768,7 @@
         singularity.feedTarget = 0;
         singularity.liveScale = 1;
         singularity.growT0 = 0;
+        singularity.prevNow = 0;
         clearSingTimers();
       }
 
@@ -5768,6 +5782,7 @@
         singularity.feedTarget = 0;
         singularity.liveScale = 0.03;
         singularity.growT0 = 0;
+        singularity.prevNow = 0;
         clearHide();
         clearSingTimers();
 
