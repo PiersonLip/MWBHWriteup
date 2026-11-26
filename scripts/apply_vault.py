@@ -13,6 +13,7 @@ from content_lib import (  # noqa: E402
     CHAPTERS_DIR,
     INDEX,
     VAULT,
+    apply_deep_notes,
     apply_hero_footer,
     parse_chapter_markdown,
     parse_home_markdown,
@@ -57,6 +58,9 @@ def main() -> None:
     if n == 0:
         print("No articles found in index.html", file=sys.stderr)
         sys.exit(1)
+
+    new_html = apply_deep_notes(new_html)
+    print("Applied deep notes from glossary")
 
     INDEX.write_text(new_html, encoding="utf-8")
     print(f"Wrote {INDEX}")

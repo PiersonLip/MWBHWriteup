@@ -6,7 +6,7 @@ Rich glossary note for **binary stars** / **binary systems** — the **full expl
 
 ## Site wiring
 
-- Glossary: `vault/Glossary/binary stars.md` (`deep: binary-stars`, short `data-tip` teaser only)
+- Glossary: `vault/Glossary/binary stars.md` — **source of truth** for the full deep-note prose (`deep: binary-stars`, `tip:` teaser, body with `{{orbit-viz}}` / `{{orion-viz}}`; applied by `apply_vault.py`)
 - Tip markup: `.tip.tip-deep[data-deep="binary-stars"]` (via `apply_vault.py`)
 - **Hover:** `.tip-bubble.tip-rich` clones `.deep-copy` with the live orbit viz inline after the “what binary means” definition paragraph (`.binary-orbit-tip-canvas`)
 - **Focus:** maximize icon (top-right) opens `#deep-root` focus panel (not browser fullscreen); click/Enter on the tip term does the same

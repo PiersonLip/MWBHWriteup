@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import html as html_mod
 import re
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -50,6 +51,7 @@ def parse_glossary_note(path: Path) -> dict:
     effect = ""
     image = ""
     viz = ""
+    tip_fm = ""
     if raw.startswith("---"):
         end = raw.find("\n---", 3)
         if end != -1:
@@ -72,6 +74,9 @@ def parse_glossary_note(path: Path) -> dict:
                 if line.strip().startswith("viz:"):
                     viz = line.split(":", 1)[1].strip().strip("'\"")
                     continue
+                if line.strip().startswith("tip:"):
+                    tip_fm = line.split(":", 1)[1].strip().strip("'\"")
+                    continue
                 if line.strip().startswith("aliases:"):
                     in_aliases = True
                     inline = line.split(":", 1)[1].strip()
@@ -91,18 +96,137 @@ def parse_glossary_note(path: Path) -> dict:
     def _wiki_plain(m: re.Match) -> str:
         return ((m.group(2) if m.group(2) is not None else m.group(1)) or "").strip().strip("|").strip()
 
-    tip = WIKILINK_RE.sub(_wiki_plain, body)
-    tip = re.sub(r"\s+", " ", tip).strip()
+    deep_md = ""
+    if deep:
+        # Short hover teaser: frontmatter tip: …, else first paragraph
+        if tip_fm:
+            tip = tip_fm
+            deep_md = body.strip()
+        else:
+            parts = re.split(r"\n\s*\n", body.strip(), maxsplit=1)
+            tip = WIKILINK_RE.sub(_wiki_plain, parts[0])
+            tip = re.sub(r"\s+", " ", tip).strip()
+            deep_md = parts[1].strip() if len(parts) > 1 else ""
+    else:
+        tip = tip_fm or WIKILINK_RE.sub(_wiki_plain, body)
+        tip = re.sub(r"\s+", " ", tip).strip()
     return {
         "path": path,
         "title": title,
         "tip": tip,
         "aliases": aliases,
         "deep": deep,
+        "deep_md": deep_md,
         "effect": effect,
         "image": image,
         "viz": viz,
     }
+
+
+ORBIT_VIZ_HTML = """\
+          <div class="deep-viz" data-orbit-viz>
+            <canvas id="binary-orbit-canvas" width="640" height="640" aria-label="Two stars orbiting a shared center of mass"></canvas>
+            <span class="deep-viz-caption">Unequal-mass binary · shared center of mass</span>
+          </div>"""
+
+ORION_VIZ_HTML = """\
+          <figure class="deep-orion" data-orion-viz aria-label="Orion constellation — gold stars are known binaries or multiples; hover for details">
+            <canvas id="orion-binary-canvas" width="800" height="800" aria-hidden="true"></canvas>
+            <div class="deep-orion-tip" id="orion-tip" hidden></div>
+          </figure>"""
+
+
+def render_deep_note_html(md: str) -> str:
+    """Render a deep-note markdown body into `.deep-copy` HTML.
+
+    Supports paragraphs, ### headings, **bold**/*em*/wikilinks via md_inline_to_html,
+    and placeholders {{orbit-viz}} / {{orion-viz}}.
+    The first paragraph becomes <p class="deep-pull">.
+    """
+    text = (md or "").strip()
+    if not text:
+        return ""
+    blocks = re.split(r"\n\s*\n", text)
+    out: List[str] = []
+    first_para = True
+    for raw_block in blocks:
+        block = raw_block.strip()
+        if not block:
+            continue
+        if block in ("{{orbit-viz}}", "{{orbit viz}}"):
+            out.append(ORBIT_VIZ_HTML)
+            first_para = False
+            continue
+        if block in ("{{orion-viz}}", "{{orion viz}}"):
+            out.append(ORION_VIZ_HTML)
+            first_para = False
+            continue
+        heading = re.match(r"^(#{2,3})\s+(.+)$", block, re.S)
+        if heading and "\n" not in block.strip():
+            level = len(heading.group(1))
+            title = md_inline_to_html(heading.group(2).strip())
+            out.append(f"          <h{level}>{title}</h{level}>")
+            first_para = False
+            continue
+        # Multi-line block starting with heading then text → split
+        hm = re.match(r"^(#{2,3})\s+(.+?)\n+([\s\S]+)$", block)
+        if hm:
+            level = len(hm.group(1))
+            title = md_inline_to_html(hm.group(2).strip())
+            out.append(f"          <h{level}>{title}</h{level}>")
+            para = md_inline_to_html(re.sub(r"\s+", " ", hm.group(3).strip()))
+            out.append(f"          <p>\n            {para}\n          </p>")
+            first_para = False
+            continue
+        para = md_inline_to_html(re.sub(r"\s*\n\s*", " ", block).strip())
+        cls = ' class="deep-pull"' if first_para else ""
+        out.append(f"          <p{cls}>{para}</p>" if first_para else f"          <p>\n            {para}\n          </p>")
+        first_para = False
+    return "\n".join(out)
+
+
+def apply_deep_notes(html: str) -> str:
+    """Inject vault deep-note prose into each `.deep-body[data-deep-id]` copy block."""
+    notes = []
+    if GLOSSARY_DIR.is_dir():
+        for path in sorted(GLOSSARY_DIR.glob("*.md")):
+            if path.name.startswith("."):
+                continue
+            note = parse_glossary_note(path)
+            if note.get("deep") and note.get("deep_md"):
+                notes.append(note)
+    if not notes:
+        return html
+
+    for note in notes:
+        deep_id = note["deep"]
+        copy_html = render_deep_note_html(note["deep_md"])
+        if not copy_html:
+            continue
+        # Replace .deep-copy inside the matching deep-body
+        pattern = re.compile(
+            rf'(<div class="deep-body" data-deep-id="{re.escape(deep_id)}"\s*>\s*'
+            rf'<div class="deep-copy">)([\s\S]*?)(</div>\s*</div>)',
+            re.M,
+        )
+
+        def repl(m: re.Match, _copy=copy_html) -> str:
+            return f"{m.group(1)}\n{_copy}\n        {m.group(3)}"
+
+        new_html, n = pattern.subn(repl, html, count=1)
+        if n:
+            html = new_html
+            title = note.get("title") or deep_id
+            pretty = (title[:1].upper() + title[1:]) if title else "Note"
+            html = re.sub(
+                r'(<h2 id="deep-title">)[^<]*(</h2>)',
+                rf"\g<1>{esc(pretty)}\g<2>",
+                html,
+                count=1,
+            )
+        else:
+            print(f"warn: no deep-body for deep id {deep_id!r}", file=sys.stderr)
+    return html
 
 
 _GLOSSARY_CACHE: Optional[dict] = None
