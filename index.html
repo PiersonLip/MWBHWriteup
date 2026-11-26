@@ -2050,14 +2050,10 @@
       transform: translateY(0);
       pointer-events: auto;
     }
-    /* Only hide the exit label while its glyphs are ghosted (avoids double text) */
+    /* Exit label stays blank after it's eaten (chrome remains, no label restore) */
     html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint.is-ghosted {
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
-    }
-    html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint.is-label-restored {
-      color: var(--ink-soft) !important;
-      -webkit-text-fill-color: var(--ink-soft) !important;
     }
     @media (max-width: 720px), (pointer: coarse) {
       .bh-lens-hint {
@@ -2121,7 +2117,7 @@
       right: auto;
       bottom: auto;
     }
-    .bh-lens-rude.place-center.is-on:not(.from-pending) {
+    .bh-lens-rude.place-center.is-on:not(.from-pending):not([class*="is-leaving-"]) {
       transform: translate(-50%, -50%) scale(1);
     }
     .bh-lens-rude.place-bl {
@@ -2131,7 +2127,7 @@
       bottom: 1.35rem;
       text-align: left;
     }
-    .bh-lens-rude.place-bl.is-on:not(.from-pending) {
+    .bh-lens-rude.place-bl.is-on:not(.from-pending):not([class*="is-leaving-"]) {
       transform: translate(0, 0) scale(1);
     }
     .bh-lens-rude.place-br {
@@ -2141,7 +2137,7 @@
       bottom: 1.35rem;
       text-align: right;
     }
-    .bh-lens-rude.place-br.is-on:not(.from-pending) {
+    .bh-lens-rude.place-br.is-on:not(.from-pending):not([class*="is-leaving-"]) {
       transform: translate(0, 0) scale(1);
     }
     .bh-lens-rude.place-tl {
@@ -2151,7 +2147,7 @@
       bottom: auto;
       text-align: left;
     }
-    .bh-lens-rude.place-tl.is-on:not(.from-pending) {
+    .bh-lens-rude.place-tl.is-on:not(.from-pending):not([class*="is-leaving-"]) {
       transform: translate(0, 0) scale(1);
     }
     .bh-lens-rude.place-tr {
@@ -2161,7 +2157,7 @@
       bottom: auto;
       text-align: right;
     }
-    .bh-lens-rude.place-tr.is-on:not(.from-pending) {
+    .bh-lens-rude.place-tr.is-on:not(.from-pending):not([class*="is-leaving-"]) {
       transform: translate(0, 0) scale(1);
     }
     .bh-lens-rude.place-chained {
@@ -2174,7 +2170,7 @@
       padding: 0.95rem 1.35rem;
       border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
     }
-    .bh-lens-rude.place-chained.is-on:not(.from-pending) {
+    .bh-lens-rude.place-chained.is-on:not(.from-pending):not([class*="is-leaving-"]) {
       transform: translate(-50%, -50%) scale(1);
     }
     /* Off-screen start poses (cleared when .from-pending drops) */
@@ -2206,42 +2202,42 @@
     .bh-lens-rude.place-chained.from-bottom.from-pending {
       transform: translate(-50%, 100vh) scale(0.96);
     }
-    /* Slide the empty chrome off after its text is eaten */
-    .bh-lens-rude.is-leaving-left {
+    /* Slide empty chrome back off-screen (reverse of enter) — must beat resting .is-on rules */
+    .bh-lens-rude.is-on.is-leaving-left {
       opacity: 0;
-      transform: translate(calc(-100% - 3rem), 0) scale(0.96);
+      transform: translate(calc(-100vw - 2rem), 0) scale(0.96);
       pointer-events: none;
     }
-    .bh-lens-rude.place-center.is-leaving-left,
-    .bh-lens-rude.place-chained.is-leaving-left {
+    .bh-lens-rude.place-center.is-on.is-leaving-left,
+    .bh-lens-rude.place-chained.is-on.is-leaving-left {
       transform: translate(calc(-100vw - 2rem), -50%) scale(0.96);
     }
-    .bh-lens-rude.is-leaving-right {
+    .bh-lens-rude.is-on.is-leaving-right {
       opacity: 0;
-      transform: translate(calc(100% + 3rem), 0) scale(0.96);
+      transform: translate(calc(100vw + 2rem), 0) scale(0.96);
       pointer-events: none;
     }
-    .bh-lens-rude.place-center.is-leaving-right,
-    .bh-lens-rude.place-chained.is-leaving-right {
-      transform: translate(100vw, -50%) scale(0.96);
+    .bh-lens-rude.place-center.is-on.is-leaving-right,
+    .bh-lens-rude.place-chained.is-on.is-leaving-right {
+      transform: translate(calc(100vw + 2rem), -50%) scale(0.96);
     }
-    .bh-lens-rude.is-leaving-top {
+    .bh-lens-rude.is-on.is-leaving-top {
       opacity: 0;
-      transform: translate(0, calc(-100% - 3rem)) scale(0.96);
+      transform: translate(0, calc(-100vh - 2rem)) scale(0.96);
       pointer-events: none;
     }
-    .bh-lens-rude.place-center.is-leaving-top,
-    .bh-lens-rude.place-chained.is-leaving-top {
+    .bh-lens-rude.place-center.is-on.is-leaving-top,
+    .bh-lens-rude.place-chained.is-on.is-leaving-top {
       transform: translate(-50%, calc(-100vh - 2rem)) scale(0.96);
     }
-    .bh-lens-rude.is-leaving-bottom {
+    .bh-lens-rude.is-on.is-leaving-bottom {
       opacity: 0;
-      transform: translate(0, calc(100% + 3rem)) scale(0.96);
+      transform: translate(0, calc(100vh + 2rem)) scale(0.96);
       pointer-events: none;
     }
-    .bh-lens-rude.place-center.is-leaving-bottom,
-    .bh-lens-rude.place-chained.is-leaving-bottom {
-      transform: translate(-50%, 100vh) scale(0.96);
+    .bh-lens-rude.place-center.is-on.is-leaving-bottom,
+    .bh-lens-rude.place-chained.is-on.is-leaving-bottom {
+      transform: translate(-50%, calc(100vh + 2rem)) scale(0.96);
     }
     /* Ghosted / leaving rude copy stays invisible in the chrome (ghosts live in #bh-ghost-ui) */
     html.bh-lens-lifted .bh-lens-rude.is-ghosted .bh-lens-rude-text,
@@ -4925,7 +4921,10 @@
         lens.items = [];
         lens.hintGhosted = false;
         const hint = document.getElementById("bh-lens-hint");
-        if (hint) hint.classList.remove("is-label-restored", "is-ghosted");
+        if (hint) {
+          hint.classList.remove("is-ghosted");
+          if (!hint.textContent.trim()) hint.textContent = "Back to normal";
+        }
       }
 
       function appendGhostWordsFrom(root, frag, { max = 520, forceColor = null, items = lens.items } = {}) {
@@ -5011,7 +5010,7 @@
         const hint = document.getElementById("bh-lens-hint");
         const ghostUi = document.getElementById("bh-ghost-ui");
         if (!hint || !ghostUi || !lens.on) return;
-        hint.classList.remove("is-label-restored");
+        if (!hint.textContent.trim()) hint.textContent = "Back to normal";
         const frag = document.createDocumentFragment();
         const before = lens.items.length;
         // Sample color before transparent class fully wins
@@ -5027,6 +5026,8 @@
           }
           ghostUi.appendChild(frag);
           hint.classList.add("is-ghosted");
+          // Clear DOM label so chrome stays blank after glyphs are eaten
+          hint.textContent = "";
           lens.hintGhosted = true;
         }
       }
@@ -5123,20 +5124,7 @@
         w.el.style.transition = "opacity 0.14s ease, transform 0.14s ease";
         w.el.style.opacity = "0";
         w.el.style.transform = `translate3d(${w.eatX}px, ${w.eatY}px, 0) scale(0.15)`;
-        maybeRestoreExitHintLabel();
         maybeShowRudePopup();
-      }
-
-      function maybeRestoreExitHintLabel() {
-        if (!lens.hintGhosted) return;
-        const hintItems = lens.items.filter((w) => w.fromHint);
-        if (!hintItems.length || !hintItems.every((w) => w.eaten)) return;
-        const hint = document.getElementById("bh-lens-hint");
-        if (hint) {
-          hint.classList.remove("is-ghosted");
-          hint.classList.add("is-label-restored");
-        }
-        lens.hintGhosted = false;
       }
 
       function placeGhostItems(pull, now) {
@@ -5208,8 +5196,24 @@
           }
           const ux = dx / dist;
           const uy = dy / dist;
-          const prox = softR / (softR + dist); // (0, 1] — never hard-cuts to zero
-          const local = Math.max(0.02, pull) * prox * warm;
+          let prox = softR / (softR + dist); // (0, 1] — never hard-cuts to zero
+          // Exit-hint glyphs: only tug when the BH is actually nearby
+          if (w.fromHint) {
+            const hintNear = 140;
+            const hintFar = 260;
+            if (dist > hintFar) prox = 0;
+            else if (dist > hintNear) {
+              const u = 1 - (dist - hintNear) / (hintFar - hintNear);
+              prox = u * u;
+            } else {
+              prox = 1;
+            }
+          }
+          const local = (w.fromHint ? pull : Math.max(0.02, pull)) * prox * warm;
+          if (local < 0.004) {
+            w.el.style.transform = `translate3d(${w.x0}px, ${w.y0}px, 0)`;
+            continue;
+          }
           const travel = Math.min(dist * 0.24, 14 + dist * 0.11);
           const turbX = Math.sin(now * 0.0022 + w.seed) * w.amp * 0.2 * local;
           const turbY = Math.cos(now * 0.0018 + w.phase) * w.amp * 0.2 * local;
@@ -5566,11 +5570,13 @@
         const next = lens.rudeStage + 1;
         lens.rudeAdvancing = true;
         clearRudeTimer();
-        // Empty chrome slides off the way it came in — keep label hidden (don't un-ghost)
+        // Empty chrome slides back off-screen (reverse of enter) — keep label hidden
         if (rude) {
           rude.classList.remove(...RUDE_LEAVE_CLASSES);
           const txt = rude.querySelector(".bh-lens-rude-text");
           if (txt) txt.textContent = "";
+          // Force a resting frame, then leave so the transform transition actually runs
+          void rude.offsetWidth;
           rude.classList.add(`is-leaving-${cur.from || "top"}`);
         }
         lens.rudeTimer = setTimeout(() => {
@@ -5598,9 +5604,9 @@
         if (!lens.items.length || lens.reduceMotion) return;
         // First taunt: every non-rude ghost has been swallowed
         if (lens.rudeStage < 0) {
-          // Page copy only — exit-hint glyphs are optional snacks
-          const pageItems = lens.items.filter((w) => !w.fromRude && !w.fromHint);
-          if (!pageItems.length || !pageItems.every((w) => w.eaten)) return;
+          // Everything non-rude (page copy + exit-hint label) must be eaten first
+          const gateItems = lens.items.filter((w) => !w.fromRude);
+          if (!gateItems.length || !gateItems.every((w) => w.eaten)) return;
           showRudeStage(0);
           return;
         }
@@ -5622,10 +5628,11 @@
         clearFrom(0);
         const hint = document.getElementById("bh-lens-hint");
         if (hint) {
-          hint.classList.remove("is-label-restored", "is-ghosted");
+          hint.classList.remove("is-ghosted");
+          if (!hint.textContent.trim()) hint.textContent = "Back to normal";
           hint.setAttribute("aria-hidden", "false");
         }
-        // Desktop: ghost the label so the BH can eat it; chrome stays; label restores after
+        // Desktop: ghost the label so the BH can eat it; chrome stays blank afterward
         if (!isTouchUi()) {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => ghostifyExitHint());
