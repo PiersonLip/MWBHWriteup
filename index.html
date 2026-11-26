@@ -2378,7 +2378,7 @@
 <div class="figure" id="gal-figure">
         <p class="figure-cap">Interactive · Schematic of paper §II.3</p>
         <h3>A disrupted binary's path through the Milky Way</h3>
-        <p class="hint">Phases: birth → pre-supernova → kick → BH and companion paths.</p>
+        <p class="hint">Phases: birth → pre-supernova → kick → BH and companion paths. Click a globular cluster or the GC to zoom in and orbit; Esc or click empty space to return. At the GC you’ll find Sgr&nbsp;A* and a few schematic S-stars.</p>
         <div class="gal-layout">
           <div class="gal-stage" id="gal-stage">
             <canvas id="gal-canvas" width="900" height="560"></canvas>
@@ -5919,14 +5919,32 @@
       },
     ];
 
+    // Schematic S-stars around Sgr A* (a in kpc — heavily exaggerated for the zoom view)
+    const SGR_STARS = [
+      { name: "S2", a: 0.14, e: 0.88, P: 7.2, M0: 0.35, i: 0.55, Omega: 0.4, color: "#f0d090" },
+      { name: "S0-102", a: 0.095, e: 0.68, P: 5.1, M0: 1.8, i: -0.35, Omega: 1.9, color: "#c9daf7" },
+      { name: "S0-38", a: 0.17, e: 0.82, P: 9.8, M0: 4.1, i: 0.25, Omega: 3.4, color: "#e8b8c8" },
+      { name: "S55", a: 0.11, e: 0.74, P: 6.4, M0: 2.6, i: -0.6, Omega: 5.1, color: "#b8e0d2" },
+      { name: "S14", a: 0.2, e: 0.94, P: 12.5, M0: 0.9, i: 0.15, Omega: 2.2, color: "#f5e6c8" },
+    ];
+
+    const GAL_HOME = {
+      lookAt: { x: 0, y: 0, z: 0 },
+      camDist: 28,
+      zoom: 1,
+      pitch: Math.PI / 2 - (16 * Math.PI) / 180,
+    };
+
     const gal = {
       playing: true,
       progress: 0, // 0..1
       example: "typical",
       yaw: 0.85,
       // pitch 0 = face-on, π/2 = edge-on → start ~16° off edge-on
-      pitch: Math.PI / 2 - (16 * Math.PI) / 180,
-      zoom: 1,
+      pitch: GAL_HOME.pitch,
+      zoom: GAL_HOME.zoom,
+      lookAt: { ...GAL_HOME.lookAt },
+      camDist: GAL_HOME.camDist,
       dragging: false,
       lastX: 0,
       lastY: 0,
@@ -5938,6 +5956,11 @@
       mouseX: -1e9,
       mouseY: -1e9,
       hoverCluster: null,
+      hoverGC: false,
+      focus: null, // { type: 'gc'|'cluster', id, label }
+      focusAnim: null,
+      sgrT: 0,
+      ptrDown: null,
     };
 
     function galInteract() {
@@ -6110,25 +6133,239 @@
     }
 
     function galProject(x, y, z, w, h) {
-      // camera look at origin, distance
+      const look = gal.lookAt || GAL_HOME.lookAt;
+      const lx = x - look.x;
+      const ly = y - look.y;
+      const lz = z - look.z;
       const cy = Math.cos(gal.yaw), sy = Math.sin(gal.yaw);
       const cp = Math.cos(gal.pitch), sp = Math.sin(gal.pitch);
       // yaw around z, then pitch
-      let x1 = x * cy - y * sy;
-      let y1 = x * sy + y * cy;
-      let z1 = z;
+      let x1 = lx * cy - ly * sy;
+      let y1 = lx * sy + ly * cy;
+      let z1 = lz;
       let y2 = y1 * cp - z1 * sp;
       let z2 = y1 * sp + z1 * cp;
-      const dist = 28;
+      const dist = gal.camDist || GAL_HOME.camDist;
       const f = 520 * gal.zoom;
       const depth = z2 + dist;
-      const s = f / depth;
+      const s = f / Math.max(0.35, depth);
       return {
         X: w * 0.5 + x1 * s * (w / 900),
         Y: h * 0.52 - y2 * s * (w / 900),
         depth,
         s,
       };
+    }
+
+    function sgrStarWorld(star, t) {
+      const M = ((t / star.P) * Math.PI * 2 + star.M0) % (Math.PI * 2);
+      let E = M;
+      for (let k = 0; k < 8; k++) E = M + star.e * Math.sin(E);
+      const cosE = Math.cos(E);
+      const sinE = Math.sin(E);
+      const xOrb = star.a * (cosE - star.e);
+      const yOrb = star.a * Math.sqrt(Math.max(0, 1 - star.e * star.e)) * sinE;
+      const cosO = Math.cos(star.Omega);
+      const sinO = Math.sin(star.Omega);
+      const cosi = Math.cos(star.i);
+      const sini = Math.sin(star.i);
+      const x = xOrb * cosO - yOrb * sinO * cosi;
+      const y = xOrb * sinO + yOrb * cosO * cosi;
+      const z = yOrb * sini;
+      return { x, y, z };
+    }
+
+    function lerpGalCam(a, b, u) {
+      const t = u * u * (3 - 2 * u);
+      return {
+        lookAt: {
+          x: a.lookAt.x + (b.lookAt.x - a.lookAt.x) * t,
+          y: a.lookAt.y + (b.lookAt.y - a.lookAt.y) * t,
+          z: a.lookAt.z + (b.lookAt.z - a.lookAt.z) * t,
+        },
+        camDist: a.camDist + (b.camDist - a.camDist) * t,
+        zoom: a.zoom + (b.zoom - a.zoom) * t,
+        yaw: a.yaw + (b.yaw - a.yaw) * t,
+        pitch: a.pitch + (b.pitch - a.pitch) * t,
+      };
+    }
+
+    function galCamSnapshot() {
+      return {
+        lookAt: { x: gal.lookAt.x, y: gal.lookAt.y, z: gal.lookAt.z },
+        camDist: gal.camDist,
+        zoom: gal.zoom,
+        yaw: gal.yaw,
+        pitch: gal.pitch,
+      };
+    }
+
+    function applyGalCam(c) {
+      gal.lookAt = { x: c.lookAt.x, y: c.lookAt.y, z: c.lookAt.z };
+      gal.camDist = c.camDist;
+      gal.zoom = c.zoom;
+      gal.yaw = c.yaw;
+      gal.pitch = c.pitch;
+    }
+
+    function enterGalFocus(hit) {
+      let to;
+      let focus;
+      if (hit.type === "gc") {
+        to = {
+          lookAt: { x: 0, y: 0, z: 0 },
+          camDist: 1.85,
+          zoom: 1.4,
+          yaw: gal.yaw + 0.55,
+          pitch: Math.min(1.05, Math.max(0.35, gal.pitch * 0.7 + 0.25)),
+        };
+        focus = { type: "gc", id: "gc", label: "Sgr A*" };
+      } else {
+        const c = hit.cl;
+        to = {
+          lookAt: { x: c.x, y: c.y, z: c.z },
+          camDist: 3.2,
+          zoom: 1.3,
+          yaw: gal.yaw + 0.65,
+          pitch: Math.min(1.15, Math.max(0.25, gal.pitch * 0.75 + 0.2)),
+        };
+        focus = { type: "cluster", id: c.id, label: c.name, cl: c };
+      }
+      // Toggle off if clicking the same target again
+      if (gal.focus && gal.focus.id === focus.id && !gal.focusAnim) {
+        exitGalFocus();
+        return;
+      }
+      gal.focusAnim = {
+        t0: performance.now(),
+        dur: 1050,
+        from: galCamSnapshot(),
+        to,
+        after: focus,
+      };
+      gal.focus = focus;
+      galInteract();
+    }
+
+    function exitGalFocus() {
+      if (!gal.focus && !gal.focusAnim) return;
+      gal.focusAnim = {
+        t0: performance.now(),
+        dur: 900,
+        from: galCamSnapshot(),
+        to: {
+          lookAt: { ...GAL_HOME.lookAt },
+          camDist: GAL_HOME.camDist,
+          zoom: GAL_HOME.zoom,
+          yaw: gal.yaw + 0.25,
+          pitch: GAL_HOME.pitch,
+        },
+        after: null,
+      };
+      galInteract();
+    }
+
+    function stepGalFocusAnim(now) {
+      if (!gal.focusAnim) return;
+      const u = Math.min(1, (now - gal.focusAnim.t0) / gal.focusAnim.dur);
+      applyGalCam(lerpGalCam(gal.focusAnim.from, gal.focusAnim.to, u));
+      if (u >= 1) {
+        gal.focus = gal.focusAnim.after;
+        gal.focusAnim = null;
+      }
+    }
+
+    function galHitTest(mx, my, w, h) {
+      if (gal.clusters) {
+        for (const cl of gal.clusters) {
+          const core = galProject(cl.x, cl.y, cl.z, w, h);
+          if (core.depth < 1.2) continue;
+          const glowR = Math.max(4, (cl.scale * 140) / Math.max(0.8, core.depth));
+          const hitR = Math.max(14, glowR * 1.75);
+          if (Math.hypot(mx - core.X, my - core.Y) < hitR) {
+            return { type: "cluster", cl, core, glowR };
+          }
+        }
+      }
+      const gc = galProject(0, 0, 0, w, h);
+      const gcHitR = gal.focus && gal.focus.type === "gc" ? 28 : 16;
+      if (gc.depth > 1.2 && Math.hypot(mx - gc.X, my - gc.Y) < gcHitR) {
+        return { type: "gc", core: gc };
+      }
+      return null;
+    }
+
+    function drawSgrFocus(ctx, w, h) {
+      const t = gal.sgrT;
+      // Soft vignette so the GC zoom reads as a local scene
+      const vig = ctx.createRadialGradient(w * 0.5, h * 0.52, h * 0.08, w * 0.5, h * 0.52, h * 0.55);
+      vig.addColorStop(0, "rgba(10,12,18,0)");
+      vig.addColorStop(1, "rgba(8,10,16,0.35)");
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, w, h);
+
+      // Orbital trails
+      for (const star of SGR_STARS) {
+        ctx.beginPath();
+        for (let i = 0; i <= 96; i++) {
+          const p = sgrStarWorld(star, (i / 96) * star.P);
+          const pr = galProject(p.x, p.y, p.z, w, h);
+          if (i === 0) ctx.moveTo(pr.X, pr.Y);
+          else ctx.lineTo(pr.X, pr.Y);
+        }
+        ctx.closePath();
+        const hex = star.color.replace("#", "");
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.28)`;
+        ctx.lineWidth = 1.1;
+        ctx.stroke();
+      }
+
+      // Sgr A*
+      const bh = galProject(0, 0, 0, w, h);
+      const R = Math.max(7, 11 * (bh.s || 1));
+      const glow = ctx.createRadialGradient(bh.X, bh.Y, 0, bh.X, bh.Y, R * 3.2);
+      glow.addColorStop(0, "rgba(255,220,160,0.22)");
+      glow.addColorStop(0.45, "rgba(232,177,90,0.12)");
+      glow.addColorStop(1, "rgba(232,177,90,0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(bh.X, bh.Y, R * 3.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#05060a";
+      ctx.beginPath();
+      ctx.arc(bh.X, bh.Y, R * 0.92, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,210,140,0.9)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.arc(bh.X, bh.Y, R * 1.15, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = "rgba(240,210,150,0.95)";
+      ctx.font = "600 12px IBM Plex Mono";
+      ctx.fillText("Sgr A*", bh.X + R * 1.5, bh.Y - R * 0.4);
+      ctx.fillStyle = "rgba(190,200,215,0.75)";
+      ctx.font = "500 10px Schibsted Grotesk";
+      ctx.fillText("schematic S-stars · exaggerated scale", bh.X + R * 1.5, bh.Y + 12);
+
+      for (const star of SGR_STARS) {
+        const p = sgrStarWorld(star, t);
+        const pr = galProject(p.x, p.y, p.z, w, h);
+        if (pr.depth < 0.5) continue;
+        const hex = star.color.replace("#", "");
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.beginPath();
+        ctx.arc(pr.X, pr.Y, Math.max(2.2, 3.2 * (18 / Math.max(4, pr.depth))), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = `rgba(${r},${g},${b},0.85)`;
+        ctx.font = "500 10px IBM Plex Mono";
+        ctx.fillText(star.name, pr.X + 6, pr.Y - 4);
+      }
     }
 
     function galPhaseInfo(p) {
@@ -6170,15 +6407,19 @@
 
       // Globular cluster easter eggs (dense little star balls in the halo)
       gal.hoverCluster = null;
+      gal.hoverGC = false;
+      const focusedCluster =
+        gal.focus && gal.focus.type === "cluster" ? gal.focus.id : null;
       if (gal.clusters) {
         for (const cl of gal.clusters) {
           const core = galProject(cl.x, cl.y, cl.z, w, h);
-          if (core.depth < 2) continue;
-          const glowR = Math.max(4, (cl.scale * 140) / core.depth);
+          if (core.depth < 1.2) continue;
+          const glowR = Math.max(4, (cl.scale * 140) / Math.max(0.8, core.depth));
+          const isFocus = focusedCluster === cl.id;
           // Soft unresolved glow
           const g = ctx.createRadialGradient(core.X, core.Y, 0, core.X, core.Y, glowR * 2.2);
           const [tr, tg, tb] = cl.tint;
-          g.addColorStop(0, `rgba(${tr},${tg},${tb},0.28)`);
+          g.addColorStop(0, `rgba(${tr},${tg},${tb},${isFocus ? 0.4 : 0.28})`);
           g.addColorStop(0.45, `rgba(${tr},${tg},${tb},0.1)`);
           g.addColorStop(1, `rgba(${tr},${tg},${tb},0)`);
           ctx.fillStyle = g;
@@ -6187,11 +6428,11 @@
           ctx.fill();
           for (const st of cl.members) {
             const pr = galProject(st.x, st.y, st.z, w, h);
-            if (pr.depth < 2) continue;
+            if (pr.depth < 1.2) continue;
             if (pr.X < -6 || pr.Y < -6 || pr.X > w + 6 || pr.Y > h + 6) continue;
-            const alpha = Math.min(0.95, st.bright * (26 / pr.depth));
+            const alpha = Math.min(0.95, st.bright * (26 / Math.max(2, pr.depth)));
             ctx.fillStyle = `rgba(${tr},${tg},${tb},${alpha})`;
-            const s = Math.max(0.6, st.size * (20 / pr.depth));
+            const s = Math.max(0.6, st.size * (20 / Math.max(2, pr.depth)) * (isFocus ? 1.25 : 1));
             ctx.beginPath();
             ctx.arc(pr.X, pr.Y, s * 0.45, 0, Math.PI * 2);
             ctx.fill();
@@ -6200,16 +6441,26 @@
           const dMouse = Math.hypot(gal.mouseX - core.X, gal.mouseY - core.Y);
           if (dMouse < hitR) gal.hoverCluster = { cl, core, glowR };
         }
-        if (gal.hoverCluster) {
-          const { cl, core, glowR } = gal.hoverCluster;
+        const tipCl = gal.hoverCluster || (focusedCluster
+          ? (() => {
+              const cl = gal.clusters.find((c) => c.id === focusedCluster);
+              if (!cl) return null;
+              const core = galProject(cl.x, cl.y, cl.z, w, h);
+              const glowR = Math.max(4, (cl.scale * 140) / Math.max(0.8, core.depth));
+              return { cl, core, glowR };
+            })()
+          : null);
+        if (tipCl && !(gal.focus && gal.focus.type === "gc")) {
+          const { cl, core, glowR } = tipCl;
           ctx.fillStyle = "rgba(15,20,28,0.78)";
           ctx.strokeStyle = "rgba(220,230,245,0.35)";
           ctx.lineWidth = 1;
           const label = cl.name;
+          const hint = gal.focus && gal.focus.id === cl.id ? "orbiting · Esc to leave" : "click to zoom · orbit";
           ctx.font = "600 12px IBM Plex Mono";
           const tw = ctx.measureText(label).width;
           ctx.font = "500 10px Schibsted Grotesk";
-          const hw = ctx.measureText(cl.hint).width;
+          const hw = ctx.measureText(hint).width;
           const boxW = Math.max(tw, hw) + 16;
           const bx = core.X + glowR + 8;
           const by = core.Y - 22;
@@ -6222,7 +6473,7 @@
           ctx.fillText(label, bx + 8, by + 14);
           ctx.fillStyle = "rgba(190,200,215,0.9)";
           ctx.font = "500 10px Schibsted Grotesk";
-          ctx.fillText(cl.hint, bx + 8, by + 27);
+          ctx.fillText(hint, bx + 8, by + 27);
         }
       }
 
@@ -6241,17 +6492,21 @@
         ctx.stroke();
       }
 
-      // galactic center (hover → full name + Sgr A*)
+      // galactic center (hover/click → zoom to Sgr A* + S-stars)
       const gc = galProject(0, 0, 0, w, h);
-      ctx.fillStyle = "#e8b15a";
-      ctx.beginPath(); ctx.arc(gc.X, gc.Y, 4, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(232,177,90,0.7)";
-      ctx.font = "500 11px IBM Plex Mono";
-      ctx.fillText("GC", gc.X + 6, gc.Y - 4);
-      const gcHit = Math.hypot(gal.mouseX - gc.X, gal.mouseY - gc.Y) < 16;
-      if (gcHit && !gal.hoverCluster) {
+      const gcFocused = gal.focus && gal.focus.type === "gc";
+      if (!gcFocused) {
+        ctx.fillStyle = "#e8b15a";
+        ctx.beginPath(); ctx.arc(gc.X, gc.Y, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "rgba(232,177,90,0.7)";
+        ctx.font = "500 11px IBM Plex Mono";
+        ctx.fillText("GC", gc.X + 6, gc.Y - 4);
+      }
+      const gcHit = Math.hypot(gal.mouseX - gc.X, gal.mouseY - gc.Y) < (gcFocused ? 28 : 16);
+      gal.hoverGC = gcHit && !gal.hoverCluster;
+      if ((gal.hoverGC || gcFocused) && !gal.hoverCluster) {
         const label = "Galactic center";
-        const hint = "Sgr A*";
+        const hint = gcFocused ? "Sgr A* · Esc to leave" : "click for Sgr A*";
         ctx.font = "600 12px IBM Plex Mono";
         const tw = ctx.measureText(label).width;
         ctx.font = "500 10px Schibsted Grotesk";
@@ -6273,6 +6528,8 @@
         ctx.font = "500 10px Schibsted Grotesk";
         ctx.fillText(hint, bx + 8, by + 27);
       }
+
+      if (gcFocused) drawSgrFocus(ctx, w, h);
 
       const path = gal.path;
       const p = gal.progress;
@@ -6352,13 +6609,32 @@
       // HUD
       ctx.fillStyle = "rgba(197,204,216,0.85)";
       ctx.font = "500 11px IBM Plex Mono";
-      ctx.fillText("drag to rotate · pinch or scroll to zoom · units: kpc", 14, 22);
+      const hud = gal.focus
+        ? `focus: ${gal.focus.label} · drag to orbit · Esc or click empty space to leave`
+        : "drag to rotate · click GC / clusters to zoom · units: kpc";
+      ctx.fillText(hud, 14, 22);
+
+      // Cursor affordance
+      canvas.style.cursor =
+        gal.dragging ? "grabbing" : (gal.hoverCluster || gal.hoverGC) ? "pointer" : "grab";
 
       const info = galPhaseInfo(p);
       const status = document.getElementById("gal-status");
       if (status) {
-        status.querySelector("strong").textContent = info.title;
-        status.querySelector("span").textContent = info.text;
+        if (gal.focus && gal.focus.type === "gc") {
+          status.querySelector("strong").textContent = "Sgr A*";
+          status.querySelector("span").textContent =
+            "Schematic Galactic-center zoom: a few highly eccentric S-stars on exaggerated orbits around the central black hole (not to scale).";
+        } else if (gal.focus && gal.focus.type === "cluster") {
+          status.querySelector("strong").textContent = gal.focus.label;
+          status.querySelector("span").textContent =
+            (gal.focus.cl && gal.focus.cl.hint
+              ? `${gal.focus.cl.hint[0].toUpperCase()}${gal.focus.cl.hint.slice(1)}. `
+              : "") + "Camera locked on the cluster — drag to orbit, Esc to return to the Galaxy view.";
+        } else {
+          status.querySelector("strong").textContent = info.title;
+          status.querySelector("span").textContent = info.text;
+        }
       }
     }
 
@@ -6396,7 +6672,7 @@
       pitchMin: 0.02,
       pitchMax: Math.PI / 2 - 0.02,
       zoomMin: 0.72,
-      zoomMax: 1.55,
+      zoomMax: 1.85,
       wheelSense: 0.0012,
       onDragStart: () => {
         gal.dragging = true;
@@ -6412,7 +6688,39 @@
         gal.mouseX = -1e9;
         gal.mouseY = -1e9;
         gal.hoverCluster = null;
+        gal.hoverGC = false;
       },
+    });
+
+    // Click GC / clusters to zoom-focus (ignore if the pointer dragged)
+    galCanvas.addEventListener("pointerdown", (e) => {
+      if (e.button != null && e.button !== 0) return;
+      gal.ptrDown = { x: e.clientX, y: e.clientY, moved: false };
+    });
+    galCanvas.addEventListener("pointermove", (e) => {
+      if (!gal.ptrDown || gal.ptrDown.moved) return;
+      if (Math.hypot(e.clientX - gal.ptrDown.x, e.clientY - gal.ptrDown.y) > 7) {
+        gal.ptrDown.moved = true;
+      }
+    });
+    galCanvas.addEventListener("pointerup", (e) => {
+      const down = gal.ptrDown;
+      gal.ptrDown = null;
+      if (!down || down.moved) return;
+      if (e.button != null && e.button !== 0) return;
+      galPointerPos(e);
+      const rect = galCanvas.getBoundingClientRect();
+      const hit = galHitTest(gal.mouseX, gal.mouseY, rect.width, rect.height);
+      if (hit) enterGalFocus(hit);
+      else if (gal.focus || gal.focusAnim) exitGalFocus();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (!gal.focus && !gal.focusAnim) return;
+      // Prefer leaving focus before exiting stage fullscreen
+      e.preventDefault();
+      e.stopPropagation();
+      exitGalFocus();
     });
 
     document.getElementById("gal-progress").addEventListener("input", (e) => {
@@ -7611,6 +7919,10 @@
       last = now;
       drawKick(dt);
       stepMicro(dt);
+      stepGalFocusAnim(now);
+      if (gal.focus && gal.focus.type === "gc") {
+        gal.sgrT += dt * 0.55; // S-star orbital clock
+      }
       if (gal.playing) {
         gal.progress = Math.min(1, gal.progress + dt * 0.06);
         if (gal.progress >= 1) {
@@ -7621,8 +7933,13 @@
           gal.lastInteract = now - 5000;
         }
         updateGalLabels();
-      } else if (!gal.dragging && (now - gal.lastInteract) >= 5000) {
-        gal.yaw += dt * 0.12; // gentle idle spin after inactivity
+      }
+      if (!gal.dragging && !gal.focusAnim) {
+        if (gal.focus) {
+          gal.yaw += dt * 0.28; // orbit the focused region
+        } else if ((now - gal.lastInteract) >= 5000) {
+          gal.yaw += dt * 0.12; // gentle idle spin after inactivity
+        }
       }
       drawGalaxy();
       requestAnimationFrame(frame);
