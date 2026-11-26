@@ -3310,6 +3310,15 @@
           "Material which is ejected from the outer atmosphere of a star into the surrounding area."
         );
       }
+      // Nested from Roman tip (portrait tip; vault-only)
+      if (!glossary.has("nancy grace roman")) {
+        glossary.set(
+          "nancy grace roman",
+          'First female executive at NASA. Served as NASA\'s first chief of astronomy. Considered the "Mother of Hubble."'
+        );
+      }
+      tipImages.set("nancy grace roman", "assets/nancy-grace-roman.jpg");
+      tipImages.set("nancy roman", "assets/nancy-grace-roman.jpg");
       // Nested / inline GW viz tip (Gravitational-wave only — not LIGO/Virgo/KAGRA)
       // Tip text comes from the vault / data-tip; only wire the canvas here.
       ["gravitational-wave", "gravitational wave", "gravitational waves"].forEach((k) => {

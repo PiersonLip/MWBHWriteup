@@ -30,6 +30,7 @@ Hover text on the site comes from the note body (after the title).
 - [[POSYDON]]
 - [[Roche-lobe overflow]]
 - [[Roman]]
+- [[Nancy Grace Roman]] — image tip (`assets/nancy-grace-roman.jpg`)
 - [[stable mass transfer]]
 - [[supernova]]
 - [[disrupted]]
