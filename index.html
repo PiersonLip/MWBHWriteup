@@ -1009,12 +1009,27 @@
       white-space: normal;
       opacity: 0;
       transform: translateY(-4px);
-      transition: opacity 0.12s ease, transform 0.12s ease;
+      transition: opacity 0.14s ease-out, transform 0.14s ease-out;
       box-sizing: border-box;
     }
     .tip-bubble.is-open {
       opacity: 1;
       transform: translateY(0);
+    }
+    .tip-bubble.is-leaving {
+      opacity: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+      transition: opacity 0.16s ease-in, transform 0.16s ease-in;
+    }
+    .tip-bubble.tip-above.is-leaving {
+      transform: translateY(4px);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tip-bubble,
+      .tip-bubble.is-leaving {
+        transition: none;
+      }
     }
     .tip-bubble .tip {
       color: var(--tip-link);
@@ -4099,9 +4114,38 @@
           .join("");
       }
 
+      function dismissBubble(bubble) {
+        if (!bubble || !bubble.isConnected) return;
+        if (bubble.classList.contains("is-leaving")) return;
+        bubble.classList.remove("is-open");
+        bubble.classList.add("is-leaving");
+        bubble.style.pointerEvents = "none";
+        const reduce =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduce) {
+          bubble.remove();
+          return;
+        }
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          bubble.removeEventListener("transitionend", onEnd);
+          if (bubble.isConnected) bubble.remove();
+        };
+        const onEnd = (e) => {
+          if (e.target !== bubble) return;
+          if (e.propertyName !== "opacity" && e.propertyName !== "transform") return;
+          finish();
+        };
+        bubble.addEventListener("transitionend", onEnd);
+        setTimeout(finish, 220);
+      }
+
       function clearFrom(depth) {
         while (open.length && open[open.length - 1].depth >= depth) {
-          open.pop().bubble.remove();
+          dismissBubble(open.pop().bubble);
         }
       }
 
