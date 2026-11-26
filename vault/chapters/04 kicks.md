@@ -16,9 +16,9 @@ When a star in a binary dies in the form of a [[supernova]], two things mess wit
 
 :::figure
 id: kick-presets
-cap: Instantaneous post-SN 2-body orbit
+cap: Post-supernova 2-body orbit
 title: Post-natal kick: bound or disrupted?
-hint: Shows the pre-supernova orbit, collapse of one component, and how the kick reshapes (or unbinds) the orbit.
+hint: Shows the pre-supernova orbit, the collapse of one component, and how the kick effects the orbit.
 :::
 
 [^1]: Lower remnant mass means a larger kick velocity for the same kick strength.

@@ -1,0 +1,1 @@
+White dwarf. The leftover remnant of a low mass star.

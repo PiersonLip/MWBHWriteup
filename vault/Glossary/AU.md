@@ -7,4 +7,4 @@ aliases:
 
 # AU
 
-Astronomical unit. The average distnace from the Sun to the Earth (~150 million km).
+Astronomical unit. The average distance from the Sun to the Earth (~150 million km).

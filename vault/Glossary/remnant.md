@@ -1,1 +1,1 @@
-Whats left behind when a star dies. In high mass stellar evolution, this typicall a black hole or neutron star.
+Whats left behind when a star dies. For high mass stars, this typically results in a black hole or neutron star. In low mass stars this results in a [[WD|white dwarf]].

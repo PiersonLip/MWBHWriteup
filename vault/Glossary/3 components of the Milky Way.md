@@ -8,4 +8,4 @@ viz: mw-components
 
 # 3 components of the Milky Way
 
-The classic stellar structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo.
+The structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo.
