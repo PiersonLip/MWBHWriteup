@@ -2294,8 +2294,8 @@
       pointer-events: none !important;
     }
     html.is-singularity.is-sing-form .tip-sing-bh {
-      opacity: 1;
-      transition: opacity 1.6s ease;
+      /* Opacity/scale driven in JS as one continuous swell */
+      transition: none;
     }
     html.is-singularity.is-sing-collapse .tip-sing-bh {
       /* JS drives the shrink; keep opacity until it's a point */
@@ -4363,6 +4363,8 @@
       const SING_PULL_MS = 8000;
       const SING_YANK_MS = 1600;
       const SING_SHRINK_MS = 1600;
+      // One continuous BH swell from first appearance through engulf
+      const SING_GROW_MS = SING_BIRTH_MS + SING_PULL_MS;
       const singularity = {
         busy: false,
         forceClear: false,
@@ -4370,6 +4372,7 @@
         raf: 0,
         t0: 0,
         phaseT0: 0,
+        growT0: 0,
         phase: "idle", // gather | birth | pull | yank | shrink | void
         cx: 0,
         cy: 0,
@@ -5454,38 +5457,50 @@
         return singularity.items.length > 0 && singularity.items.every((w) => w.eaten);
       }
 
-      function singScale() {
+      function singGrowU(now) {
+        if (!singularity.growT0) return 0;
+        return Math.min(1, Math.max(0, (now - singularity.growT0) / SING_GROW_MS));
+      }
+
+      function singScale(now) {
         singularity.feed += (singularity.feedTarget - singularity.feed) * 0.08;
-        if (singularity.phase === "birth") {
-          const u = Math.min(1, (performance.now() - singularity.phaseT0) / SING_BIRTH_MS);
-          return 0.08 + easeInOut(u) * 0.95 + singularity.feed;
-        }
         if (singularity.phase === "shrink") {
-          const u = Math.min(1, (performance.now() - singularity.phaseT0) / SING_SHRINK_MS);
+          const u = Math.min(1, ((now || performance.now()) - singularity.phaseT0) / SING_SHRINK_MS);
           // Ease into a vanishing point — no bounce / explode
           const e = u * u;
           return Math.max(0.004, singularity.shrinkFrom * (1 - e));
         }
-        // Grow with pull so the horizon covers the screen in ~SING_PULL_MS
-        const base = 1.0 + easeInOut(Math.min(1, singularity.pull)) * 1.55;
-        return base + singularity.feed;
+        if (
+          singularity.phase === "birth" ||
+          singularity.phase === "pull" ||
+          singularity.phase === "yank"
+        ) {
+          // Single smooth swell from speck → full (no birth plateau / second swell)
+          const u = singGrowU(now || performance.now());
+          const base = 0.03 + smootherstep(u) * 2.55;
+          return base + singularity.feed;
+        }
+        return singularity.liveScale || 0.03;
       }
 
-      function placeSingBh() {
+      function placeSingBh(now) {
         const bh = document.getElementById("tip-sing-bh");
         if (!bh) return;
-        const scale = singScale();
+        const t = now || performance.now();
+        const scale = singScale(t);
         singularity.liveScale = scale;
         bh.style.transform = `translate3d(${singularity.cx}px, ${singularity.cy}px, 0) scale(${scale})`;
         if (singularity.phase === "shrink") {
-          const u = Math.min(1, (performance.now() - singularity.phaseT0) / SING_SHRINK_MS);
+          const u = Math.min(1, (t - singularity.phaseT0) / SING_SHRINK_MS);
           bh.style.opacity = u > 0.82 ? String(Math.max(0, 1 - (u - 0.82) / 0.18)) : "1";
         } else if (
           singularity.phase === "birth" ||
           singularity.phase === "pull" ||
           singularity.phase === "yank"
         ) {
-          bh.style.opacity = "1";
+          // Fade in with the swell — no hard pop
+          const fade = Math.min(1, singGrowU(t) / 0.12);
+          bh.style.opacity = String(smootherstep(fade));
         } else {
           bh.style.opacity = "0";
         }
@@ -5494,7 +5509,7 @@
       function placeSingItems(now) {
         const cx = singularity.cx;
         const cy = singularity.cy;
-        placeSingBh();
+        placeSingBh(now);
         if (
           singularity.phase !== "birth" &&
           singularity.phase !== "pull" &&
@@ -5503,7 +5518,7 @@
           return;
         }
 
-        const scale = singularity.liveScale || singScale();
+        const scale = singularity.liveScale || singScale(now);
         const yanking = singularity.phase === "yank";
         const yankU = yanking
           ? Math.min(1, (now - singularity.phaseT0) / SING_YANK_MS)
@@ -5568,6 +5583,7 @@
         const root = document.documentElement;
         singularity.phase = "birth";
         singularity.phaseT0 = performance.now();
+        singularity.growT0 = singularity.phaseT0;
         singularity.pull = 0.03;
         root.classList.remove("is-sing-gather");
         root.classList.add("is-sing-form");
@@ -5616,6 +5632,7 @@
         singularity.forceClear = false;
         singularity.tips = [];
         destroySingGhost();
+        placeSingBh(singularity.phaseT0);
       }
 
       function beginSingVoid() {
@@ -5682,7 +5699,7 @@
             beginSingShrink();
           }
         } else if (singularity.phase === "shrink") {
-          placeSingBh();
+          placeSingBh(now);
           const u = Math.min(1, (now - singularity.phaseT0) / SING_SHRINK_MS);
           if (u >= 1) beginSingVoid();
         }
@@ -5737,6 +5754,7 @@
         singularity.feed = 0;
         singularity.feedTarget = 0;
         singularity.liveScale = 1;
+        singularity.growT0 = 0;
         clearSingTimers();
       }
 
@@ -5748,7 +5766,8 @@
         singularity.pull = 0;
         singularity.feed = 0;
         singularity.feedTarget = 0;
-        singularity.liveScale = 1;
+        singularity.liveScale = 0.03;
+        singularity.growT0 = 0;
         clearHide();
         clearSingTimers();
 
