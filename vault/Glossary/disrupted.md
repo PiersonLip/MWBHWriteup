@@ -6,4 +6,4 @@ aliases:
 
 # disrupted
 
-When a kick and/or sudden mass loss unbinds a binary so the components no longer orbit each other.
+When a kick and/or sudden mass loss unbinds a binary causing the components to no longer orbit each other.
