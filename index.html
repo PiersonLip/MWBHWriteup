@@ -2200,7 +2200,7 @@
               <input type="range" id="m2" min="1" max="40" step="0.5" value="10" />
             </div>
             <div class="control">
-              <label>Pre-supernova separation <span class="val" id="a-val">0.50 AU</span></label>
+              <label>Pre-supernova separation <span class="val" id="a-val">0.50 <span class="tip" tabindex="0" data-tip="Astronomical unit — the average Earth–Sun distance (~150 million km). Handy yardstick for separations inside a stellar system.">AU</span></span></label>
               <input type="range" id="a" min="0.2" max="5" step="0.05" value="0.5" />
             </div>
             <div class="control">
@@ -5172,12 +5172,14 @@
 
     const msunTip =
       '<span class="tip" tabindex="0" data-tip="Solar masses. E.g. 2 M☉ is twice the mass of the Sun">M☉</span>';
+    const auTip =
+      '<span class="tip" tabindex="0" data-tip="Astronomical unit — the average Earth–Sun distance (~150 million km). Handy yardstick for separations inside a stellar system.">AU</span>';
 
     function updateLabels() {
       document.getElementById("vns-val").textContent = `${kickUI.vns} km/s`;
       document.getElementById("mbh-val").innerHTML = `${kickUI.mbh.toFixed(1)} ${msunTip}`;
       document.getElementById("m2-val").innerHTML = `${kickUI.m2.toFixed(1)} ${msunTip}`;
-      document.getElementById("a-val").textContent = `${kickUI.a.toFixed(2)} AU`;
+      document.getElementById("a-val").innerHTML = `${kickUI.a.toFixed(2)} ${auTip}`;
       document.getElementById("theta-val").textContent = `${kickUI.theta}°`;
       document.getElementById("dm-val").innerHTML = `${kickUI.dm.toFixed(1)} ${msunTip}`;
     }

@@ -21,6 +21,7 @@ Hover text on the site comes from the note body (after the title).
 - [[mass transfer]]
 - [[MESA]]
 - [[M☉]] — solar masses (aliases: solar mass, Msun)
+- [[AU]] — astronomical unit
 - [[metallicity]] — nests [[everything heavier than helium]] (astronomer periodic-table gag image)
 - [[everything heavier than helium]] — image-only tip (`assets/astronomer-periodic-table.png`, no caption)
 - [[microlens]]
