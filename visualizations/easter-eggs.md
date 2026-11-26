@@ -16,7 +16,7 @@ After **3 theme changes** (e.g. light → dark → light → dark), a **Super da
 
 ## Pierson tip confetti (`#name-confetti`)
 
-Each open of the byline tip (**Pierson** / **Pierson Lipschultz**, depth 0) drops **4** star particles from the name, then clears. Skipped when `prefers-reduced-motion`.
+Each open of the byline tip (**Pierson** / **Pierson Lipschultz**, depth 0) pops **7** star particles outward from the name, then fades them in place. Skipped when `prefers-reduced-motion`.
 
 ## Changelog
 
