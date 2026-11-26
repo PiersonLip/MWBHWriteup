@@ -12,7 +12,7 @@ title: We're about to find a whole lot more black holes
 :::prose
 The Milky Way has **hundreds of millions** of stellar-mass[^1] [[black holes]][^census]. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in [[X-ray binaries]] and the ones that are detected via [[Glossary/Gravitational-wave|gravitational waves]] by [[LIGO-Virgo-KAGRA|LIGO/Virgo/KAGRA]].
 
-However, that is rapidly changing. So far [[Gaia]] has already confirmed three quiet black holes with bright companions and [[Gaia DR4]] is expected to have dozens more measured BH binaries, [[Roman]] should detect hundreds more isolated[^3] ones. Thus the question is quickly shifting from *"can we find them?"* to *"how did they get there?"*
+However, that is rapidly changing. So far [[Gaia]] has already confirmed three quiet black holes with bright companions and [[Gaia DR4]] is expected to have dozens more; [[Roman]] should detect hundreds more isolated[^3] ones. Thus the question is quickly shifting from *"can we find them?"* to *"how did they get there?"*
 
 And we can't answer that question just counting the remnants of stars. Most massive stars[^2] grow up intertwined with a partner in [[binary stars|binary systems]]. These relationships are tumultuous, with things like [[mass transfer]], [[common envelope]], mergers, and [[supernova]] kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. Previous work approximates these processes; we use [[POSYDON]] instead, which lets us use much more accurate [[MESA]] simulations.
 :::

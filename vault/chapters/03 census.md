@@ -16,12 +16,12 @@ In our baseline solar-[[metallicity]][^1] simulation, we found about **400,000,0
 
 :::stats
 - ~4×10⁸ | Total Galactic BHs
-- 78% | Isolated 
+- 78% | Isolated
 - 19% | In detached BH-BH binaries
 :::
 
 :::prose
-For the formation of isolated black holes, **stellar mergers** are the most common (42% of all BHs): this happens stars drift closer and closer together until they merge into one (often after a failed [[common envelope]]), the merger product later collapsing into a black hole. **Disrupted binaries** come next (27%): these are black holes where a [[natal kick]] and/or sudden mass loss rips the binary apart, sending the black hole flying through our Milky Way. This can happen at the when either of the stars go supernova. Stars born single, BH+star mergers, and rare [[DCO]] mergers make up the rest.
+For the formation of isolated black holes, **stellar mergers** are the most common (42% of all BHs): this happens stars drift closer and closer together until they merge into one (often after a failed [[common envelope]]), the merger product later collapsing into a black hole. **Disrupted binaries** come next (27%): these are black holes where a [[natal kick]] and/or sudden mass loss rips the binary apart, sending the black hole flying through our Milky Way. This can happen at the when either of the stars go supernova. The rest of the black holes are from single born stars, BH+star mergers, or rare [[DCO| double compact object]] mergers make up.
 
 The binary systems that survive are unique in their own right. [[Detached]] **[[BH-BH]]** systems alone are ~19% of all BHs. [[BH+NS]], [[BH+WD]], and BH+star systems together are only a few percent, yet this few percent are really the only ones we've observed so far.
 
