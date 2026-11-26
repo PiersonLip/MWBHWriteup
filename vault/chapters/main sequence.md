@@ -1,0 +1,1 @@
+The main stable stage all stars experince. This is where hydrogen is being fused in the shell with helium building up in the core. This is what stage our sun is in. 
