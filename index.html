@@ -1065,7 +1065,8 @@
       position: absolute;
       left: 0; top: 0;
       width: 0; height: 0;
-      z-index: 1000;
+      /* Above deep-note modal (4000) so nested tips work in Focus view */
+      z-index: 5000;
       pointer-events: none;
     }
     .tip-bubble {
@@ -1570,6 +1571,29 @@
       color: var(--ink);
       line-height: 1.4;
     }
+    .deep-copy .footnotes {
+      margin-top: 1.25rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--line);
+    }
+    .deep-copy .footnotes h3 {
+      font-family: "Schibsted Grotesk", system-ui, sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin: 0 0 0.45rem;
+    }
+    .deep-copy .footnotes ol {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+    .deep-copy .footnotes li {
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: var(--ink-soft);
+      margin: 0 0 0.35rem;
+    }
     /* Orion binary map — focus panel only (stripped from hover tip) */
     .deep-orion {
       display: block;
@@ -2050,7 +2074,7 @@
 
       <div class="prose">
         <p>
-          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="An incredibly dense remnant of a massive star formed in a supernova. Also does weird things with light.">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> and the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses." data-viz="gw">gravitational waves</span> by <span class="tip" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy.">LIGO/Virgo/KAGRA</span>.
+          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="An incredibly dense remnant of a massive star formed in a supernova. Also does weird things with light.">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> and the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses. In this visualization it shows a close binary with two black holes." data-viz="gw">gravitational waves</span> by <span class="tip" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy.">LIGO/Virgo/KAGRA</span>.
         </p>
         <p>
           However, that is rapidly changing. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries, <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span> should detect hundreds more isolated<sup class="fn-ref" id="fnref-why-3" data-fn-id="3"><a href="#fn-why-3">3</a></sup> ones. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get there?"</em>
@@ -2168,7 +2192,7 @@
 
       <div class="prose">
         <p>
-          When a star in a binary dies in the form of a <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span>, two things mess with the orbit. The sudden extreme mass loss shifts the center of mass (referred to as the <span class="tip" tabindex="0" data-tip="Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw.">Blaauw effect</span> or Blaauw kick) and any sort of asymmetries can also give the remnant an extra <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span><sup class="fn-ref" id="fnref-kicks-2" data-fn-id="2"><a href="#fn-kicks-2">1</a></sup>. If the combined effect of these is strong enough, the system becomes <span class="tip" tabindex="0" data-tip="When a kick and/or sudden mass loss unbinds a binary so the components no longer orbit each other.">disrupted</span>. This disruption from strong kicks is a big reason so many BHs are single, and why low-mass BHs are especially likely to be isolated<sup class="fn-ref" id="fnref-kicks-1" data-fn-id="1"><a href="#fn-kicks-1">2</a></sup>.
+          When a star in a binary dies in the form of a <span class="tip" tabindex="0" data-tip="The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole.">supernova</span>, two things mess with the orbit. The sudden extreme mass loss shifts the center of mass (referred to as the <span class="tip" tabindex="0" data-tip="Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw.">Blaauw effect</span> or Blaauw kick) and any sort of asymmetries can also give the remnant an extra <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span><sup class="fn-ref" id="fnref-kicks-2" data-fn-id="2"><a href="#fn-kicks-2">1</a></sup>. If the combined effect of these is strong enough, the system becomes <span class="tip" tabindex="0" data-tip="When a kick and/or sudden mass loss unbinds a binary causing the components to no longer orbit each other.">disrupted</span>. This disruption from strong kicks is a big reason so many BHs are single, and why low-mass BHs are especially likely to be isolated<sup class="fn-ref" id="fnref-kicks-1" data-fn-id="1"><a href="#fn-kicks-1">2</a></sup>.
         </p>
       </div>
 
@@ -2555,7 +2579,7 @@
             <span class="deep-viz-caption">Unequal-mass binary · shared center of mass</span>
           </div>
           <p>
-            “Binary” is also shorthand for the whole family of <strong>multiple-star systems</strong>. There is not reason why you can't have a close binary pair that has a wide teritary which orbits far away[^1], or have two binary pairs orbiting each other.
+            “Binary” is also shorthand for the whole family of <strong>multiple-star systems</strong>. There is not reason why you can't have a close binary pair that has a wide teritary which orbits far away<sup class="fn-ref" id="fnref-binary-stars-1" data-fn-id="1"><a href="#fn-binary-stars-1">1</a></sup>, or have two binary pairs orbiting each other.
           </p>
           <h3>Way more common then you'd think</h3>
           <p>
@@ -2568,9 +2592,12 @@
             <canvas id="orion-binary-canvas" width="800" height="800" aria-hidden="true"></canvas>
             <div class="deep-orion-tip" id="orion-tip" hidden></div>
           </figure>
-          <p>
-            [^1]: Note that despite the fact that this is three stars orbiting eachother, it noteably is <em>not</em> a three body problem. This is because all three stars are orbiting the same stable common center of mass, whereas in a three body problem there no such consistent center.
-          </p>
+                <section class="footnotes" id="footnotes-binary-stars">
+                  <h3>Notes</h3>
+                  <ol>
+                    <li id="fn-binary-stars-1" value="1" data-fn-id="1"><span class="fn-text">Note that despite the fact that this is three stars orbiting eachother, it noteably is <em>not</em> a three body problem. This is because all three stars are orbiting the same stable common center of mass, whereas in a three body problem there no such consistent center.</span> <a href="#fnref-binary-stars-1" class="fn-back" title="Back to text">↩</a></li>
+                  </ol>
+                </section>
         </div>
       </div>
     </div>
@@ -3322,18 +3349,21 @@
 
     // ═══════════════════════════════════════════
     (function initNestedTips() {
-      const TIP_ANCHOR = ".tip[data-tip], .fn-ref";
+      const TIP_ANCHOR = ".tip[data-tip], .tip[data-image], .tip.tip-image, .fn-ref";
       const glossary = new Map(); // lower -> tip text
       const tipEffects = new Map(); // lower -> effect name
       const tipImages = new Map(); // lower -> image src
       const tipViz = new Map(); // lower -> viz id (e.g. gw)
       const tipDeep = new Map(); // lower -> deep-note id (never nest these)
-      document.querySelectorAll(".tip[data-tip]").forEach((el) => {
+      document.querySelectorAll(".tip[data-tip], .tip[data-image], .tip.tip-image").forEach((el) => {
         const label = el.textContent.replace(/\s+/g, " ").trim();
         const tip = el.getAttribute("data-tip") || "";
-        if (!label || !tip) return;
+        const hasMedia = !!(el.dataset.image || el.dataset.viz || el.dataset.deep || el.dataset.effect);
+        if (!label || (!tip && !hasMedia)) return;
         const key = label.toLowerCase();
-        if (!glossary.has(key) || tip.length > glossary.get(key).length) {
+        if (tip && (!glossary.has(key) || tip.length > (glossary.get(key) || "").length)) {
+          glossary.set(key, tip);
+        } else if (!glossary.has(key)) {
           glossary.set(key, tip);
         }
         if (el.dataset.effect) tipEffects.set(key, el.dataset.effect);
@@ -4338,6 +4368,8 @@
           if (src) {
             const clone = src.cloneNode(true);
             clone.querySelectorAll("[data-orion-viz]").forEach((el) => el.remove());
+            // Keep footnote defs in the Focus panel only (avoid duplicate IDs in the tip)
+            clone.querySelectorAll(".footnotes").forEach((el) => el.remove());
             const viz = clone.querySelector("[data-orbit-viz]");
             if (viz) {
               viz.className = "tip-rich-viz";

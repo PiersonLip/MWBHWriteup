@@ -136,53 +136,73 @@ ORION_VIZ_HTML = """\
           </figure>"""
 
 
-def render_deep_note_html(md: str) -> str:
+def render_deep_note_html(md: str, deep_id: str = "note") -> str:
     """Render a deep-note markdown body into `.deep-copy` HTML.
 
     Supports paragraphs, ### headings, **bold**/*em*/wikilinks via md_inline_to_html,
-    and placeholders {{orbit-viz}} / {{orion-viz}}.
+    placeholders {{orbit-viz}} / {{orion-viz}}, and Obsidian footnotes.
     The first paragraph becomes <p class="deep-pull">.
     """
     text = (md or "").strip()
     if not text:
         return ""
-    blocks = re.split(r"\n\s*\n", text)
-    out: List[str] = []
-    first_para = True
-    for raw_block in blocks:
-        block = raw_block.strip()
-        if not block:
-            continue
-        if block in ("{{orbit-viz}}", "{{orbit viz}}"):
-            out.append(ORBIT_VIZ_HTML)
+    footnotes = {}
+    for m in FN_DEF_MD_RE.finditer(text):
+        footnotes[m.group(1)] = m.group(2).strip()
+    text = FN_DEF_MD_RE.sub("", text).strip()
+    begin_footnotes(deep_id, footnotes)
+    try:
+        blocks = re.split(r"\n\s*\n", text)
+        out: List[str] = []
+        first_para = True
+        for raw_block in blocks:
+            block = raw_block.strip()
+            if not block:
+                continue
+            if block in ("{{orbit-viz}}", "{{orbit viz}}"):
+                out.append(ORBIT_VIZ_HTML)
+                first_para = False
+                continue
+            if block in ("{{orion-viz}}", "{{orion viz}}"):
+                out.append(ORION_VIZ_HTML)
+                first_para = False
+                continue
+            heading = re.match(r"^(#{2,3})\s+(.+)$", block, re.S)
+            if heading and "\n" not in block.strip():
+                level = len(heading.group(1))
+                title = md_inline_to_html(heading.group(2).strip())
+                out.append(f"          <h{level}>{title}</h{level}>")
+                first_para = False
+                continue
+            # Multi-line block starting with heading then text → split
+            hm = re.match(r"^(#{2,3})\s+(.+?)\n+([\s\S]+)$", block)
+            if hm:
+                level = len(hm.group(1))
+                title = md_inline_to_html(hm.group(2).strip())
+                out.append(f"          <h{level}>{title}</h{level}>")
+                para = md_inline_to_html(re.sub(r"\s+", " ", hm.group(3).strip()))
+                out.append(f"          <p>\n            {para}\n          </p>")
+                first_para = False
+                continue
+            para = md_inline_to_html(re.sub(r"\s*\n\s*", " ", block).strip())
+            cls = ' class="deep-pull"' if first_para else ""
+            out.append(
+                f"          <p{cls}>{para}</p>"
+                if first_para
+                else f"          <p>\n            {para}\n          </p>"
+            )
             first_para = False
-            continue
-        if block in ("{{orion-viz}}", "{{orion viz}}"):
-            out.append(ORION_VIZ_HTML)
-            first_para = False
-            continue
-        heading = re.match(r"^(#{2,3})\s+(.+)$", block, re.S)
-        if heading and "\n" not in block.strip():
-            level = len(heading.group(1))
-            title = md_inline_to_html(heading.group(2).strip())
-            out.append(f"          <h{level}>{title}</h{level}>")
-            first_para = False
-            continue
-        # Multi-line block starting with heading then text → split
-        hm = re.match(r"^(#{2,3})\s+(.+?)\n+([\s\S]+)$", block)
-        if hm:
-            level = len(hm.group(1))
-            title = md_inline_to_html(hm.group(2).strip())
-            out.append(f"          <h{level}>{title}</h{level}>")
-            para = md_inline_to_html(re.sub(r"\s+", " ", hm.group(3).strip()))
-            out.append(f"          <p>\n            {para}\n          </p>")
-            first_para = False
-            continue
-        para = md_inline_to_html(re.sub(r"\s*\n\s*", " ", block).strip())
-        cls = ' class="deep-pull"' if first_para else ""
-        out.append(f"          <p{cls}>{para}</p>" if first_para else f"          <p>\n            {para}\n          </p>")
-        first_para = False
-    return "\n".join(out)
+        body = "\n".join(out)
+        state = end_footnotes()
+        if state and state.order:
+            # Slightly tighter indent so it sits cleanly inside .deep-copy
+            fn = render_footnotes_html(state)
+            fn = "\n".join(("          " + line if line.strip() else line) for line in fn.splitlines())
+            body = f"{body}\n{fn}"
+        return body
+    except Exception:
+        end_footnotes()
+        raise
 
 
 def apply_deep_notes(html: str) -> str:
@@ -200,7 +220,7 @@ def apply_deep_notes(html: str) -> str:
 
     for note in notes:
         deep_id = note["deep"]
-        copy_html = render_deep_note_html(note["deep_md"])
+        copy_html = render_deep_note_html(note["deep_md"], deep_id=deep_id)
         if not copy_html:
             continue
         # Replace .deep-copy inside the matching deep-body
