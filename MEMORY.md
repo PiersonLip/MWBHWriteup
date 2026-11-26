@@ -49,6 +49,7 @@ Two themes via `data-theme` on `<html>` + CSS variables. Light = former slate; d
 | Galactic seeding `#galaxy` | [galaxy.md](visualizations/galaxy.md) | Active |
 | Microlensing `#micro` | [micro.md](visualizations/micro.md) | Active (3D+2D stacked) |
 | BH lens gag (`data-effect="lens"`) | [lens.md](visualizations/lens.md) | Active (glossary easter egg) |
+| Tip-nest singularity (6 deep) | [tip-singularity.md](visualizations/tip-singularity.md) | Active (glossary easter egg) |
 | Fiducial demographics `#demo` | — | **Removed** (flowchart replaces it) |
 
 ## Paper concepts covered
@@ -87,6 +88,13 @@ See [visualizations/lens.md](visualizations/lens.md) for full detail.
 - Hover → instant tiny cursor BH + word ghosts; ~1.2s dwell → pinned focus; exit via hint click or Esc.
 - UI chrome stays put; copy turns transparent and ghosts peel toward the cursor. BH eats overlapping words and grows from feeding after a natural size plateau.
 - Photon ring near the outer horizon rim; scroll locked while active; eat-everything → “well that was awfully rude”.
+
+## Tip-nest singularity — summary
+
+See [visualizations/tip-singularity.md](visualizations/tip-singularity.md).
+
+- Open glossary tips **6 deep** → BH forms on the tip, pulls page + tips into a point, flash/sparkle, **5s** black void, page fades back.
+- Separate overlay from the lens gag; exits lens first if both would conflict.
 
 ## Writing / UX conventions
 

@@ -11,6 +11,7 @@ Living docs for every interactive figure in `index.html`.
 | [galaxy.md](./galaxy.md) | `#gal-figure` / `#galaxy` | Galactic seeding |
 | [micro.md](./micro.md) | `#micro` | Observational links |
 | [lens.md](./lens.md) | `data-effect="lens"` (page overlay) | Glossary gag (“weird things with light”) |
+| [tip-singularity.md](./tip-singularity.md) | 6-deep tip nest (page overlay) | Glossary gag (tip recursion) |
 
 ## Agent rule
 
@@ -26,6 +27,8 @@ Removed / parked: **Fiducial demographics** bar stack (`#demo`) — flowchart co
 Related: rich glossary deep-dive for **binary stars** — [binary-stars.md](./binary-stars.md) (`data-deep="binary-stars"`).
 
 Related: BH lens easter egg — [lens.md](./lens.md) (`effect: lens` on glossary note **weird things with light**).
+
+Related: tip-nest singularity — [tip-singularity.md](./tip-singularity.md) (6 nested tips → page swallow).
 
 Related: tip canvases — [gw-tip.md](./gw-tip.md) (`viz: gw`), [envelope-tip.md](./envelope-tip.md) (`viz: envelope`), [common-envelope-tip.md](./common-envelope-tip.md) (`viz: common-envelope`), [mw-components-tip.md](./mw-components-tip.md) (`viz: mw-components`), [eccentricity-tip.md](./eccentricity-tip.md) (`viz: eccentricity`).
 

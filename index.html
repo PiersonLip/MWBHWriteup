@@ -2089,6 +2089,229 @@
       .bh-lens-hint { transition: none; }
       .bh-lens-rude { transition: none; }
       .bh-core::after { animation: none; }
+      .tip-sing-bh,
+      .tip-sing-flash,
+      .tip-sing-spark,
+      html.is-singularity.is-sing-pull .wrap,
+      html.is-singularity.is-sing-pull #tip-layer {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* Tip-nest singularity gag (6 deep tips → swallow the page) */
+    .tip-sing {
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+      pointer-events: none;
+      display: none;
+    }
+    html.is-singularity .tip-sing {
+      display: block;
+      pointer-events: auto;
+    }
+    html.is-singularity {
+      overflow: hidden;
+      cursor: none;
+    }
+    html.is-singularity body {
+      overflow: hidden;
+      touch-action: none;
+    }
+    .tip-sing-bh {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 140px;
+      height: 140px;
+      margin: -70px 0 0 -70px;
+      border-radius: 50%;
+      opacity: 0;
+      transform: translate3d(var(--sing-px, -9999px), var(--sing-py, -9999px), 0) scale(0.05);
+      will-change: transform, opacity;
+      background:
+        radial-gradient(
+          circle at 50% 50%,
+          #000 0%,
+          #000 46%,
+          rgba(6, 2, 2, 0.98) 54%,
+          rgba(24, 10, 8, 0.6) 66%,
+          rgba(80, 32, 18, 0.22) 78%,
+          rgba(140, 60, 30, 0.06) 90%,
+          transparent 100%
+        );
+      box-shadow:
+        0 0 36px 14px rgba(0, 0, 0, 0.45),
+        0 0 80px 28px rgba(40, 14, 8, 0.2);
+      transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
+      z-index: 2;
+    }
+    .tip-sing-bh::before {
+      content: "";
+      position: absolute;
+      inset: 14%;
+      border-radius: 50%;
+      background: #000;
+      box-shadow:
+        0 0 0 1.5px rgba(255, 236, 200, 0.95),
+        0 0 0 3px rgba(255, 170, 90, 0.5),
+        0 0 14px 3px rgba(255, 160, 80, 0.4);
+    }
+    .tip-sing-bh::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          from 200deg,
+          rgba(255, 200, 130, 0.55) 0deg,
+          rgba(255, 248, 230, 1) 55deg,
+          rgba(255, 190, 100, 0.85) 110deg,
+          rgba(255, 150, 70, 0.35) 180deg,
+          rgba(255, 170, 90, 0.5) 260deg,
+          rgba(255, 200, 130, 0.55) 360deg
+        );
+      mask: radial-gradient(
+        circle at 50% 50%,
+        transparent 0%,
+        transparent 85%,
+        #000 86.5%,
+        #000 91%,
+        transparent 93%,
+        transparent 100%
+      );
+      -webkit-mask: radial-gradient(
+        circle at 50% 50%,
+        transparent 0%,
+        transparent 85%,
+        #000 86.5%,
+        #000 91%,
+        transparent 93%,
+        transparent 100%
+      );
+      animation: tip-sing-spin 10s linear infinite;
+    }
+    @keyframes tip-sing-spin {
+      to { transform: rotate(360deg); }
+    }
+    html.is-singularity.is-sing-form .tip-sing-bh {
+      opacity: 1;
+      transform: translate3d(var(--sing-px, 0px), var(--sing-py, 0px), 0) scale(1.15);
+    }
+    html.is-singularity.is-sing-pull .wrap,
+    html.is-singularity.is-sing-pull #tip-layer {
+      transform-origin: var(--sing-x, 50%) var(--sing-y, 50%);
+      transition:
+        transform 1.85s cubic-bezier(0.55, 0.02, 0.95, 0.45),
+        filter 1.7s ease,
+        opacity 1.5s ease;
+      transform: scale(0.018) rotate(620deg);
+      filter: brightness(0.25) contrast(1.2) blur(1.5px);
+      opacity: 0.12;
+      pointer-events: none;
+    }
+    html.is-singularity.is-sing-pull .tip-sing-bh {
+      transition: transform 1.85s cubic-bezier(0.55, 0.02, 0.95, 0.45), opacity 0.3s ease 1.4s;
+      transform: translate3d(var(--sing-px, 0px), var(--sing-py, 0px), 0) scale(3.4);
+    }
+    html.is-singularity.is-sing-collapse .tip-sing-bh {
+      transition: transform 0.28s cubic-bezier(0.7, 0, 1, 0.3), opacity 0.22s ease;
+      transform: translate3d(var(--sing-px, 0px), var(--sing-py, 0px), 0) scale(0);
+      opacity: 0;
+    }
+    .tip-sing-flash {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.08s ease;
+    }
+    html.is-singularity.is-sing-flash .tip-sing-flash {
+      opacity: 1;
+      transition: opacity 0.05s ease;
+    }
+    html.is-singularity.is-sing-flash-out .tip-sing-flash {
+      opacity: 0;
+      transition: opacity 0.55s ease;
+    }
+    .tip-sing-sparks {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .tip-sing-spark {
+      position: absolute;
+      left: var(--sing-px, 50%);
+      top: var(--sing-py, 50%);
+      width: 3px;
+      height: 3px;
+      margin: -1.5px 0 0 -1.5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow:
+        0 0 6px 2px rgba(255, 230, 180, 0.95),
+        0 0 14px 4px rgba(255, 180, 90, 0.55);
+      opacity: 0;
+      transform: translate(0, 0) scale(0.4);
+    }
+    html.is-singularity.is-sing-spark .tip-sing-spark {
+      animation: tip-sing-spark-fly 0.95s ease-out forwards;
+      animation-delay: var(--spark-delay, 0s);
+    }
+    @keyframes tip-sing-spark-fly {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1.1);
+      }
+      70% {
+        opacity: 0.85;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--sx), var(--sy)) scale(0.15);
+      }
+    }
+    .tip-sing-void {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      opacity: 0;
+      z-index: 6;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    html.is-singularity.is-sing-void .tip-sing-void {
+      opacity: 1;
+    }
+    html.is-singularity.is-sing-void .wrap,
+    html.is-singularity.is-sing-void #tip-layer {
+      visibility: hidden;
+      opacity: 0;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+    html.is-singularity.is-sing-return .tip-sing-void {
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+    html.is-singularity.is-sing-return .wrap,
+    html.is-singularity.is-sing-return #tip-layer {
+      visibility: visible;
+      opacity: 0;
+      transform: none;
+      filter: none;
+      transition: opacity 0.85s ease 0.15s;
+    }
+    html.is-singularity.is-sing-return.is-sing-return-show .wrap,
+    html.is-singularity.is-sing-return.is-sing-return-show #tip-layer {
+      opacity: 1;
     }
   </style>
 </head>
@@ -2600,6 +2823,13 @@
   <div class="bh-ghost-ui" id="bh-ghost-ui" aria-hidden="true"></div>
   <div class="bh-lens-rude" id="bh-lens-rude" role="status" aria-live="polite" aria-hidden="true">
     well that was awfully rude
+  </div>
+
+  <div class="tip-sing" id="tip-singularity" aria-hidden="true">
+    <div class="tip-sing-bh" id="tip-sing-bh"></div>
+    <div class="tip-sing-sparks" id="tip-sing-sparks" aria-hidden="true"></div>
+    <div class="tip-sing-flash" id="tip-sing-flash"></div>
+    <div class="tip-sing-void" id="tip-sing-void"></div>
   </div>
 
   <div class="mobile-notice" id="mobile-notice" hidden role="dialog" aria-modal="true" aria-labelledby="mobile-notice-title">
@@ -4013,6 +4243,14 @@
       const open = []; // { bubble, anchor, depth }
       let hideTimer = null;
       const pointer = { x: 0, y: 0 };
+      // 6 open tips (depth 0..5) → page collapses into a singularity
+      const SING_TRIGGER_DEPTH = 5;
+      const SING_VOID_MS = 5000;
+      const singularity = {
+        busy: false,
+        timers: [],
+        reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+      };
       const lens = {
         on: false,
         pinned: false,
@@ -4921,7 +5159,160 @@
         return b ? Number(b.dataset.depth || 0) + 1 : 0;
       }
 
+      function clearSingTimers() {
+        singularity.timers.forEach((id) => clearTimeout(id));
+        singularity.timers = [];
+      }
+
+      function singLater(fn, ms) {
+        const id = setTimeout(fn, ms);
+        singularity.timers.push(id);
+        return id;
+      }
+
+      function buildSingSparks(count) {
+        const host = document.getElementById("tip-sing-sparks");
+        if (!host) return;
+        host.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+          const el = document.createElement("span");
+          el.className = "tip-sing-spark";
+          const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.35;
+          const dist = 70 + Math.random() * 220;
+          el.style.setProperty("--sx", `${Math.cos(ang) * dist}px`);
+          el.style.setProperty("--sy", `${Math.sin(ang) * dist}px`);
+          el.style.setProperty("--spark-delay", `${(Math.random() * 0.18).toFixed(3)}s`);
+          const size = 2 + Math.random() * 3.5;
+          el.style.width = `${size}px`;
+          el.style.height = `${size}px`;
+          el.style.margin = `${-size / 2}px 0 0 ${-size / 2}px`;
+          host.appendChild(el);
+        }
+      }
+
+      function finishSingularity() {
+        const root = document.documentElement;
+        root.classList.remove(
+          "is-singularity",
+          "is-sing-form",
+          "is-sing-pull",
+          "is-sing-collapse",
+          "is-sing-flash",
+          "is-sing-flash-out",
+          "is-sing-spark",
+          "is-sing-void",
+          "is-sing-return",
+          "is-sing-return-show"
+        );
+        root.style.removeProperty("--sing-x");
+        root.style.removeProperty("--sing-y");
+        root.style.removeProperty("--sing-px");
+        root.style.removeProperty("--sing-py");
+        const host = document.getElementById("tip-sing-sparks");
+        if (host) host.innerHTML = "";
+        const bh = document.getElementById("tip-sing-bh");
+        if (bh) {
+          bh.style.transform = "";
+          bh.style.opacity = "";
+        }
+        const layerEl = document.getElementById("tip-singularity");
+        if (layerEl) layerEl.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        document.body.style.touchAction = "";
+        root.style.overflow = "";
+        singularity.busy = false;
+        clearSingTimers();
+      }
+
+      function triggerTipSingularity(bubble) {
+        if (singularity.busy) return;
+        singularity.busy = true;
+        clearHide();
+        clearSingTimers();
+
+        // Don't fight the cursor lens gag
+        if (lens.on || lens.pinned || lens.exit) {
+          try {
+            exitPinnedLens();
+          } catch (_) { /* ok */ }
+        }
+
+        const root = document.documentElement;
+        const r = bubble.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        root.style.setProperty("--sing-x", `${cx}px`);
+        root.style.setProperty("--sing-y", `${cy}px`);
+        root.style.setProperty("--sing-px", `${cx}px`);
+        root.style.setProperty("--sing-py", `${cy}px`);
+
+        const layerEl = document.getElementById("tip-singularity");
+        if (layerEl) layerEl.setAttribute("aria-hidden", "false");
+
+        root.classList.add("is-singularity");
+        root.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+        document.body.style.touchAction = "none";
+
+        const reduce = singularity.reduceMotion;
+        if (reduce) {
+          root.classList.add("is-sing-void");
+          clearFrom(0);
+          singLater(() => {
+            root.classList.add("is-sing-return");
+            requestAnimationFrame(() => {
+              root.classList.add("is-sing-return-show");
+            });
+            singLater(finishSingularity, 1000);
+          }, SING_VOID_MS);
+          return;
+        }
+
+        // Form BH on the tip
+        requestAnimationFrame(() => {
+          root.classList.add("is-sing-form");
+        });
+
+        // Pull page + tip stack into the singularity
+        singLater(() => {
+          root.classList.add("is-sing-pull");
+        }, 520);
+
+        // Collapse → flash + sparkle → void (keep pull until void so page stays gone)
+        singLater(() => {
+          root.classList.add("is-sing-collapse");
+          buildSingSparks(28);
+          singLater(() => {
+            root.classList.add("is-sing-flash", "is-sing-spark");
+            clearFrom(0);
+            singLater(() => {
+              root.classList.remove("is-sing-flash");
+              root.classList.add("is-sing-flash-out", "is-sing-void");
+              root.classList.remove("is-sing-pull");
+              singLater(() => {
+                root.classList.remove(
+                  "is-sing-flash-out",
+                  "is-sing-spark",
+                  "is-sing-collapse",
+                  "is-sing-form"
+                );
+              }, 600);
+            }, 90);
+          }, 260);
+        }, 2400);
+
+        // Page returns after the void
+        singLater(() => {
+          root.classList.add("is-sing-return");
+          requestAnimationFrame(() => {
+            root.classList.add("is-sing-return-show");
+          });
+          singLater(finishSingularity, 1100);
+        }, 2400 + 400 + SING_VOID_MS);
+      }
+
       function showTip(anchor) {
+        if (singularity.busy) return;
         const tipText = tipTextFor(anchor);
         const deepId = anchor.getAttribute && anchor.getAttribute("data-deep");
         const imgSrcEarly = anchor.getAttribute && anchor.getAttribute("data-image");
@@ -5027,6 +5418,9 @@
         }
         if (vizId === "mw-components" && typeof ensureMwTipAnim === "function") {
           requestAnimationFrame(() => ensureMwTipAnim());
+        }
+        if (depth >= SING_TRIGGER_DEPTH) {
+          requestAnimationFrame(() => triggerTipSingularity(bubble));
         }
       }
 
