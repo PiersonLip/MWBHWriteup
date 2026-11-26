@@ -2621,8 +2621,14 @@
       let mode = null; // "orbit" | "pinch"
       let orbit = null;
       let pinch = null;
-      const pitchMin = opts.pitchMin ?? 0.02;
-      const pitchMax = opts.pitchMax ?? Math.PI / 2 - 0.02;
+      const pitchMinOf = () => {
+        const v = typeof opts.pitchMin === "function" ? opts.pitchMin() : opts.pitchMin;
+        return v ?? 0.02;
+      };
+      const pitchMaxOf = () => {
+        const v = typeof opts.pitchMax === "function" ? opts.pitchMax() : opts.pitchMax;
+        return v ?? Math.PI / 2 - 0.02;
+      };
       const zoomMin = opts.zoomMin ?? 0.7;
       const zoomMax = opts.zoomMax ?? 1.6;
       const yawSense = opts.yawSense ?? 0.008;
@@ -2701,7 +2707,9 @@
             const dy = e.clientY - orbit.y;
             opts.setYaw(orbit.yaw0 + yawSign * dx * yawSense);
             const pSign = orbit.invert ? -1 : 1;
-            opts.setPitch(clamp(orbit.pitch0 + pSign * dy * pitchSense, pitchMin, pitchMax));
+            opts.setPitch(
+              clamp(orbit.pitch0 + pSign * dy * pitchSense, pitchMinOf(), pitchMaxOf())
+            );
             opts.onChange?.();
           }
         },
@@ -6669,8 +6677,9 @@
       yawSign: 1,
       yawSense: 0.008,
       pitchSense: 0.007,
-      pitchMin: 0.02,
-      pitchMax: Math.PI / 2 - 0.02,
+      // While focused on a cluster/GC, allow full overhead (pitch → 0)
+      pitchMin: () => (gal.focus || gal.focusAnim ? 0 : 0.02),
+      pitchMax: () => Math.PI / 2 - 0.02,
       zoomMin: 0.72,
       zoomMax: 1.85,
       wheelSense: 0.0012,
