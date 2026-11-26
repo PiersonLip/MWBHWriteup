@@ -13,8 +13,7 @@ title: What Gaia and Roman see
 :::prose
 Quiet black holes with luminous companions[^1] are pretty rare in the full census, but they're incredibly useful for measuring those black holes. This is because we can measure the effect that the blackhole has on its companion, which 
 
-**Microlensing.** 
-Microlensing is a form of [[gravitational lensing]]
+Microlensing is a form of [[gravitational lensing]] where the brightness of a star increases dramitcally due to an object (in this case a black hole) passing infront and bending light around itself. 
 
 A dark foreground mass — say a quiet black hole — can briefly bend and brighten light from a background bulge star. You usually can't resolve the warp. What you *do* see is a smooth brightening and fading: the light curve. Closer alignments (smaller impact parameter) make taller peaks. The green circle in the figure is the Einstein ring scale set by the lens mass and geometry; the blue and red arcs are the two lensed images of the source.
 :::
