@@ -5327,6 +5327,7 @@
         while (open.length && open[open.length - 1].depth >= depth) {
           dismissBubble(open.pop().bubble);
         }
+        if (typeof syncOrbitCompanionFocus === "function") syncOrbitCompanionFocus();
       }
 
       function clearHide() {
@@ -5945,12 +5946,19 @@
 
       // ── Easter: orbital companion on period tip ──
       const ORBIT_TIP_KEYS = new Set(["period", "periods", "orbital period"]);
+      const ORBIT_NATURAL_FADE_MS = 700;
+      // Leave-focus fade is 75% faster than the natural end fade (25% of that duration)
+      const ORBIT_DISMISS_FADE_MS = Math.round(ORBIT_NATURAL_FADE_MS * 0.25);
       const orbitEgg = {
         el: document.getElementById("orbit-companion"),
         raf: 0,
         dwell: 0,
         t0: 0,
         active: false,
+        fading: false,
+        fadeT0: 0,
+        fadeMs: ORBIT_NATURAL_FADE_MS,
+        fadeFrom: 1,
         anchor: null,
         reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
       };
@@ -5960,6 +5968,7 @@
           orbitEgg.dwell = 0;
         }
         orbitEgg.active = false;
+        orbitEgg.fading = false;
         orbitEgg.anchor = null;
         if (orbitEgg.raf) {
           cancelAnimationFrame(orbitEgg.raf);
@@ -5971,17 +5980,67 @@
           orbitEgg.el.style.transform = "";
         }
       }
+      function beginOrbitDismissFade(fromAlpha) {
+        if (!orbitEgg.active || !orbitEgg.el) return;
+        if (orbitEgg.fading && orbitEgg.fadeMs === ORBIT_DISMISS_FADE_MS) return;
+        orbitEgg.fading = true;
+        orbitEgg.fadeT0 = performance.now();
+        orbitEgg.fadeMs = ORBIT_DISMISS_FADE_MS;
+        orbitEgg.fadeFrom = Math.max(0, Math.min(1, fromAlpha == null ? 1 : fromAlpha));
+      }
+      function syncOrbitCompanionFocus() {
+        const still =
+          orbitEgg.anchor && open.some((o) => o.anchor === orbitEgg.anchor);
+        if (orbitEgg.dwell && !still) {
+          clearTimeout(orbitEgg.dwell);
+          orbitEgg.dwell = 0;
+          orbitEgg.anchor = null;
+        }
+        if (orbitEgg.active && !still) {
+          const cur = orbitEgg.el
+            ? parseFloat(orbitEgg.el.style.opacity || "1")
+            : 1;
+          beginOrbitDismissFade(Number.isFinite(cur) ? cur : 1);
+        }
+      }
       function tickOrbitCompanion(now) {
         if (!orbitEgg.active || !orbitEgg.el) return;
         const elapsed = now - orbitEgg.t0;
         const dur = 7200;
-        if (elapsed > dur) {
-          stopOrbitCompanion();
-          return;
+
+        // Tip left → snappy dismiss fade (even mid-orbit)
+        if (
+          !orbitEgg.fading &&
+          orbitEgg.anchor &&
+          !open.some((o) => o.anchor === orbitEgg.anchor)
+        ) {
+          let cur = 1;
+          if (elapsed < 320) cur = elapsed / 320;
+          else if (elapsed > dur - ORBIT_NATURAL_FADE_MS) {
+            cur = (dur - elapsed) / ORBIT_NATURAL_FADE_MS;
+          }
+          beginOrbitDismissFade(cur);
         }
+
         let a = 1;
-        if (elapsed < 320) a = elapsed / 320;
-        else if (elapsed > dur - 700) a = (dur - elapsed) / 700;
+        if (orbitEgg.fading) {
+          const ft = (now - orbitEgg.fadeT0) / orbitEgg.fadeMs;
+          if (ft >= 1) {
+            stopOrbitCompanion();
+            return;
+          }
+          a = orbitEgg.fadeFrom * (1 - Math.max(0, ft));
+        } else {
+          if (elapsed > dur) {
+            stopOrbitCompanion();
+            return;
+          }
+          if (elapsed < 320) a = elapsed / 320;
+          else if (elapsed > dur - ORBIT_NATURAL_FADE_MS) {
+            a = (dur - elapsed) / ORBIT_NATURAL_FADE_MS;
+          }
+        }
+
         const ang = elapsed * 0.0016; // ~1.8 orbits over the hold
         const r = 44 + 3.5 * Math.sin(elapsed * 0.0014);
         const x = pointer.x + Math.cos(ang) * r;
@@ -5993,12 +6052,15 @@
       function armOrbitCompanion(skipKey, anchor) {
         if (orbitEgg.reduceMotion || !orbitEgg.el) return;
         if (!ORBIT_TIP_KEYS.has(skipKey)) return;
-        if (orbitEgg.active && orbitEgg.anchor === anchor) return;
+        if (orbitEgg.active && orbitEgg.anchor === anchor && !orbitEgg.fading) return;
         if (orbitEgg.dwell) clearTimeout(orbitEgg.dwell);
+        // Leaving mid-fade then re-hover: cancel fade and restart dwell
+        if (orbitEgg.fading) stopOrbitCompanion();
         orbitEgg.dwell = setTimeout(() => {
           orbitEgg.dwell = 0;
           if (!open.some((o) => o.anchor === anchor)) return;
           orbitEgg.active = true;
+          orbitEgg.fading = false;
           orbitEgg.anchor = anchor;
           orbitEgg.t0 = performance.now();
           orbitEgg.el.classList.add("is-on");

@@ -4,7 +4,7 @@ Lightweight gags in `index.html` (not full chapter figures). Separate from the b
 
 ## Orbital companion (`#orbit-companion`)
 
-Hold ~600ms on the **period** / **periods** / **orbital period** tip. A tiny star dot orbits the cursor slowly (~44px radius, ~7s), drawn **under** tip bubbles (`z-index` 4500 vs tip-layer 5000). Skipped when `prefers-reduced-motion`.
+Hold ~600ms on the **period** / **periods** / **orbital period** tip. A tiny star dot orbits the cursor slowly (~44px radius, ~7s), drawn **under** tip bubbles (`z-index` 4500 vs tip-layer 5000). Leaving the tip fades the companion **75% faster** than the natural end fade (~175ms vs ~700ms). Skipped when `prefers-reduced-motion`.
 
 ## Sgr A* stare (galaxy HUD)
 
