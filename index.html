@@ -3987,17 +3987,33 @@
       }
 
       function tipUiUnderPointer() {
+        return activeTipDepthUnderPointer() >= 0;
+      }
+
+      /** Deepest tip depth currently under the cursor (−1 = none). */
+      function activeTipDepthUnderPointer() {
         const fs = document.fullscreenElement || document.webkitFullscreenElement;
-        if (fs && fs.classList && fs.classList.contains("tip-gw-viz")) return true;
+        if (fs && fs.classList && fs.classList.contains("tip-gw-viz")) return 0;
         const stack = document.elementsFromPoint(pointer.x, pointer.y) || [];
-        return stack.some(
-          (n) =>
-            (n.classList && n.classList.contains("tip-bubble")) ||
-            (n.classList && n.classList.contains("tip") && n.getAttribute("data-tip")) ||
-            (n.classList && n.classList.contains("fn-ref")) ||
-            (n.closest && n.closest(".fn-ref")) ||
-            (n.closest && n.closest(".deep-root"))
-        );
+        let maxDepth = -1;
+        for (const n of stack) {
+          if (!n || !n.closest) continue;
+          if (n.closest(".deep-root")) {
+            maxDepth = Math.max(maxDepth, 0);
+            continue;
+          }
+          // Nested glossary terms inside a parent bubble count as the child depth
+          const anchor = n.closest(TIP_ANCHOR);
+          if (anchor) {
+            maxDepth = Math.max(maxDepth, depthOf(anchor));
+            continue;
+          }
+          const bubble = n.closest(".tip-bubble");
+          if (bubble) {
+            maxDepth = Math.max(maxDepth, Number(bubble.dataset.depth || 0));
+          }
+        }
+        return maxDepth;
       }
 
       function tipTextFor(anchor) {
@@ -4102,15 +4118,18 @@
         window.matchMedia("(max-width: 720px)").addEventListener("change", syncTouchUiClass);
       } catch (_) { /* older browsers */ }
 
-      function scheduleHide(fromDepth) {
+      function scheduleHide(_fromDepth) {
+        // Always prune to whatever tip depth the cursor still covers.
+        // (Old logic treated "still on parent tip" as keep-everything, so
+        // nested tips stuck open after you left them.)
         clearHide();
         if (isTouchUi()) return; // tap mode: tips stay until dismiss
+        const nestedOpen = open.some((o) => o.depth > 0);
         const richOpen = open.some((o) => o.bubble.classList.contains("tip-rich"));
+        const delay = nestedOpen ? 160 : richOpen ? 700 : 420;
         hideTimer = setTimeout(() => {
-          // Cursor may still be bridging into a bubble / nested tip
-          if (tipUiUnderPointer()) return;
-          clearFrom(fromDepth);
-        }, richOpen ? 700 : 420);
+          clearFrom(activeTipDepthUnderPointer() + 1);
+        }, delay);
       }
 
       function placeBubble(bubble, anchor, depth) {
@@ -4328,14 +4347,20 @@
         "pointerover",
         (e) => {
           if (isTouchUi()) return;
-          if (e.target.closest && e.target.closest(".tip-bubble")) clearHide();
           const t = e.target.closest && e.target.closest(TIP_ANCHOR);
-          if (!t) return;
-          const from = e.relatedTarget && e.relatedTarget.closest
-            ? e.relatedTarget.closest(TIP_ANCHOR)
-            : null;
-          if (from === t) return;
-          showTip(t);
+          if (t) {
+            clearHide();
+            const from = e.relatedTarget && e.relatedTarget.closest
+              ? e.relatedTarget.closest(TIP_ANCHOR)
+              : null;
+            if (from === t) return;
+            showTip(t);
+            return;
+          }
+          // Moved onto a parent bubble body (not a nested term) — close children
+          if (e.target.closest && e.target.closest(".tip-bubble")) {
+            scheduleHide();
+          }
         },
         true
       );
@@ -4346,15 +4371,11 @@
           if (isTouchUi()) return;
           const leaving = e.target.closest && e.target.closest(`${TIP_ANCHOR}, .tip-bubble`);
           if (!leaving) return;
-          const to = e.relatedTarget;
-          if (isTipUi(to)) {
-            clearHide();
-            return;
-          }
-          const depth = leaving.classList.contains("tip-bubble")
-            ? Number(leaving.dataset.depth || 0)
-            : depthOf(leaving);
-          scheduleHide(depth);
+          scheduleHide(
+            leaving.classList.contains("tip-bubble")
+              ? Number(leaving.dataset.depth || 0)
+              : depthOf(leaving)
+          );
         },
         true
       );
@@ -4368,8 +4389,6 @@
         if (isTouchUi()) return;
         const t = e.target.closest && e.target.closest(TIP_ANCHOR);
         if (!t) return;
-        const to = e.relatedTarget;
-        if (isTipUi(to)) return;
         scheduleHide(depthOf(t));
       });
 
