@@ -6322,15 +6322,19 @@
 
     function drawSgrFocus(ctx, w, h) {
       const t = gal.sgrT;
-      // Soft vignette so the GC zoom reads as a local scene (fades with focus anim)
       const va = Math.max(0, Math.min(1, gal.gcVig));
-      if (va > 0.01) {
-        const vig = ctx.createRadialGradient(w * 0.5, h * 0.52, h * 0.08, w * 0.5, h * 0.52, h * 0.55);
-        vig.addColorStop(0, "rgba(10,12,18,0)");
-        vig.addColorStop(1, `rgba(8,10,16,${0.35 * va})`);
-        ctx.fillStyle = vig;
-        ctx.fillRect(0, 0, w, h);
-      }
+      if (va < 0.01) return;
+
+      // Soft vignette so the GC zoom reads as a local scene (fades with focus anim)
+      const vig = ctx.createRadialGradient(w * 0.5, h * 0.52, h * 0.08, w * 0.5, h * 0.52, h * 0.55);
+      vig.addColorStop(0, "rgba(10,12,18,0)");
+      vig.addColorStop(1, `rgba(8,10,16,${0.35 * va})`);
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, w, h);
+
+      // Sgr A* + S-stars fade with the same transition
+      ctx.save();
+      ctx.globalAlpha = va;
 
       // Orbital trails
       for (const star of SGR_STARS) {
@@ -6391,6 +6395,7 @@
         ctx.font = "500 9px IBM Plex Mono";
         ctx.fillText(star.name, pr.X + 5, pr.Y - 3);
       }
+      ctx.restore();
     }
 
     function galPhaseInfo(p) {
@@ -6559,7 +6564,7 @@
         ctx.fillText(hint, bx + 8, by + 27);
       }
 
-      if (gcFocused) drawSgrFocus(ctx, w, h);
+      if (gcFocused || gal.gcVig > 0.01) drawSgrFocus(ctx, w, h);
 
       const path = gal.path;
       const p = gal.progress;
