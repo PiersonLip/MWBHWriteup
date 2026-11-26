@@ -47,10 +47,10 @@ Size = **natural plateau** + **feed bonus** from eaten words.
 
 - Built from text in `.wrap` (+ canvases/images as blocks) via `buildGhost()` / `appendGhostWordsFrom()`.
 - Soft global pull toward cursor (falloff with distance, never a hard near/far cutoff) + light turbulence.
-- On pin, exit label ghostifies into `#bh-ghost-ui` (edible; ~1.1s hold, then only pulls when BH is nearby). Chrome stays **blank** after (no label restore). Exit-hint glyphs also gate the rude chain.
+- On pin, exit label ghostifies into `#bh-ghost-ui` (edible; ~1.1s hold, then only pulls when BH is nearby). Label text stays in the DOM but transparent (`.is-ghosted`) so the button keeps full size while looking blank. Exit-hint glyphs also gate the rude chain.
 - Rude-stage glyphs warm into the pull over ~520ms after their grace (`eatAfter`) so nearby BH doesn’t snap them.
 - BH overlapping a word → `eaten` (fade/scale into core); triggers feed + maybe rude chain.
-- When a rude stage’s text is fully eaten, empty popup chrome **slides off** the way it entered, then the next stage slides in. Exit hint chrome stays put.
+- When a rude stage’s text is fully eaten, empty popup chrome **slides off** via Web Animations (same direction it entered), then the next stage slides in. Exit hint chrome stays put.
 - On soft exit, eaten ghosts ease back to home (opacity/scale/position, slight stagger) so page copy doesn’t pop in.
 - UI chrome (button boxes, toc pills, etc.) stays; only **text** lifts off (`color: transparent` under `.bh-lens-lifted`).
 
