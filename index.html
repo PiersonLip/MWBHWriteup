@@ -6017,18 +6017,17 @@
       const NAME_TIP_KEYS = new Set(["pierson", "pierson lipschultz"]);
       const nameEgg = {
         el: document.getElementById("name-confetti"),
-        count: 0,
-        fired: false,
+        clearTimer: 0,
         reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
       };
       function burstNameConfetti(anchor) {
-        if (nameEgg.reduceMotion || !nameEgg.el || nameEgg.fired) return;
-        nameEgg.fired = true;
+        if (nameEgg.reduceMotion || !nameEgg.el) return;
         const rect = anchor.getBoundingClientRect();
         const cx = rect.left + rect.width * 0.5;
         const cy = rect.top + rect.height * 0.4;
         const colors = ["#fff8e0", "#ffe08a", "#ffc14d", "#f0b35a"];
         const n = 4;
+        if (nameEgg.clearTimer) clearTimeout(nameEgg.clearTimer);
         nameEgg.el.innerHTML = "";
         for (let i = 0; i < n; i++) {
           const s = document.createElement("span");
@@ -6061,15 +6060,15 @@
             }, 720);
           });
         }
-        setTimeout(() => {
+        nameEgg.clearTimer = setTimeout(() => {
+          nameEgg.clearTimer = 0;
           if (nameEgg.el) nameEgg.el.innerHTML = "";
         }, 1400);
       }
       function maybeNameConfetti(skipKey, anchor) {
         if (!NAME_TIP_KEYS.has(skipKey)) return;
         if (depthOf(anchor) !== 0) return;
-        nameEgg.count += 1;
-        if (nameEgg.count >= 3) burstNameConfetti(anchor);
+        burstNameConfetti(anchor);
       }
 
       function showTip(anchor) {
