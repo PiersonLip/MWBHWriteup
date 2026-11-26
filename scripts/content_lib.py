@@ -464,8 +464,18 @@ def md_inline_to_html(s: str) -> str:
 
     s = TIP_MD_RE.sub(tip_sub, s)
 
+    # Bold/italic for prose only — keep **…** inside data-tip="…" for tip renderer
+    tip_holders: List[str] = []
+
+    def _stash_data_tip(m: re.Match) -> str:
+        tip_holders.append(m.group(0))
+        return f"\x00TIPHOLD{len(tip_holders) - 1}\x00"
+
+    s = re.sub(r'data-tip="[^"]*"', _stash_data_tip, s)
     s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"<em>\1</em>", s)
+    for i, held in enumerate(tip_holders):
+        s = s.replace(f"\x00TIPHOLD{i}\x00", held)
     # nbsp for unit gaps like 10 Gyr stays as normal space unless user writes &nbsp;
     s = s.replace(" M☉", "&nbsp;M☉").replace(" km/s", "&nbsp;km/s")
     s = s.replace(" Z☉", "&nbsp;Z☉").replace(" Gyr", "&nbsp;Gyr")
