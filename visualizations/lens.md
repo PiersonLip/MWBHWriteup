@@ -49,7 +49,7 @@ Size = **natural plateau** + **feed bonus** from eaten words.
 - On pin, `ghostifyExitHint()` clones the exit-button label into `#bh-ghost-ui`.
 - Soft global pull toward cursor (falloff with distance, never a hard near/far cutoff) + light turbulence.
 - BH overlapping a word → `eaten` (fade/scale into core); triggers feed + maybe rude chain.
-- When the rude chain starts, `#bh-lens-hint` slides off-screen (`.is-away`).
+- When a rude stage’s text is fully eaten, the empty popup chrome slides off-screen, then the next stage slides in. Exit hint stays put.
 - On soft exit, eaten ghosts ease back to home (opacity/scale/position, slight stagger) so page copy doesn’t pop in.
 - UI chrome (button boxes, toc pills, etc.) stays; only **text** lifts off (`color: transparent` under `.bh-lens-lifted`).
 

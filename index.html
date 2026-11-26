@@ -2050,12 +2050,6 @@
       transform: translateY(0);
       pointer-events: auto;
     }
-    /* After page copy is eaten, shoo the exit control off-screen */
-    html.bh-lens-pinned .bh-lens-hint.is-away {
-      opacity: 0;
-      transform: translate(28%, 140%);
-      pointer-events: none;
-    }
     /* Ghost words (in .bh-ghost-ui above) lift off; button chrome stays solid */
     html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint {
       color: transparent !important;
@@ -2206,6 +2200,43 @@
     }
     .bh-lens-rude.place-center.from-bottom.from-pending,
     .bh-lens-rude.place-chained.from-bottom.from-pending {
+      transform: translate(-50%, 100vh) scale(0.96);
+    }
+    /* Slide the empty chrome off after its text is eaten */
+    .bh-lens-rude.is-leaving-left {
+      opacity: 0;
+      transform: translate(calc(-100% - 3rem), 0) scale(0.96);
+      pointer-events: none;
+    }
+    .bh-lens-rude.place-center.is-leaving-left,
+    .bh-lens-rude.place-chained.is-leaving-left {
+      transform: translate(calc(-100vw - 2rem), -50%) scale(0.96);
+    }
+    .bh-lens-rude.is-leaving-right {
+      opacity: 0;
+      transform: translate(calc(100% + 3rem), 0) scale(0.96);
+      pointer-events: none;
+    }
+    .bh-lens-rude.place-center.is-leaving-right,
+    .bh-lens-rude.place-chained.is-leaving-right {
+      transform: translate(100vw, -50%) scale(0.96);
+    }
+    .bh-lens-rude.is-leaving-top {
+      opacity: 0;
+      transform: translate(0, calc(-100% - 3rem)) scale(0.96);
+      pointer-events: none;
+    }
+    .bh-lens-rude.place-center.is-leaving-top,
+    .bh-lens-rude.place-chained.is-leaving-top {
+      transform: translate(-50%, calc(-100vh - 2rem)) scale(0.96);
+    }
+    .bh-lens-rude.is-leaving-bottom {
+      opacity: 0;
+      transform: translate(0, calc(100% + 3rem)) scale(0.96);
+      pointer-events: none;
+    }
+    .bh-lens-rude.place-center.is-leaving-bottom,
+    .bh-lens-rude.place-chained.is-leaving-bottom {
       transform: translate(-50%, 100vh) scale(0.96);
     }
     /* Ghosted rude copy lifts into #bh-ghost-ui (above this chrome) */
@@ -5395,22 +5426,29 @@
         svg.setAttribute("aria-hidden", "false");
       }
 
-      function setExitHintAway(away) {
-        const hint = document.getElementById("bh-lens-hint");
-        if (!hint) return;
-        hint.classList.toggle("is-away", !!away);
-      }
+      const RUDE_LEAVE_CLASSES = [
+        "is-leaving-left",
+        "is-leaving-right",
+        "is-leaving-top",
+        "is-leaving-bottom",
+      ];
 
       function hideRudePopup() {
         lens.rudeShown = false;
         lens.rudeStage = -1;
         lens.rudeGen = 0;
+        lens.rudeAdvancing = false;
         clearRudeTimer();
         clearRudeChains();
-        setExitHintAway(false);
         const rude = document.getElementById("bh-lens-rude");
         if (rude) {
-          rude.classList.remove("is-on", "is-ghosted", ...RUDE_PLACE_CLASSES, ...RUDE_FROM_CLASSES);
+          rude.classList.remove(
+            "is-on",
+            "is-ghosted",
+            ...RUDE_PLACE_CLASSES,
+            ...RUDE_FROM_CLASSES,
+            ...RUDE_LEAVE_CLASSES
+          );
           rude.setAttribute("aria-hidden", "true");
           const txt = rude.querySelector(".bh-lens-rude-text");
           if (txt) txt.textContent = RUDE_CHAIN[0].text;
@@ -5448,11 +5486,16 @@
         lens.rudeShown = true;
         lens.rudeStage = stage;
         lens.rudeGen += 1;
+        lens.rudeAdvancing = false;
         clearRudeTimer();
         clearRudeChains();
-        // Page copy is gone — slide the exit control off so the rude chain owns the screen
-        if (stage === 0) setExitHintAway(true);
-        rude.classList.remove("is-on", "is-ghosted", ...RUDE_PLACE_CLASSES, ...RUDE_FROM_CLASSES);
+        rude.classList.remove(
+          "is-on",
+          "is-ghosted",
+          ...RUDE_PLACE_CLASSES,
+          ...RUDE_FROM_CLASSES,
+          ...RUDE_LEAVE_CLASSES
+        );
         const txt = rude.querySelector(".bh-lens-rude-text");
         if (txt) txt.textContent = step.text;
         const placeClass =
@@ -5480,6 +5523,29 @@
         }, RUDE_SLIDE_MS);
       }
 
+      function advanceRudeChain() {
+        if (lens.rudeAdvancing) return;
+        if (lens.rudeStage < 0 || lens.rudeStage >= RUDE_CHAIN.length - 1) return;
+        const rude = document.getElementById("bh-lens-rude");
+        const cur = RUDE_CHAIN[lens.rudeStage];
+        const next = lens.rudeStage + 1;
+        lens.rudeAdvancing = true;
+        clearRudeTimer();
+        // Empty chrome slides off the way it came in
+        if (rude) {
+          rude.classList.remove("is-ghosted", ...RUDE_LEAVE_CLASSES);
+          rude.classList.add(`is-leaving-${cur.from || "top"}`);
+        }
+        lens.rudeTimer = setTimeout(() => {
+          lens.rudeTimer = 0;
+          if (!lens.on) {
+            lens.rudeAdvancing = false;
+            return;
+          }
+          showRudeStage(next);
+        }, RUDE_SLIDE_MS);
+      }
+
       window.addEventListener(
         "resize",
         () => {
@@ -5502,10 +5568,11 @@
         }
         // Final chained :D — nowhere left to go
         if (lens.rudeStage >= RUDE_CHAIN.length - 1) return;
+        if (lens.rudeAdvancing) return;
         const gen = lens.rudeGen;
         const stageItems = lens.items.filter((w) => w.fromRude && w.rudeGen === gen);
         if (!stageItems.length || !stageItems.every((w) => w.eaten)) return;
-        showRudeStage(lens.rudeStage + 1);
+        advanceRudeChain();
       }
 
       function pinLens(fromEl) {
