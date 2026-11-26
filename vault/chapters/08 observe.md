@@ -11,7 +11,7 @@ title: What we actually see
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-Quiet black holes with luminous companions[^1] are pretty rare in the full census, but they're extremtly useful when it comes to measuring black holes. This is because they're both much easier to spot due their bright companion, but also by measuring the effect the black hole has on its companion, we can  
+Quiet black holes with luminous companions[^1] are pretty rare in the full census, but they're extremtly useful when it comes to measuring black holes. This is because they're both much easier to spot due their bright companion, but also by measuring the effect the black hole has on its companion, we can get a exceptionally in depth understanding of the black holes properties.
 
 Microlensing is a form of [[gravitational lensing]] where the brightness of a star increases dramitcally due to an object (in this case a black hole) passing infront and bending light around itself. This process is currently our only way of measuring isolated black hole[^2].
 :::
