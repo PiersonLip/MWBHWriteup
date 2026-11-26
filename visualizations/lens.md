@@ -56,13 +56,13 @@ Size = **natural plateau** + **feed bonus** from eaten words.
 
 After every non-rude ghost is swallowed, `#bh-lens-rude` stages (each edible except the last):
 
-1. “well that was awfully rude” (center)
-2. “C'mon...” (bottom-left)
-3. “Hey I'm trying to talk to you” (bottom-left)
-4. “:(” → “:((" → “:(((” (bottom-left)
+1. “well that was awfully rude” — slides in from the top (center)
+2. “C'mon...” — from the left (bottom-left)
+3. “Hey I'm trying to talk to you” — from the right (top-right)
+4. “:(” / “:((” / “:(((” — from bottom / top / left
 5. “:D” **chained dead-center** — not edible; `#bh-lens-chains` ties it to the four corners
 
-Edible stages ghost into `#bh-ghost-ui` (`is-ghosted`); swallowing all words of the current `rudeGen` advances the chain.
+Panel chrome sits under `#bh-ghost-ui` so glyphs render on the box. Edible stages wait for the slide-in, then ghostify with a read grace (`eatAfter`) so the first taunt isn’t instantly swallowed.
 
 ## Scroll / input
 

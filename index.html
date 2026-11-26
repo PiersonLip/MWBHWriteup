@@ -2084,11 +2084,10 @@
     .bh-ghost-ui .bh-ghost-word {
       visibility: visible;
     }
+    /* Panel chrome under #bh-ghost-ui (5250) so edible glyphs sit on top of the box */
     .bh-lens-rude {
       position: fixed;
-      left: 50%;
-      top: 42%;
-      z-index: 5300;
+      z-index: 5240;
       max-width: min(22rem, calc(100vw - 2.5rem));
       padding: 0.85rem 1.15rem;
       border-radius: 10px;
@@ -2102,14 +2101,22 @@
       text-align: center;
       box-shadow: var(--shadow);
       opacity: 0;
-      transform: translate(-50%, -40%) scale(0.96);
       pointer-events: none;
-      transition: opacity 0.4s ease, transform 0.4s ease;
+      transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.22, 0.9, 0.28, 1);
     }
     .bh-lens-rude.is-on {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
       pointer-events: auto;
+    }
+    /* Resting anchors */
+    .bh-lens-rude.place-center {
+      left: 50%;
+      top: 42%;
+      right: auto;
+      bottom: auto;
+    }
+    .bh-lens-rude.place-center.is-on:not(.from-pending) {
+      transform: translate(-50%, -50%) scale(1);
     }
     .bh-lens-rude.place-bl {
       left: 1.15rem;
@@ -2117,25 +2124,83 @@
       top: auto;
       bottom: 1.35rem;
       text-align: left;
-      transform: translate(0, 14px) scale(0.96);
     }
-    .bh-lens-rude.place-bl.is-on {
+    .bh-lens-rude.place-bl.is-on:not(.from-pending) {
+      transform: translate(0, 0) scale(1);
+    }
+    .bh-lens-rude.place-br {
+      left: auto;
+      right: 1.15rem;
+      top: auto;
+      bottom: 1.35rem;
+      text-align: right;
+    }
+    .bh-lens-rude.place-br.is-on:not(.from-pending) {
+      transform: translate(0, 0) scale(1);
+    }
+    .bh-lens-rude.place-tl {
+      left: 1.15rem;
+      right: auto;
+      top: 1.25rem;
+      bottom: auto;
+      text-align: left;
+    }
+    .bh-lens-rude.place-tl.is-on:not(.from-pending) {
+      transform: translate(0, 0) scale(1);
+    }
+    .bh-lens-rude.place-tr {
+      left: auto;
+      right: 1.15rem;
+      top: 1.25rem;
+      bottom: auto;
+      text-align: right;
+    }
+    .bh-lens-rude.place-tr.is-on:not(.from-pending) {
       transform: translate(0, 0) scale(1);
     }
     .bh-lens-rude.place-chained {
       left: 50%;
       top: 50%;
+      right: auto;
       bottom: auto;
       font-size: 1.65rem;
       font-weight: 600;
       padding: 0.95rem 1.35rem;
-      transform: translate(-50%, -40%) scale(0.96);
       border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
     }
-    .bh-lens-rude.place-chained.is-on {
+    .bh-lens-rude.place-chained.is-on:not(.from-pending) {
       transform: translate(-50%, -50%) scale(1);
     }
-    /* Ghosted rude copy lifts into #bh-ghost-ui (same trick as exit hint) */
+    /* Off-screen start poses (cleared when .from-pending drops) */
+    .bh-lens-rude.from-left.from-pending {
+      transform: translate(calc(-100% - 2rem), 0) scale(0.96);
+    }
+    .bh-lens-rude.place-center.from-left.from-pending,
+    .bh-lens-rude.place-chained.from-left.from-pending {
+      transform: translate(calc(-100vw - 2rem), -50%) scale(0.96);
+    }
+    .bh-lens-rude.from-right.from-pending {
+      transform: translate(calc(100% + 2rem), 0) scale(0.96);
+    }
+    .bh-lens-rude.place-center.from-right.from-pending,
+    .bh-lens-rude.place-chained.from-right.from-pending {
+      transform: translate(100vw, -50%) scale(0.96);
+    }
+    .bh-lens-rude.from-top.from-pending {
+      transform: translate(0, calc(-100% - 2rem)) scale(0.96);
+    }
+    .bh-lens-rude.place-center.from-top.from-pending,
+    .bh-lens-rude.place-chained.from-top.from-pending {
+      transform: translate(-50%, calc(-100vh - 2rem)) scale(0.96);
+    }
+    .bh-lens-rude.from-bottom.from-pending {
+      transform: translate(0, calc(100% + 2rem)) scale(0.96);
+    }
+    .bh-lens-rude.place-center.from-bottom.from-pending,
+    .bh-lens-rude.place-chained.from-bottom.from-pending {
+      transform: translate(-50%, 100vh) scale(0.96);
+    }
+    /* Ghosted rude copy lifts into #bh-ghost-ui (above this chrome) */
     html.bh-lens-lifted .bh-lens-rude.is-ghosted .bh-lens-rude-text {
       color: transparent;
       -webkit-text-fill-color: transparent;
@@ -2145,7 +2210,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      z-index: 5295;
+      z-index: 5235;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.45s ease;
@@ -4773,6 +4838,7 @@
         rudeShown: false,
         rudeStage: -1,
         rudeGen: 0,
+        rudeTimer: 0,
         hintGhosted: false,
         raf: 0,
         t0: 0,
@@ -5054,6 +5120,11 @@
             w.el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
             continue;
           }
+          // Rude-stage grace: stay put / uneatable until the popup has been readable
+          if (w.eatAfter && now < w.eatAfter) {
+            w.el.style.transform = `translate3d(${w.x0}px, ${w.y0}px, 0)`;
+            continue;
+          }
           const dx = cx - w.cx;
           const dy = cy - w.cy;
           const dist = Math.hypot(dx, dy) || 1;
@@ -5260,14 +5331,24 @@
 
       // Escalating taunts after every page ghost is eaten; final :D is chained dead-center
       const RUDE_CHAIN = [
-        { text: "well that was awfully rude", place: "center" },
-        { text: "C'mon...", place: "bl" },
-        { text: "Hey I'm trying to talk to you", place: "bl" },
-        { text: ":(", place: "bl" },
-        { text: ":((", place: "bl" },
-        { text: ":(((", place: "bl" },
-        { text: ":D", place: "chained" }, // locked in the center — not edible
+        { text: "well that was awfully rude", place: "center", from: "top", graceMs: 1600 },
+        { text: "C'mon...", place: "bl", from: "left", graceMs: 1000 },
+        { text: "Hey I'm trying to talk to you", place: "tr", from: "right", graceMs: 1100 },
+        { text: ":(", place: "br", from: "bottom", graceMs: 800 },
+        { text: ":((", place: "tl", from: "top", graceMs: 800 },
+        { text: ":(((", place: "bl", from: "left", graceMs: 800 },
+        { text: ":D", place: "chained", from: "top", graceMs: 0 },
       ];
+      const RUDE_PLACE_CLASSES = [
+        "place-center",
+        "place-bl",
+        "place-br",
+        "place-tl",
+        "place-tr",
+        "place-chained",
+      ];
+      const RUDE_FROM_CLASSES = ["from-left", "from-right", "from-top", "from-bottom", "from-pending"];
+      const RUDE_SLIDE_MS = 560;
 
       function clearRudeChains() {
         const svg = document.getElementById("bh-lens-chains");
@@ -5275,6 +5356,13 @@
         svg.classList.remove("is-on");
         svg.innerHTML = "";
         svg.setAttribute("aria-hidden", "true");
+      }
+
+      function clearRudeTimer() {
+        if (lens.rudeTimer) {
+          clearTimeout(lens.rudeTimer);
+          lens.rudeTimer = 0;
+        }
       }
 
       function drawRudeChains() {
@@ -5286,7 +5374,6 @@
         const vh = window.innerHeight;
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
-        // Attach near the box edges toward each corner
         const anchors = [
           { x: r.left + 8, y: r.top + 8, ox: 10, oy: 10 },
           { x: r.right - 8, y: r.top + 8, ox: vw - 10, oy: 10 },
@@ -5302,7 +5389,6 @@
           html += `<circle cx="${a.x}" cy="${a.y}" r="3.5" />`;
           html += `<circle cx="${a.ox}" cy="${a.oy}" r="4.5" />`;
         });
-        // Soft hub at popup center
         html += `<circle cx="${cx}" cy="${cy}" r="2.5" />`;
         svg.innerHTML = html;
         svg.classList.add("is-on");
@@ -5313,17 +5399,18 @@
         lens.rudeShown = false;
         lens.rudeStage = -1;
         lens.rudeGen = 0;
+        clearRudeTimer();
         clearRudeChains();
         const rude = document.getElementById("bh-lens-rude");
         if (rude) {
-          rude.classList.remove("is-on", "is-ghosted", "place-bl", "place-chained");
+          rude.classList.remove("is-on", "is-ghosted", ...RUDE_PLACE_CLASSES, ...RUDE_FROM_CLASSES);
           rude.setAttribute("aria-hidden", "true");
           const txt = rude.querySelector(".bh-lens-rude-text");
           if (txt) txt.textContent = RUDE_CHAIN[0].text;
         }
       }
 
-      function ghostifyRudePopup() {
+      function ghostifyRudePopup(graceMs) {
         const rude = document.getElementById("bh-lens-rude");
         const textEl = rude && rude.querySelector(".bh-lens-rude-text");
         const ghostUi = document.getElementById("bh-ghost-ui");
@@ -5336,9 +5423,11 @@
           "#1a1f26";
         appendGhostWordsFrom(textEl, frag, { forceColor: ink });
         if (lens.items.length <= before) return;
+        const eatAfter = performance.now() + Math.max(0, graceMs || 0);
         for (let i = before; i < lens.items.length; i++) {
           lens.items[i].fromRude = true;
           lens.items[i].rudeGen = lens.rudeGen;
+          lens.items[i].eatAfter = eatAfter;
         }
         ghostUi.appendChild(frag);
         rude.classList.add("is-ghosted");
@@ -5352,23 +5441,34 @@
         lens.rudeShown = true;
         lens.rudeStage = stage;
         lens.rudeGen += 1;
+        clearRudeTimer();
         clearRudeChains();
-        rude.classList.remove("is-on", "is-ghosted", "place-bl", "place-chained");
+        rude.classList.remove("is-on", "is-ghosted", ...RUDE_PLACE_CLASSES, ...RUDE_FROM_CLASSES);
         const txt = rude.querySelector(".bh-lens-rude-text");
         if (txt) txt.textContent = step.text;
-        if (step.place === "bl") rude.classList.add("place-bl");
-        if (step.place === "chained") rude.classList.add("place-chained");
+        const placeClass =
+          step.place === "chained"
+            ? "place-chained"
+            : step.place === "center"
+              ? "place-center"
+              : `place-${step.place}`;
+        const fromClass = `from-${step.from || "top"}`;
+        rude.classList.add(placeClass, fromClass, "from-pending");
         rude.setAttribute("aria-hidden", "false");
-        // Force reflow so the enter transition runs each stage
         void rude.offsetWidth;
         rude.classList.add("is-on");
-        const edible = step.place !== "chained" && !lens.reduceMotion;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            if (step.place === "chained") drawRudeChains();
-            if (edible) ghostifyRudePopup();
+            rude.classList.remove("from-pending");
           });
         });
+        const edible = step.place !== "chained" && !lens.reduceMotion;
+        lens.rudeTimer = setTimeout(() => {
+          lens.rudeTimer = 0;
+          if (!lens.on || lens.rudeStage !== stage) return;
+          if (step.place === "chained") drawRudeChains();
+          if (edible) ghostifyRudePopup(step.graceMs || 900);
+        }, RUDE_SLIDE_MS);
       }
 
       window.addEventListener(
