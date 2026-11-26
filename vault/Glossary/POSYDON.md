@@ -4,5 +4,4 @@ title: "POSYDON"
 
 # POSYDON
 
-**PO**pulation **SY**nthesis with **D**etailed binary-evolution simulati**ON**s. 
-A binary [[population synthesis]] simulation code made by collaborative team of astrophyiscsists and computer scientists. Allows [[MESA]] simulations to be used a marge larger scale
+Population Synthesis with Detailed binary-evolution simulatiONs — a binary [[population synthesis]] code that runs [[MESA]] grids at large scale. Made by a collaborative team of astrophysicists and computer scientists.
