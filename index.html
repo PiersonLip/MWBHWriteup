@@ -7963,8 +7963,8 @@
       }
       if (!gal.dragging && !gal.focusAnim) {
         if (gal.focus) {
-          // GC orbit is slower so S-stars stay readable
-          gal.yaw += dt * (gal.focus.type === "gc" ? 0.07 : 0.28);
+          // Slow focus orbit (same rate for GC and clusters)
+          gal.yaw += dt * 0.07;
         } else if ((now - gal.lastInteract) >= 5000) {
           gal.yaw += dt * 0.12; // gentle idle spin after inactivity
         }
