@@ -3303,6 +3303,13 @@
       }
       tipImages.set("roche-lobe", "assets/roche-lobe.svg");
       tipImages.set("roche lobe", "assets/roche-lobe.svg");
+      // Nested from mass-transfer tip (Winds is vault-only; never an on-page .tip)
+      if (!glossary.has("winds")) {
+        glossary.set(
+          "winds",
+          "Material which is ejected from the outer atmosphere of a star into the surrounding area."
+        );
+      }
       // Nested / inline GW viz tip (Gravitational-wave only — not LIGO/Virgo/KAGRA)
       // Tip text comes from the vault / data-tip; only wire the canvas here.
       ["gravitational-wave", "gravitational wave", "gravitational waves"].forEach((k) => {
