@@ -526,6 +526,13 @@
     }
     .detail-box h3 { font-family: "Newsreader", Georgia, serif; font-size: 1.02rem; margin: 0 0 0.28rem; }
     .detail-box p { font-size: 0.86rem; color: var(--ink-soft); }
+    .detail-box.flow-detail-anim {
+      animation: flow-detail-in 0.34s ease-out;
+    }
+    @keyframes flow-detail-in {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     .flow-stage {
       background: var(--panel-soft); border: 1px solid var(--line); border-radius: 10px;
@@ -537,20 +544,51 @@
     }
     .flow-svg .flow-edge {
       fill: none; stroke: var(--viz-line); stroke-width: 1.6;
-      transition: stroke 0.2s, stroke-width 0.2s, opacity 0.2s;
+      transition: stroke 0.38s ease, stroke-width 0.38s ease, opacity 0.38s ease;
     }
     .flow-svg .flow-edge.on {
       stroke: var(--accent); stroke-width: 2.4; opacity: 1;
     }
     .flow-svg .flow-edge.dim { opacity: 0.28; }
-    .flow-svg .flow-node { cursor: pointer; }
+    .flow-svg .flow-edge.flow-draw {
+      transition:
+        stroke-dashoffset 0.55s cubic-bezier(0.22, 0.7, 0.25, 1),
+        stroke 0.38s ease,
+        stroke-width 0.38s ease,
+        opacity 0.38s ease;
+    }
+    .flow-svg .flow-node {
+      cursor: pointer;
+      transition: opacity 0.38s ease;
+    }
     .flow-svg .flow-node rect {
-      stroke-width: 1.5; transition: filter 0.15s, stroke-width 0.15s, opacity 0.2s;
+      stroke-width: 1.5;
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: filter 0.15s, stroke-width 0.35s ease, transform 0.35s ease;
     }
     .flow-svg .flow-node:hover rect { filter: brightness(1.04); }
     .flow-svg .flow-node.on rect { stroke-width: 2.5; }
     .flow-svg .flow-node.dim { opacity: 0.4; }
     .flow-svg .flow-node.on { opacity: 1; }
+    .flow-svg .flow-node.flow-pop rect {
+      animation: flow-node-pop 0.48s ease-out;
+    }
+    @keyframes flow-node-pop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .detail-box.flow-detail-anim { animation: none; }
+      .flow-svg .flow-edge,
+      .flow-svg .flow-edge.flow-draw,
+      .flow-svg .flow-node,
+      .flow-svg .flow-node rect {
+        transition: none;
+      }
+      .flow-svg .flow-node.flow-pop rect { animation: none; }
+    }
     .flow-svg .flow-node text {
       pointer-events: none; font-family: "Schibsted Grotesk", system-ui, sans-serif;
     }
@@ -5689,20 +5727,38 @@
       otherbin: { nodes: ["root", "birth-bin", "sn", "bound", "otherbin"], edges: ["e-root-bin", "e-bin-sn", "e-sn-bound", "e-bound-other"] },
     };
 
-    function setActiveChannel(id) {
-      if (!channels.find((c) => c.id === id)) return;
-      active = id;
-      renderPop();
-      renderFlow();
+    let flowThemeKey = null;
+    let flowDetailKey = null;
+
+    function flowReduceMotion() {
+      return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     }
 
-    function renderPop() {
+    function setActiveChannel(id) {
+      if (!channels.find((c) => c.id === id)) return;
+      const changed = active !== id;
+      active = id;
+      renderPop(changed);
+      renderFlow({ animate: changed });
+    }
+
+    function renderPop(animate) {
       // Fiducial demographics bar chart removed — flowchart carries the same story.
       const c = channels.find((x) => x.id === active);
       if (!c) return;
       const detail = `<h3>${c.name} · ${c.pct}% of all BHs</h3><p>${c.detail}</p>`;
       const flowDetail = document.getElementById("flow-detail");
-      if (flowDetail) flowDetail.innerHTML = detail;
+      if (!flowDetail) return;
+      const key = `${c.id}|${c.detail}`;
+      if (key === flowDetailKey && flowDetail.innerHTML) return;
+      flowDetailKey = key;
+      flowDetail.classList.remove("flow-detail-anim");
+      flowDetail.innerHTML = detail;
+      if (animate && !flowReduceMotion()) {
+        // restart CSS animation
+        void flowDetail.offsetWidth;
+        flowDetail.classList.add("flow-detail-anim");
+      }
     }
     function popRow(c, max) {
       return `<button type="button" class="pop-row ${active === c.id ? "active" : ""}" data-id="${c.id}">
@@ -5712,9 +5768,77 @@
         </button>`;
     }
 
-    function renderFlow() {
-      const svg = document.getElementById("flow-svg");
-      if (!svg) return;
+    function ensureFlowClicks(svg) {
+      if (!svg || svg.dataset.bound) return;
+      svg.dataset.bound = "1";
+      svg.addEventListener("click", (e) => {
+        const el = e.target.closest && e.target.closest("[data-channel]");
+        if (!el || !svg.contains(el)) return;
+        setActiveChannel(el.getAttribute("data-channel"));
+      });
+      svg.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const el = e.target.closest && e.target.closest("[data-channel]");
+        if (!el || !svg.contains(el)) return;
+        e.preventDefault();
+        setActiveChannel(el.getAttribute("data-channel"));
+      });
+    }
+
+    function updateFlowHighlight(svg, animate) {
+      const path = flowPaths[active] || flowPaths.bhbh;
+      const onN = new Set(path.nodes);
+      const onE = new Set(path.edges);
+      const reduce = flowReduceMotion();
+      const doAnim = animate && !reduce;
+
+      svg.querySelectorAll(".flow-edge").forEach((el) => {
+        const id = el.getAttribute("data-id");
+        const wasOn = el.classList.contains("on");
+        const nowOn = onE.has(id);
+        el.classList.toggle("on", nowOn);
+        el.classList.toggle("dim", !nowOn);
+        el.setAttribute("marker-end", `url(#${nowOn ? "flow-arrow-on" : "flow-arrow"})`);
+        if (doAnim && nowOn && !wasOn) {
+          let len = 0;
+          try { len = el.getTotalLength(); } catch (_) { len = 0; }
+          if (len > 0) {
+            el.classList.add("flow-draw");
+            el.style.strokeDasharray = String(len);
+            el.style.strokeDashoffset = String(len);
+            void el.getBoundingClientRect();
+            el.style.strokeDashoffset = "0";
+            window.setTimeout(() => {
+              el.classList.remove("flow-draw");
+              el.style.strokeDasharray = "";
+              el.style.strokeDashoffset = "";
+            }, 600);
+          }
+        } else if (!nowOn) {
+          el.classList.remove("flow-draw");
+          el.style.strokeDasharray = "";
+          el.style.strokeDashoffset = "";
+        }
+      });
+
+      svg.querySelectorAll(".flow-node").forEach((el) => {
+        const id = el.getAttribute("data-id");
+        const wasOn = el.classList.contains("on");
+        const nowOn = onN.has(id);
+        el.classList.toggle("on", nowOn);
+        el.classList.toggle("dim", !nowOn);
+        if (doAnim && nowOn && !wasOn) {
+          el.classList.remove("flow-pop");
+          void el.offsetWidth;
+          el.classList.add("flow-pop");
+          window.setTimeout(() => el.classList.remove("flow-pop"), 500);
+        } else {
+          el.classList.remove("flow-pop");
+        }
+      });
+    }
+
+    function buildFlowSvg(svg) {
       const path = flowPaths[active] || flowPaths.bhbh;
       const onN = new Set(path.nodes);
       const onE = new Set(path.edges);
@@ -5767,16 +5891,10 @@
         const mx = viaX != null ? viaX : (x1 + x2) / 2;
         return `M${x1},${y1} H${mx} V${y2} H${x2}`;
       }
-      function over(a, b, railY, viaX) {
-        const [x1, y1] = a;
-        const [x2, y2] = b;
-        return `M${x1},${y1} V${railY} H${viaX} V${y2} H${x2}`;
-      }
 
       const g1 = 172;
       const g2 = 360;
       const g3 = 580;
-      const railTop = 26;
 
       const edges = [
         { id: "e-root-single", d: elbow(mid("root", "R"), mid("birth-single", "L"), g1) },
@@ -5836,8 +5954,8 @@
         else if (id === "birth-single" || id === "sn-single") click = `data-channel="single"`;
         else if (id === "sn") click = `data-channel="disrupt"`;
         else if (id === "bound") click = `data-channel="bhbh"`;
-        const titleY = n.y + (end ? 22 : 22);
-        const subY = n.y + (end ? 40 : 40);
+        const titleY = n.y + 22;
+        const subY = n.y + 40;
         const extra = id === "bhbh"
           ? `<text class="flow-sub" x="${n.x + n.w / 2}" y="${n.y + 56}" text-anchor="middle" fill="${subFill}" font-size="9.5">stable MT · ~13 M☉ wind</text>`
           : "";
@@ -5853,17 +5971,27 @@
       }).join("") + `</g>`;
 
       svg.innerHTML = html;
-      svg.querySelectorAll("[data-channel]").forEach((el) => {
-        const go = () => setActiveChannel(el.getAttribute("data-channel"));
-        el.addEventListener("click", go);
-        el.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
-        });
-      });
+      ensureFlowClicks(svg);
     }
 
-    renderPop();
-    renderFlow();
+    function renderFlow(opts) {
+      const animate = !!(opts && opts.animate);
+      const svg = document.getElementById("flow-svg");
+      if (!svg) return;
+      const themeKey = themeIsDark() ? "dark" : "light";
+      const needsBuild = !svg.querySelector(".flow-nodes") || flowThemeKey !== themeKey;
+      if (needsBuild) {
+        buildFlowSvg(svg);
+        flowThemeKey = themeKey;
+        // Initial/theme rebuild: set classes without draw flash
+        updateFlowHighlight(svg, false);
+        return;
+      }
+      updateFlowHighlight(svg, animate);
+    }
+
+    renderPop(false);
+    renderFlow({ animate: false });
 
     // ═══════════════════════════════════════════
     // Wind / SMT channels

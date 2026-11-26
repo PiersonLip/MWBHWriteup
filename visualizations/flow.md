@@ -17,6 +17,7 @@ Map how present-day Galactic BHs get to each demographic channel (mergers, disru
 - Click a path or endpoint node → highlight that route (nodes + edges) and show channel % / blurb in `#flow-detail`.
 - Non-highlighted trails stay visible but dimmed; colored endpoints keep their channel colors.
 - Column labels and `%` on endpoints are real fractions of all present-day BHs from `channels[].pct`.
+- Path changes animate in place (SVG is not rebuilt): edges fade/draw on, nodes get a light pop, detail panel fades up. Theme changes still rebuild fills. Honors `prefers-reduced-motion`.
 
 ## Sync notes
 
@@ -31,3 +32,4 @@ Map how present-day Galactic BHs get to each demographic channel (mergers, disru
 - 2026-11-24: Single-star path inserts **Supernova** between Born single and Initially single.
 - 2026-11-24: Today endpoint boxes get a light/dark rim so borders read like the hub steps.
 - 2026-11-26: Renamed column label to Fate; path blurbs editable via `vault/figures/flow-paths.md`.
+- 2026-11-26: Path-selection transitions (edge draw, node pop, detail fade).
