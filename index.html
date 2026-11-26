@@ -379,7 +379,7 @@
         0 0 14px 3px rgba(255, 150, 60, 0.35);
       opacity: 0;
       pointer-events: none;
-      z-index: 13000;
+      z-index: 4500; /* under #tip-layer (5000) so tips sit above the companion */
       will-change: transform, opacity;
     }
     .orbit-companion.is-on { opacity: 1; }
@@ -5940,17 +5940,8 @@
         if (!singularity.raf) singularity.raf = requestAnimationFrame(singFrame);
       }
 
-      // ── Easter: orbital companion on binary / period tips ──
-      const ORBIT_TIP_KEYS = new Set([
-        "binary",
-        "binaries",
-        "binary stars",
-        "binary star",
-        "binary systems",
-        "period",
-        "periods",
-        "orbital period",
-      ]);
+      // ── Easter: orbital companion on period tip ──
+      const ORBIT_TIP_KEYS = new Set(["period", "periods", "orbital period"]);
       const orbitEgg = {
         el: document.getElementById("orbit-companion"),
         raf: 0,
@@ -5980,16 +5971,16 @@
       function tickOrbitCompanion(now) {
         if (!orbitEgg.active || !orbitEgg.el) return;
         const elapsed = now - orbitEgg.t0;
-        const dur = 4200;
+        const dur = 7200;
         if (elapsed > dur) {
           stopOrbitCompanion();
           return;
         }
         let a = 1;
-        if (elapsed < 280) a = elapsed / 280;
-        else if (elapsed > dur - 520) a = (dur - elapsed) / 520;
-        const ang = elapsed * 0.0042;
-        const r = 18 + 2.2 * Math.sin(elapsed * 0.003);
+        if (elapsed < 320) a = elapsed / 320;
+        else if (elapsed > dur - 700) a = (dur - elapsed) / 700;
+        const ang = elapsed * 0.0016; // ~1.8 orbits over the hold
+        const r = 44 + 3.5 * Math.sin(elapsed * 0.0014);
         const x = pointer.x + Math.cos(ang) * r;
         const y = pointer.y + Math.sin(ang) * r;
         orbitEgg.el.style.opacity = String(Math.max(0, Math.min(1, a)));
