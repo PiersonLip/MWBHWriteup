@@ -10,7 +10,7 @@ title: We're about to find a whole lot more black holes
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-The Milky Way has **hundreds of millions** of stellar-mass[^1] [[black holes]][^census]. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in [[X-ray binaries]] and the ones that are detected via [[Glossary/Gravitational-wave|gravitational waves]] by [[LIGO-Virgo-KAGRA|LIGO/Virgo/KAGRA]].
+The Milky Way has **hundreds of millions** of stellar-mass[^1] [[black holes]]{no-nest:remnant,supernova}[^census]. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in [[X-ray binaries]] and the ones that are detected via [[Glossary/Gravitational-wave|gravitational waves]] by [[LIGO-Virgo-KAGRA|LIGO/Virgo/KAGRA]].
 
 However, that is rapidly changing. So far [[Gaia]] has already confirmed three quiet black holes with bright companions and [[Gaia DR4]] is expected to have dozens more; [[Roman]] should detect hundreds more isolated[^3] ones. Thus the question is quickly shifting from *"can we find them?"* to *"how did they get there?"*
 

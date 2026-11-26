@@ -21,7 +21,11 @@ TIP_HTML_RE = re.compile(
     re.S,
 )
 # Display alias stops at | or ]; stray trailing pipes in vault links are ignored
-WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]|]*))?\|*\]\]")
+# Optional {no-nest:term,term} after a wikilink → data-tip-no-nest on the tip span
+WIKILINK_RE = re.compile(
+    r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]|]*))?\|*\]\]"
+    r"(?:\{no-nest:([^}]+)\})?"
+)
 
 # Optional short Obsidian aliases → note stem
 GLOSSARY_ALIASES = {
@@ -442,6 +446,10 @@ def md_inline_to_html(s: str) -> str:
             effect_attr = f' data-effect="{esc(effect)}"' if effect else ""
             image_attr = f' data-image="{esc(image)}"' if image else ""
             viz_attr = f' data-viz="{esc(viz)}"' if viz else ""
+            no_nest = (m.group(3) or "").strip()
+            no_nest_attr = (
+                f' data-tip-no-nest="{esc(no_nest)}"' if no_nest else ""
+            )
             cls = "tip tip-deep" if deep else "tip"
             if image:
                 cls += " tip-image"
@@ -449,7 +457,7 @@ def md_inline_to_html(s: str) -> str:
                 cls += " tip-viz"
             return (
                 f'<span class="{cls}" tabindex="0" data-tip="{esc(entry["tip"])}"'
-                f"{deep_attr}{effect_attr}{image_attr}{viz_attr}>{display}</span>"
+                f"{deep_attr}{effect_attr}{image_attr}{viz_attr}{no_nest_attr}>{display}</span>"
             )
         # unresolved wikilink: leave readable plain text
         return display

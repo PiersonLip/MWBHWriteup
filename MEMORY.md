@@ -27,7 +27,7 @@ Two themes via `data-theme` on `<html>` + CSS variables. Light = former slate; d
 - Glossary tips are individual notes in `vault/Glossary/*.md` (index: `vault/Glossary.md`). Edit note body for hover text; link from chapters as `[[Term]]` or aliases (`[[XrB]]`, `[[CE]]`, …).
 - `apply_vault.py` resolves those wikilinks into site `.tip` spans using the note body.
 - Obsidian hotkeys/plugins/themes/snippets synced from `~/notes/obsidianNotes` (plugin `data.json` gitignored; `semantic-auto-linker` not committed — bundled API key).
-- Nested tips: site builds a glossary from all `.tip[data-tip]` terms and linkifies matches inside open tip bubbles (hover MESA inside POSYDON).
+- Nested tips: site builds a glossary from all `.tip[data-tip]` terms and linkifies matches inside open tip bubbles (hover MESA inside POSYDON). Per-instance suppress via vault `[[term]]{no-nest:a,b}` → `data-tip-no-nest` (e.g. first §01 “black holes” skips remnant/supernova).
 - Footnotes: Obsidian `[^id]` / `^[inline]` in chapter markdown ↔ site `.fn-ref` + `.footnotes` section (round-trip via apply/export). Hover/focus on a superscript previews the note in the same tip bubble UI (text pulled from the chapter Notes list); click still jumps to the footnote.
 - Figure blocks only sync **cap / title / hint** — do not add/remove `:::figure` blocks without updating vault + docs.
 - Apply vault → site: `python3 scripts/apply_vault.py`
