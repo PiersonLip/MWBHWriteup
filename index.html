@@ -2073,8 +2073,8 @@
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
       }
-      /* Keep the exit label readable — ghosted glyphs sit under this chrome on mobile */
-      html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint {
+      /* Mobile keeps the label (no ghostify); don't override desktop .is-ghosted */
+      html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint:not(.is-ghosted) {
         color: var(--ink) !important;
         -webkit-text-fill-color: var(--ink) !important;
       }
@@ -5020,6 +5020,11 @@
           "#5c6570";
         appendGhostWordsFrom(hint, frag, { forceColor: ink });
         if (lens.items.length > before) {
+          // Hold still briefly — soft global gravity would otherwise tug the corner label immediately
+          const eatAfter = performance.now() + 1100;
+          for (let i = before; i < lens.items.length; i++) {
+            lens.items[i].eatAfter = eatAfter;
+          }
           ghostUi.appendChild(frag);
           hint.classList.add("is-ghosted");
           lens.hintGhosted = true;
