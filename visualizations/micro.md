@@ -32,6 +32,7 @@ Gaudi-style teaching schematic: how a dark lens (BH) brightens a background sour
 
 ## 2D panel
 
+- Canvas matches the stage box and device pixel ratio (same approach as the 3D panel)
 - Einstein ring + true source + major (blue) / minor (red) mapped arcs (finite-source samples)
 - Light curve: axes labeled **brightness** / **time**
 - Gaudi-style visual fraction in light-curve corner:
@@ -53,3 +54,4 @@ Gaudi-style teaching schematic: how a dark lens (BH) brightens a background sour
 - 2026-11-24: 3D rays follow lens-map image positions so the major path doesn’t keep warping the wrong way after the source passes the BH.
 - 2026-11-24: Side-on 3D view shows minor (red) below / major above when u₀>0; top-down follows image (x,y).
 - 2026-11-23: Start farther out (`tmax` 5.2); minor image/ray fades in only as `|u|` drops; clock advances only while `#micro` is in view (resets to early single-path frame on enter).
+- 2026-11-26: 2D canvas uses the stage size and device pixel ratio. While paused or off-screen the figure is not redrawn every frame (orbit drag and sliders still paint immediately).

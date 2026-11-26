@@ -11,7 +11,7 @@ title: Most Galactic black holes are alone (but they weren't born that way)
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-In our baseline solar-[[metallicity]][^1] simulation, we found about **400,000,000** stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, while the rest still have their binary comapnions.
+In our baseline solar-[[metallicity]][^1] simulation, we found about **400,000,000** stellar-mass black holes in the Galaxy. Roughly three-quarters of these are single today, while the rest still have their binary companions.
 :::
 
 :::stats
@@ -21,7 +21,7 @@ In our baseline solar-[[metallicity]][^1] simulation, we found about **400,000,0
 :::
 
 :::prose
-For the formation of isolated black holes, **stellar mergers** are the most common (42% of all BHs): this happens stars drift closer and closer together until they merge into one (often after a failed [[common envelope]]), the merger product later collapsing into a black hole. **Disrupted binaries** come next (27%): these are black holes where a [[natal kick]] and/or sudden mass loss rips the binary apart, sending the black hole flying through our Milky Way. This can happen at the when either of the stars go supernova. The rest of the black holes are from single born stars, BH+star mergers, or rare [[DCO| double compact object]] mergers make up.
+For the formation of isolated black holes, **stellar mergers** are the most common (42% of all BHs): this happens when stars drift closer and closer together until they merge into one (often after a failed [[common envelope]]), the merger product later collapsing into a black hole. **Disrupted binaries** come next (27%): these are black holes where a [[natal kick]] and/or sudden mass loss rips the binary apart, sending the black hole flying through our Milky Way. This can happen when either of the stars goes supernova. The rest come from single-born stars, BH+star mergers, or rare [[DCO|double compact object]] mergers.
 
 The binary systems that survive are unique in their own right. [[Detached]] **[[BH-BH]]** systems alone are ~19% of all BHs. [[BH+NS]], [[BH+WD]], and BH+star systems together are only a few percent, yet this few percent are really the only ones we've observed so far.
 

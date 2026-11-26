@@ -14,7 +14,7 @@ The Milky Way has **hundreds of millions** of stellar-mass[^1] [[black holes]]{n
 
 However, that is rapidly changing. So far [[Gaia]] has already confirmed three quiet black holes with bright companions and [[Gaia DR4]] is expected to have dozens more; [[Roman]] should detect hundreds more isolated[^3] ones. Thus the question is quickly shifting from *"can we find them?"* to *"how did they get there?"*
 
-And we can't answer that question just counting the remnants of stars. Most massive stars[^2] grow up intertwined with a partner in [[binary stars|binary systems]]. These relationships are tumultuous, with things like [[mass transfer]], [[common envelope]], mergers, and [[supernova]] kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. Previous work approximates these processes; we use [[POSYDON]] instead, which lets us use much more accurate [[MESA]] simulations.
+And we can't answer that question just by counting the remnants of stars. Most massive stars[^2] grow up intertwined with a partner in [[binary stars|binary systems]]. These relationships are tumultuous, with things like [[mass transfer]], [[common envelope]], mergers, and [[supernova]] kicks deciding whether a black hole ends up alone or paired, massive or light, close-by or far away. Previous work approximates these processes; we use [[POSYDON]] instead, which lets us use much more accurate [[MESA]] simulations.
 :::
 
 :::callout

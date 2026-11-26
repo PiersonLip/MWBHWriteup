@@ -38,3 +38,4 @@ Drop a binary into a MW-like potential: birth → pre-SN disk arc → SN+kick �
 - 2026-11-23: More gap between stage and controls; “Example system” → “Kick strength”.
 - 2026-11-26: Click clusters/GC to zoom-orbit; GC focus shows Sgr A* + schematic S-stars.
 - 2026-11-26: Linger ~9s on GC focus → HUD “still watching?” (see [easter-eggs.md](./easter-eggs.md)).
+- 2026-11-26: Status text, progress label, and the cursor are written only when they change. The canvas is not repainted while it is off-screen; the story clock still advances.

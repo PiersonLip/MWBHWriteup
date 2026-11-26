@@ -4,4 +4,4 @@ title: "Detached"
 
 # Detached
 
-Not [[mass transfer|transfering mass]] through [[Roche-lobe overflow]] currently.
+Not [[mass transfer|transferring mass]] through [[Roche-lobe overflow]] currently.

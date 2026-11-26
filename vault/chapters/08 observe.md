@@ -11,9 +11,9 @@ title: What Gaia and Roman see
 > Edit the blocks below. Interactive figure guts stay on the site; only captions / titles / hints sync.
 
 :::prose
-Quiet black holes with luminous companions[^1] are pretty rare in the full census, but they're extremtly useful when it comes to measuring black holes. This is because they're both much easier to spot due their bright companion, but also by measuring the effect the black hole has on its companion, we can get a exceptionally in depth understanding of the black holes properties.
+Quiet black holes with luminous companions[^1] are pretty rare in the full census, but they're extremely useful when it comes to measuring black holes. This is because they're much easier to spot due to their bright companion, and by measuring the effect the black hole has on its companion, we can get an exceptionally in-depth understanding of the black hole’s properties.
 
-Microlensing is a form of [[gravitational lensing]] where the brightness of a star increases dramitcally due to an object (in this case a black hole) passing infront and bending light around itself. This process is currently our only way of measuring isolated black hole[^2].
+Microlensing is a form of [[gravitational lensing]] where the brightness of a star increases dramatically due to an object (in this case a black hole) passing in front and bending light around itself. This process is currently our only way of measuring isolated black holes[^2].
 :::
 
 :::figure

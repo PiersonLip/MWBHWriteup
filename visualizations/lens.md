@@ -50,7 +50,7 @@ Size = **natural plateau** + **feed bonus** from eaten words.
 - On pin, exit label ghostifies into `#bh-ghost-ui` (edible; ~1.1s hold, then only pulls when BH is nearby). Label text stays in the DOM but transparent (`.is-ghosted`) so the button keeps full size while looking blank. Exit-hint glyphs also gate the rude chain.
 - Rude-stage glyphs warm into the pull over ~520ms after their grace (`eatAfter`) so nearby BH doesn’t snap them.
 - BH overlapping a word → `eaten` (fade/scale into core); triggers feed + maybe rude chain.
-- When a rude stage’s text is fully eaten, empty popup chrome **slides off** via Web Animations (same direction it entered), then the next stage slides in. Exit hint chrome stays put.
+- When a rude stage’s text is fully eaten, empty popup chrome **slides off** the way it came: JS freezes the panel’s on-screen box (pixel `left`/`top` + min size), clears the place classes so CSS can’t snap it, then WAAPI translates it off-screen (~620ms). Next stage only starts after that leave finishes. Exit hint chrome stays put.
 - On soft exit, eaten ghosts ease back to home (opacity/scale/position, slight stagger) so page copy doesn’t pop in.
 - UI chrome (button boxes, toc pills, etc.) stays; only **text** lifts off (`color: transparent` under `.bh-lens-lifted`).
 

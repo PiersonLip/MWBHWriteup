@@ -1,7 +1,7 @@
 ---
 id: kicks
 label: 04 · Natal kicks & disruption
-title: The kick decides who stays together
+title: The kicks decide who stays together
 ---
 
 # The kicks decide who stays together
@@ -18,7 +18,7 @@ When a star in a binary dies in the form of a [[supernova]], two things mess wit
 id: kick-presets
 cap: Post-supernova 2-body orbit
 title: Post-natal kick: bound or disrupted?
-hint: Shows the pre-supernova orbit, the collapse of one component, and how the kick effects the orbit.
+hint: Shows the pre-supernova orbit, the collapse of one component, and how the kick affects the orbit.
 :::
 
 [^1]: Lower remnant mass means a larger kick velocity for the same kick strength.

@@ -1,1 +1,1 @@
-A binary consiting of a black hole and white dwarf
+A binary consisting of a black hole and a white dwarf

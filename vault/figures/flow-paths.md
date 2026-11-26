@@ -9,7 +9,7 @@ Edit the paragraph under each heading, then run `python3 scripts/apply_vault.py`
 
 ## merger · Stellar mergers
 
-Two normal stars merge (typically after a failed [[common envolope]]), then the leftover collapses to a black hole. This is the most common channel for isolated black holes.
+Two normal stars merge (typically after a failed [[common envelope]]), then the leftover collapses to a black hole. This is the most common channel for isolated black holes.
 
 ## disrupt · Disrupted binaries
 

@@ -39,3 +39,4 @@ Instantaneous post-SN 2-body schematic: pre-SN circular orbit → collapse + kic
 - 2026-11-24: Loop restart blends post → pre (positions, guides, BH→progenitor).
 - 2026-11-24: Post guides drawn from the body trail; bound paths use analytic Kepler (guides match stars).
 - 2026-11-24: Phase clock is wall-time (kick on schedule); orbital motion rate still scales with zoom.
+- 2026-11-26: Slider readouts update the number in place so the M☉ / AU tips stay open while dragging. Pixel redraw pauses when the canvas is off-screen; the phase clock keeps running.
