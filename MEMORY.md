@@ -93,7 +93,7 @@ See [visualizations/lens.md](visualizations/lens.md) for full detail.
 
 See [visualizations/tip-singularity.md](visualizations/tip-singularity.md).
 
-- Open glossary tips **5 deep** → tips converge + shrink to a speck, then BH forms and engulfs them; strong page pull; BH shrinks to a point; black → 0.5s → cartoon twinkle; page returns after **3s** void. Cursor stays until blackout.
+- Open glossary tips **5 deep** → tips converge (tilted, faster) + shrink to a speck, then BH forms; slower page ghost-pull; BH shrinks to a point; black → 0.85s → cartoon twinkle; page returns after **3s** void. Cursor stays until blackout.
 - Separate overlay from the lens gag; exits lens first if both would conflict.
 
 ## Writing / UX conventions

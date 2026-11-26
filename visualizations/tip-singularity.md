@@ -14,20 +14,20 @@ Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag (
 
 ## Timeline (motion on)
 
-1. **Gather** (~7.8s) — No BH. Tips ease to midpoint and shrink to a speck; cursor stays normal.
+1. **Gather** (~4.2s) — No BH. Tips ease to midpoint with a slight tilt, shrinking to a speck; cursor stays normal.
 2. **Birth** (~2s) — Only once tips are tiny: BH forms at the midpoint and engulfs them.
-3. **Pull** (~16s) — Strong gravity: ghosts travel nearly the full distance to the hole; large swallow radius + feed growth. Shrink only after **all** items are eaten.
+3. **Pull** (~26s) — Strong but slower gravity: ghosts drift in; large swallow radius + feed growth. Shrink only after **all** items are eaten.
 4. **Yank** (if needed, ~2.8s) — Final hard pull so leftovers finish falling in.
 5. **Shrink** (~1.6s) — BH eases to a tiny point and fades (no flash / outward sparks).
-6. **Void + twinkle** — Full black (cursor hides here); **0.5s** later a cartoon 4-point far-away “ding” twinkle; restore after `SING_VOID_MS` (3000).
+6. **Void + twinkle** — Full black (cursor hides here); **0.85s** later a cartoon 4-point far-away “ding” twinkle; restore after `SING_VOID_MS` (3000).
 
 ## Knobs
 
 | Constant | Meaning |
 |----------|---------|
 | `SING_TRIGGER_DEPTH` | `4` → 5th tip |
-| `SING_GATHER_MS` / `SING_BIRTH_MS` | Tip converge / BH birth |
-| `SING_PULL_MS` / `SING_YANK_MS` | Main pull / cleanup yank |
+| `SING_GATHER_MS` / `SING_BIRTH_MS` | Tip converge (~4200) / BH birth |
+| `SING_PULL_MS` / `SING_YANK_MS` | Main pull (~26000) / cleanup yank |
 | `SING_SHRINK_MS` | Point collapse |
 | `SING_VOID_MS` | Black hold (3000) |
 

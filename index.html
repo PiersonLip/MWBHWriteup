@@ -4352,9 +4352,9 @@
       // 5 open tips (depth 0..4) → tips gather → BH at midpoint → page swallow
       const SING_TRIGGER_DEPTH = 4;
       const SING_VOID_MS = 3000;
-      const SING_GATHER_MS = 7800;
+      const SING_GATHER_MS = 4200;
       const SING_BIRTH_MS = 2000;
-      const SING_PULL_MS = 16000;
+      const SING_PULL_MS = 26000;
       const SING_YANK_MS = 2800;
       const SING_SHRINK_MS = 1600;
       const singularity = {
@@ -5381,7 +5381,9 @@
           const cy = r.top + r.height / 2;
           sx += cx;
           sy += cy;
-          return { el, cx, cy, dx: 0, dy: 0 };
+          // Slight random lean while falling in
+          const tilt = (Math.random() * 2 - 1) * 18;
+          return { el, cx, cy, dx: 0, dy: 0, tilt };
         });
         const cx = sx / tips.length;
         const cy = sy / tips.length;
@@ -5408,8 +5410,10 @@
           if (!tip.el || !tip.el.isConnected) continue;
           // Converge + shrink to a speck — BH waits until they're tiny
           const s = 1 - 0.97 * t; // → ~0.03
+          // Tilt builds as they fall in, then eases a bit as they meet
+          const rot = (tip.tilt || 0) * Math.sin(t * Math.PI);
           tip.el.style.opacity = "1";
-          tip.el.style.transform = `translate(${tip.dx * t}px, ${tip.dy * t}px) scale(${Math.max(0.03, s)})`;
+          tip.el.style.transform = `translate(${tip.dx * t}px, ${tip.dy * t}px) rotate(${rot}deg) scale(${Math.max(0.03, s)})`;
         }
       }
 
@@ -5540,11 +5544,12 @@
           t.el.style.transition =
             "opacity 1.5s ease, transform 1.8s cubic-bezier(0.55, 0.02, 0.9, 0.4)";
           t.el.style.opacity = "1";
-          t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) scale(0.03)`;
+          const tilt = t.tilt || 0;
+          t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) rotate(${tilt * 0.35}deg) scale(0.03)`;
           // Next frame: get swallowed by the newborn hole
           requestAnimationFrame(() => {
             if (!t.el || !t.el.isConnected) return;
-            t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) scale(0.001)`;
+            t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) rotate(${tilt * 0.1}deg) scale(0.001)`;
             t.el.style.opacity = "0";
           });
         });
@@ -5593,13 +5598,13 @@
           cancelAnimationFrame(singularity.raf);
           singularity.raf = 0;
         }
-        // Full black → half-second beat → cartoon far-away twinkle → restore
+        // Full black → 0.85s beat → cartoon far-away twinkle → restore
         singLater(() => {
           root.classList.add("is-sing-twinkle");
-        }, 500);
+        }, 850);
         singLater(() => {
           root.classList.remove("is-sing-twinkle");
-        }, 500 + 900);
+        }, 850 + 900);
         singLater(() => {
           root.classList.add("is-sing-return");
           requestAnimationFrame(() => {
@@ -5625,7 +5630,7 @@
           if (u >= 1) beginSingPull();
         } else if (singularity.phase === "pull") {
           const u = Math.min(1, (now - singularity.phaseT0) / SING_PULL_MS);
-          singularity.pull = 0.12 + 0.88 * Math.pow(u, 0.75);
+          singularity.pull = 0.08 + 0.92 * Math.pow(u, 0.9); // slower ease-in fall
           placeSingItems(now);
           if (allSingEaten()) {
             beginSingShrink();
