@@ -2104,7 +2104,7 @@
       }
     }
 
-    /* Tip-nest singularity gag (5 deep tips → gather → BH → page swallow) */
+    /* Tip-nest singularity gag (8 deep tips → gather → BH → page swallow) */
     .tip-sing {
       position: fixed;
       inset: 0;
@@ -4355,13 +4355,13 @@
       const open = []; // { bubble, anchor, depth }
       let hideTimer = null;
       const pointer = { x: 0, y: 0 };
-      // 5 open tips (depth 0..4) → tips gather → BH at midpoint → page swallow
-      const SING_TRIGGER_DEPTH = 4;
+      // 8 open tips (depth 0..7) → tips gather → BH at midpoint → page swallow
+      const SING_TRIGGER_DEPTH = 7;
       const SING_VOID_MS = 3000;
       const SING_GATHER_MS = 4200;
       const SING_BIRTH_MS = 2000;
-      const SING_PULL_MS = 26000;
-      const SING_YANK_MS = 2800;
+      const SING_PULL_MS = 8000;
+      const SING_YANK_MS = 1600;
       const SING_SHRINK_MS = 1600;
       const singularity = {
         busy: false,
@@ -5439,7 +5439,7 @@
       function singSwallow(w) {
         if (w.eaten) return;
         w.eaten = true;
-        singularity.feedTarget = Math.min(1.2, singularity.feedTarget + 0.006);
+        singularity.feedTarget = Math.min(2.0, singularity.feedTarget + 0.014);
         w.el.style.transition = "opacity 0.18s ease, transform 0.18s ease";
         w.el.style.opacity = "0";
         w.el.style.transform = `translate3d(${singularity.cx - (w.rw || 0)}px, ${singularity.cy - (w.rh || 0)}px, 0) scale(0.08)`;
@@ -5461,8 +5461,8 @@
           const e = u * u;
           return Math.max(0.004, singularity.shrinkFrom * (1 - e));
         }
-        // Milder growth with pull — avoid a late-stage size spike
-        const base = 0.95 + easeInOut(Math.min(1, singularity.pull)) * 0.75;
+        // Grow with pull so the horizon covers the screen in ~SING_PULL_MS
+        const base = 1.0 + easeInOut(Math.min(1, singularity.pull)) * 1.55;
         return base + singularity.feed;
       }
 
@@ -5505,7 +5505,7 @@
         const pull = yanking
           ? singularity.pull + (1 - singularity.pull) * easeInOut(yankU)
           : singularity.pull;
-        const swallowR = Math.max(8, 70 * scale * (yanking ? 1.05 : 0.9));
+        const swallowR = Math.max(10, 70 * scale * (yanking ? 1.2 : 1.0));
 
         for (const w of singularity.items) {
           if (w.eaten) continue;
@@ -5518,20 +5518,20 @@
           }
           const ux = dx / dist;
           const uy = dy / dist;
-          // Weaker gravity — drift in, don't slam
+          // Ramp hard enough to clear the viewport in ~8s
           const strength = yanking
-            ? 0.25 + 0.55 * easeInOut(yankU)
-            : Math.min(0.62, Math.pow(Math.max(0, pull), 0.9) * 0.62);
+            ? 0.45 + 0.5 * easeInOut(yankU)
+            : Math.min(0.95, Math.pow(Math.max(0, pull), 0.65) * 0.95);
           const travel = dist * strength;
-          const turbAmp = yanking ? 0.1 : 0.28;
+          const turbAmp = yanking ? 0.08 : 0.2;
           const turbX = Math.sin(now * 0.0011 + w.seed) * w.amp * turbAmp * pull;
           const turbY = Math.cos(now * 0.0009 + w.phase) * w.amp * turbAmp * pull;
-          const swirl = Math.sin(now * 0.0007 + w.seed * 1.7) * (2 + 6 * pull) * (yanking ? 0.35 : 1);
+          const swirl = Math.sin(now * 0.0007 + w.seed * 1.7) * (2.5 + 10 * pull) * (yanking ? 0.35 : 1);
           const x = w.x0 + ux * travel + turbX + (-uy) * swirl;
           const y = w.y0 + uy * travel + turbY + ux * swirl;
           const facing = (Math.atan2(dy, dx) * 180) / Math.PI;
-          const rot = facing * strength * 0.28 + Math.sin(now * 0.0012 + w.seed) * 1.8 * pull;
-          const s = Math.max(0.2, 1 - 0.45 * strength);
+          const rot = facing * strength * 0.32 + Math.sin(now * 0.0012 + w.seed) * 2 * pull;
+          const s = Math.max(0.12, 1 - 0.65 * strength);
           w.el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${s})`;
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
@@ -5651,7 +5651,7 @@
           if (u >= 1) beginSingPull();
         } else if (singularity.phase === "pull") {
           const u = Math.min(1, (now - singularity.phaseT0) / SING_PULL_MS);
-          singularity.pull = 0.08 + 0.92 * Math.pow(u, 0.9); // slower ease-in fall
+          singularity.pull = 0.15 + 0.85 * Math.pow(u, 0.7); // ~8s to full engulf
           placeSingItems(now);
           if (allSingEaten()) {
             beginSingShrink();
