@@ -11,7 +11,7 @@ python3 -m http.server 8765
 
 ### Deploy (VPS `rack`)
 
-Live: https://milkywaybhs.piersonl.com/
+Live: https://milkywaybhs.piersonl.com/ (canonical URL; includes Open Graph / sitemap SEO)
 
 ```bash
 ./deploy/setup-domain.sh   # once (nginx + TLS)

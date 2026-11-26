@@ -12,14 +12,17 @@ chmod +x deploy/deploy.sh deploy/setup-domain.sh
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-# Static explainer: index + referenced assets only
+# Static explainer: index + SEO + referenced assets only
 mkdir -p "$TMP/assets"
 cp "$ROOT/index.html" "$TMP/"
+cp "$ROOT/robots.txt" "$TMP/"
+cp "$ROOT/sitemap.xml" "$TMP/"
 cp "$ROOT/assets/astronomer-periodic-table.png" "$TMP/assets/"
 cp "$ROOT/assets/crescent-nebula.jpg" "$TMP/assets/"
 cp "$ROOT/assets/xrb.jpg" "$TMP/assets/"
 cp "$ROOT/assets/roche-lobe.svg" "$TMP/assets/"
 cp "$ROOT/assets/nancy-grace-roman.jpg" "$TMP/assets/"
+cp "$ROOT/assets/og-card.jpg" "$TMP/assets/"
 
 echo "Syncing to ${REMOTE_HOST}:${REMOTE_DIR}..."
 ssh "$REMOTE_HOST" "mkdir -p ${REMOTE_DIR}/assets"
