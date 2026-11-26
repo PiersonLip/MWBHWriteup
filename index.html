@@ -6232,8 +6232,9 @@
         const c = hit.cl;
         to = {
           lookAt: { x: c.x, y: c.y, z: c.z },
-          camDist: 0.95,
-          zoom: 1.55,
+          // Stay outside the depth-cull floor (look-at depth ≈ camDist)
+          camDist: 1.7,
+          zoom: 1.45,
           yaw: gal.yaw + 0.65,
           pitch: Math.min(1.15, Math.max(0.25, gal.pitch * 0.75 + 0.2)),
         };
@@ -6284,10 +6285,11 @@
     }
 
     function galHitTest(mx, my, w, h) {
+      const minDepth = 0.4;
       if (gal.clusters) {
         for (const cl of gal.clusters) {
           const core = galProject(cl.x, cl.y, cl.z, w, h);
-          if (core.depth < 1.2) continue;
+          if (core.depth < minDepth) continue;
           const glowR = Math.max(4, (cl.scale * 140) / Math.max(0.8, core.depth));
           const hitR = Math.max(14, glowR * 1.75);
           if (Math.hypot(mx - core.X, my - core.Y) < hitR) {
@@ -6297,7 +6299,7 @@
       }
       const gc = galProject(0, 0, 0, w, h);
       const gcHitR = gal.focus && gal.focus.type === "gc" ? 28 : 16;
-      if (gc.depth > 1.2 && Math.hypot(mx - gc.X, my - gc.Y) < gcHitR) {
+      if (gc.depth > minDepth && Math.hypot(mx - gc.X, my - gc.Y) < gcHitR) {
         return { type: "gc", core: gc };
       }
       return null;
@@ -6418,7 +6420,8 @@
       if (gal.clusters) {
         for (const cl of gal.clusters) {
           const core = galProject(cl.x, cl.y, cl.z, w, h);
-          if (core.depth < 1.2) continue;
+          // look-at depth ≈ camDist; keep a low floor so close focus doesn't vanish
+          if (core.depth < 0.4) continue;
           const glowR = Math.max(4, (cl.scale * 140) / Math.max(0.8, core.depth));
           const isFocus = focusedCluster === cl.id;
           // Soft unresolved glow
@@ -6433,11 +6436,15 @@
           ctx.fill();
           for (const st of cl.members) {
             const pr = galProject(st.x, st.y, st.z, w, h);
-            if (pr.depth < 1.2) continue;
+            if (pr.depth < 0.4) continue;
             if (pr.X < -6 || pr.Y < -6 || pr.X > w + 6 || pr.Y > h + 6) continue;
             const alpha = Math.min(0.95, st.bright * (26 / Math.max(2, pr.depth)));
             ctx.fillStyle = `rgba(${tr},${tg},${tb},${alpha})`;
-            const s = Math.max(0.6, st.size * (20 / Math.max(2, pr.depth)) * (isFocus ? 1.25 : 1));
+            // Cap apparent size when very close so members don't blow out / vanish oddly
+            const s = Math.min(
+              isFocus ? 4.5 : 8,
+              Math.max(0.55, st.size * (20 / Math.max(2, pr.depth)) * (isFocus ? 1.05 : 1))
+            );
             ctx.beginPath();
             ctx.arc(pr.X, pr.Y, s * 0.45, 0, Math.PI * 2);
             ctx.fill();
