@@ -2016,7 +2016,6 @@
       visibility: hidden;
     }
     html.is-lensing #tip-layer { z-index: 5000; }
-    html.bh-lens-pinned { cursor: none; }
     html.bh-lens-pinned #tip-layer { pointer-events: none; }
     .bh-lens-hint {
       position: fixed;
@@ -2050,6 +2049,12 @@
       opacity: 1;
       transform: translateY(0);
       pointer-events: auto;
+    }
+    /* After page copy is eaten, shoo the exit control off-screen */
+    html.bh-lens-pinned .bh-lens-hint.is-away {
+      opacity: 0;
+      transform: translate(28%, 140%);
+      pointer-events: none;
     }
     /* Ghost words (in .bh-ghost-ui above) lift off; button chrome stays solid */
     html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint {
@@ -5103,9 +5108,8 @@
         const exitU = lens.exit
           ? Math.min(1, Math.max(0, (now - lens.exitT0) / exitMs))
           : 0;
-        // Only the near field really falls in; far words stay put
-        const nearR = 220;
-        const farR = 520;
+        // Soft global gravity — always some pull, stronger near the BH (no hard on/off ring)
+        const softR = 360;
         for (const w of lens.items) {
           if (w.eaten) {
             if (!lens.exit) continue;
@@ -5138,23 +5142,16 @@
           }
           const ux = dx / dist;
           const uy = dy / dist;
-          let prox = 1;
-          if (dist > farR) prox = 0;
-          else if (dist > nearR) prox = 1 - (dist - nearR) / (farR - nearR);
-          prox *= prox; // keep the outer ring almost still
-          const local = pull * prox;
-          if (local < 0.004) {
-            w.el.style.transform = `translate3d(${w.x0}px, ${w.y0}px, 0)`;
-            continue;
-          }
-          const travel = Math.min(dist * 0.28, 18 + dist * 0.14);
-          const turbX = Math.sin(now * 0.0022 + w.seed) * w.amp * 0.22 * local;
-          const turbY = Math.cos(now * 0.0018 + w.phase) * w.amp * 0.22 * local;
-          const swirl = Math.sin(now * 0.0014 + w.seed * 1.7) * 1.6 * local;
+          const prox = softR / (softR + dist); // (0, 1] — never hard-cuts to zero
+          const local = Math.max(0.02, pull) * prox;
+          const travel = Math.min(dist * 0.24, 14 + dist * 0.11);
+          const turbX = Math.sin(now * 0.0022 + w.seed) * w.amp * 0.2 * local;
+          const turbY = Math.cos(now * 0.0018 + w.phase) * w.amp * 0.2 * local;
+          const swirl = Math.sin(now * 0.0014 + w.seed * 1.7) * 1.4 * local;
           const x = w.x0 + ux * travel * local + turbX + (-uy) * swirl;
           const y = w.y0 + uy * travel * local + turbY + ux * swirl;
           const facing = (Math.atan2(dy, dx) * 180) / Math.PI;
-          const rot = facing * local + Math.sin(now * 0.0024 + w.seed) * 1.2 * local;
+          const rot = facing * local * 0.85 + Math.sin(now * 0.0024 + w.seed) * 1.1 * local;
           // Also swallow if the moved glyph has crossed the horizon
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
@@ -5398,12 +5395,19 @@
         svg.setAttribute("aria-hidden", "false");
       }
 
+      function setExitHintAway(away) {
+        const hint = document.getElementById("bh-lens-hint");
+        if (!hint) return;
+        hint.classList.toggle("is-away", !!away);
+      }
+
       function hideRudePopup() {
         lens.rudeShown = false;
         lens.rudeStage = -1;
         lens.rudeGen = 0;
         clearRudeTimer();
         clearRudeChains();
+        setExitHintAway(false);
         const rude = document.getElementById("bh-lens-rude");
         if (rude) {
           rude.classList.remove("is-on", "is-ghosted", ...RUDE_PLACE_CLASSES, ...RUDE_FROM_CLASSES);
@@ -5446,6 +5450,8 @@
         lens.rudeGen += 1;
         clearRudeTimer();
         clearRudeChains();
+        // Page copy is gone — slide the exit control off so the rude chain owns the screen
+        if (stage === 0) setExitHintAway(true);
         rude.classList.remove("is-on", "is-ghosted", ...RUDE_PLACE_CLASSES, ...RUDE_FROM_CLASSES);
         const txt = rude.querySelector(".bh-lens-rude-text");
         if (txt) txt.textContent = step.text;
