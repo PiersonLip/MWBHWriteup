@@ -2280,8 +2280,14 @@
     @keyframes tip-sing-spin {
       to { transform: rotate(360deg); }
     }
+    html.is-singularity.is-sing-gather #tip-layer .tip-bubble {
+      transition: none !important;
+      will-change: transform, opacity;
+      pointer-events: none !important;
+    }
     html.is-singularity.is-sing-form .tip-sing-bh {
       opacity: 1;
+      transition: opacity 1.6s ease;
     }
     html.is-singularity.is-sing-collapse .tip-sing-bh {
       transition: transform 0.55s cubic-bezier(0.7, 0, 1, 0.3), opacity 0.4s ease;
@@ -4307,10 +4313,11 @@
       const open = []; // { bubble, anchor, depth }
       let hideTimer = null;
       const pointer = { x: 0, y: 0 };
-      // 4 open tips (depth 0..3) → word ghosts pull into a singularity
+      // 4 open tips (depth 0..3) → tips gather → BH at midpoint → page swallow
       const SING_TRIGGER_DEPTH = 3;
       const SING_VOID_MS = 5000;
-      const SING_FORM_MS = 2200;
+      const SING_GATHER_MS = 7800;
+      const SING_BIRTH_MS = 2000;
       const SING_PULL_MS = 14000;
       const SING_FINISH_MS = 2200;
       const singularity = {
@@ -4318,12 +4325,15 @@
         timers: [],
         raf: 0,
         t0: 0,
+        phaseT0: 0,
+        phase: "idle", // gather | birth | pull | finish
         cx: 0,
         cy: 0,
         pull: 0,
         feed: 0,
         feedTarget: 0,
         items: [],
+        tips: [], // { el, cx, cy, dx, dy }
         finishing: false,
         finishT0: 0,
         reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -5338,6 +5348,51 @@
         }
       }
 
+      function tipMidpoint() {
+        const bubbles = open.map((o) => o.bubble).filter((b) => b && b.isConnected);
+        if (!bubbles.length) {
+          return { cx: window.innerWidth / 2, cy: window.innerHeight / 2, tips: [] };
+        }
+        let sx = 0;
+        let sy = 0;
+        const tips = bubbles.map((el) => {
+          const r = el.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          sx += cx;
+          sy += cy;
+          return { el, cx, cy, dx: 0, dy: 0 };
+        });
+        const cx = sx / tips.length;
+        const cy = sy / tips.length;
+        tips.forEach((t) => {
+          t.dx = cx - t.cx;
+          t.dy = cy - t.cy;
+        });
+        return { cx, cy, tips };
+      }
+
+      function setSingAnchor(cx, cy) {
+        singularity.cx = cx;
+        singularity.cy = cy;
+        const root = document.documentElement;
+        root.style.setProperty("--sing-x", `${cx}px`);
+        root.style.setProperty("--sing-y", `${cy}px`);
+        root.style.setProperty("--sing-px", `${cx}px`);
+        root.style.setProperty("--sing-py", `${cy}px`);
+      }
+
+      function placeGatherTips(u) {
+        const t = easeInOut(Math.min(1, Math.max(0, u)));
+        for (const tip of singularity.tips) {
+          if (!tip.el || !tip.el.isConnected) continue;
+          // Converge centers on the shared midpoint; gently shrink as they meet
+          const s = 1 - 0.42 * t;
+          tip.el.style.transform = `translate(${tip.dx * t}px, ${tip.dy * t}px) scale(${s})`;
+          tip.el.style.opacity = String(1 - 0.15 * t);
+        }
+      }
+
       function singSwallow(w) {
         if (w.eaten) return;
         w.eaten = true;
@@ -5349,26 +5404,40 @@
 
       function singScale() {
         singularity.feed += (singularity.feedTarget - singularity.feed) * 0.08;
-        const base = 0.35 + easeInOut(Math.min(1, singularity.pull)) * 1.55;
+        if (singularity.phase === "birth") {
+          const u = Math.min(1, (performance.now() - singularity.phaseT0) / SING_BIRTH_MS);
+          return 0.08 + easeInOut(u) * 0.95 + singularity.feed;
+        }
+        const base = 0.9 + easeInOut(Math.min(1, singularity.pull)) * 1.35;
         return base + singularity.feed;
+      }
+
+      function placeSingBh() {
+        const bh = document.getElementById("tip-sing-bh");
+        if (!bh) return;
+        const scale = singScale();
+        bh.style.transform = `translate3d(${singularity.cx}px, ${singularity.cy}px, 0) scale(${scale})`;
+        if (singularity.phase === "birth" || singularity.phase === "pull" || singularity.phase === "finish") {
+          bh.style.opacity = "1";
+        } else {
+          bh.style.opacity = "0";
+        }
       }
 
       function placeSingItems(now) {
         const cx = singularity.cx;
         const cy = singularity.cy;
+        placeSingBh();
+        if (singularity.phase !== "pull" && singularity.phase !== "finish") return;
+
         const scale = singScale();
-        const bh = document.getElementById("tip-sing-bh");
-        if (bh) {
-          bh.style.transform = `translate3d(${cx}px, ${cy}px, 0) scale(${scale})`;
-          bh.style.opacity = String(Math.min(1, 0.4 + singularity.pull * 1.2));
-        }
         const swallowR = Math.max(6, 70 * scale * 0.88);
         const nearR = 280;
         const farR = 900;
-        const finishU = singularity.finishing
+        const finishU = singularity.phase === "finish"
           ? Math.min(1, (now - singularity.finishT0) / SING_FINISH_MS)
           : 0;
-        const pull = singularity.finishing
+        const pull = singularity.phase === "finish"
           ? Math.min(1, singularity.pull + (1 - singularity.pull) * easeInOut(finishU))
           : singularity.pull;
 
@@ -5387,8 +5456,7 @@
           const local = Math.min(1, pull * (0.35 + 0.65 * prox * prox));
           const ux = dx / dist;
           const uy = dy / dist;
-          // Slow drift early; finishing phase yanks leftovers home hard
-          const travel = singularity.finishing
+          const travel = singularity.phase === "finish"
             ? dist * easeInOut(finishU)
             : Math.min(dist * 0.42, 10 + dist * 0.18) * local;
           const turbX = Math.sin(now * 0.0011 + w.seed) * w.amp * 0.35 * local;
@@ -5398,7 +5466,7 @@
           const y = w.y0 + uy * travel + turbY + ux * swirl;
           const facing = (Math.atan2(dy, dx) * 180) / Math.PI;
           const rot = facing * local * 0.35 + Math.sin(now * 0.0012 + w.seed) * 2 * local;
-          const s = singularity.finishing ? Math.max(0.12, 1 - 0.75 * easeInOut(finishU)) : 1;
+          const s = singularity.phase === "finish" ? Math.max(0.12, 1 - 0.75 * easeInOut(finishU)) : 1;
           w.el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${s})`;
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
@@ -5406,11 +5474,44 @@
         }
       }
 
+      function beginSingPull() {
+        const root = document.documentElement;
+        singularity.phase = "pull";
+        singularity.phaseT0 = performance.now();
+        singularity.pull = 0.08;
+        // Tips have become the seed — hide them as the page lifts into ghosts
+        singularity.tips.forEach((t) => {
+          if (t.el && t.el.isConnected) {
+            t.el.style.opacity = "0";
+            t.el.style.pointerEvents = "none";
+          }
+        });
+        buildSingGhost();
+        root.classList.add("is-sing-lifted");
+        root.classList.remove("is-sing-gather");
+      }
+
+      function beginSingBirth() {
+        const root = document.documentElement;
+        singularity.phase = "birth";
+        singularity.phaseT0 = performance.now();
+        root.classList.remove("is-sing-gather");
+        root.classList.add("is-sing-form");
+        // Final tip squeeze into the forming hole
+        singularity.tips.forEach((t) => {
+          if (!t.el || !t.el.isConnected) return;
+          t.el.style.transition = "opacity 1.4s ease, transform 1.6s cubic-bezier(0.55, 0.02, 0.9, 0.4)";
+          t.el.style.transform = `translate(${t.dx}px, ${t.dy}px) scale(0.08)`;
+          t.el.style.opacity = "0";
+        });
+        placeSingBh();
+      }
+
       function beginSingCollapse() {
-        if (!singularity.busy || singularity.finishing) return;
+        if (!singularity.busy || singularity.phase === "finish") return;
+        singularity.phase = "finish";
         singularity.finishing = true;
         singularity.finishT0 = performance.now();
-        // Yank remaining glyphs in, then flash
         singLater(() => {
           singularity.items.forEach((w) => {
             if (!w.eaten) singSwallow(w);
@@ -5422,8 +5523,9 @@
             root.classList.add("is-sing-flash", "is-sing-spark");
             clearFrom(0);
             destroySingGhost();
+            singularity.tips = [];
             singLater(() => {
-              root.classList.remove("is-sing-flash", "is-sing-lifted");
+              root.classList.remove("is-sing-flash", "is-sing-lifted", "is-sing-form");
               root.classList.add("is-sing-flash-out", "is-sing-void");
               if (singularity.raf) {
                 cancelAnimationFrame(singularity.raf);
@@ -5433,8 +5535,7 @@
                 root.classList.remove(
                   "is-sing-flash-out",
                   "is-sing-spark",
-                  "is-sing-collapse",
-                  "is-sing-form"
+                  "is-sing-collapse"
                 );
               }, 900);
             }, 120);
@@ -5456,19 +5557,26 @@
           singularity.raf = 0;
           return;
         }
-        const elapsed = now - singularity.t0;
-        if (!singularity.finishing) {
-          if (elapsed < SING_FORM_MS) {
-            singularity.pull = 0.04 + 0.12 * easeInOut(elapsed / SING_FORM_MS);
-          } else {
-            const u = Math.min(1, (elapsed - SING_FORM_MS) / SING_PULL_MS);
-            singularity.pull = 0.16 + 0.84 * (u * u); // ease-in: slow then stronger
-            if (u >= 1 || singularity.items.every((w) => w.eaten)) {
-              beginSingCollapse();
-            }
+
+        if (singularity.phase === "gather") {
+          const u = Math.min(1, (now - singularity.phaseT0) / SING_GATHER_MS);
+          placeGatherTips(u);
+          if (u >= 1) beginSingBirth();
+        } else if (singularity.phase === "birth") {
+          const u = Math.min(1, (now - singularity.phaseT0) / SING_BIRTH_MS);
+          placeSingBh();
+          if (u >= 1) beginSingPull();
+        } else if (singularity.phase === "pull") {
+          const u = Math.min(1, (now - singularity.phaseT0) / SING_PULL_MS);
+          singularity.pull = 0.08 + 0.92 * (u * u);
+          placeSingItems(now);
+          if (u >= 1 || (singularity.items.length && singularity.items.every((w) => w.eaten))) {
+            beginSingCollapse();
           }
+        } else if (singularity.phase === "finish") {
+          placeSingItems(now);
         }
-        placeSingItems(now);
+
         singularity.raf = requestAnimationFrame(singFrame);
       }
 
@@ -5479,8 +5587,17 @@
           singularity.raf = 0;
         }
         destroySingGhost();
+        singularity.tips.forEach((t) => {
+          if (t.el && t.el.isConnected) {
+            t.el.style.transform = "";
+            t.el.style.opacity = "";
+            t.el.style.transition = "";
+          }
+        });
+        singularity.tips = [];
         root.classList.remove(
           "is-singularity",
+          "is-sing-gather",
           "is-sing-form",
           "is-sing-lifted",
           "is-sing-collapse",
@@ -5509,16 +5626,18 @@
         root.style.overflow = "";
         singularity.busy = false;
         singularity.finishing = false;
+        singularity.phase = "idle";
         singularity.pull = 0;
         singularity.feed = 0;
         singularity.feedTarget = 0;
         clearSingTimers();
       }
 
-      function triggerTipSingularity(bubble) {
+      function triggerTipSingularity(_bubble) {
         if (singularity.busy) return;
         singularity.busy = true;
         singularity.finishing = false;
+        singularity.phase = "gather";
         singularity.pull = 0;
         singularity.feed = 0;
         singularity.feedTarget = 0;
@@ -5533,21 +5652,24 @@
         }
 
         const root = document.documentElement;
-        const r = bubble.getBoundingClientRect();
-        singularity.cx = r.left + r.width / 2;
-        singularity.cy = r.top + r.height / 2;
-        root.style.setProperty("--sing-x", `${singularity.cx}px`);
-        root.style.setProperty("--sing-y", `${singularity.cy}px`);
-        root.style.setProperty("--sing-px", `${singularity.cx}px`);
-        root.style.setProperty("--sing-py", `${singularity.cy}px`);
+        const mid = tipMidpoint();
+        singularity.tips = mid.tips;
+        setSingAnchor(mid.cx, mid.cy);
 
         const layerEl = document.getElementById("tip-singularity");
         if (layerEl) layerEl.setAttribute("aria-hidden", "false");
 
-        root.classList.add("is-singularity");
+        root.classList.add("is-singularity", "is-sing-gather");
         root.style.overflow = "hidden";
         document.body.style.overflow = "hidden";
         document.body.style.touchAction = "none";
+
+        // Keep BH hidden until tips finish gathering
+        const bh = document.getElementById("tip-sing-bh");
+        if (bh) {
+          bh.style.opacity = "0";
+          bh.style.transform = `translate3d(${mid.cx}px, ${mid.cy}px, 0) scale(0.05)`;
+        }
 
         if (singularity.reduceMotion) {
           root.classList.add("is-sing-void");
@@ -5562,13 +5684,10 @@
           return;
         }
 
-        buildSingGhost();
         singularity.t0 = performance.now();
-        requestAnimationFrame(() => {
-          root.classList.add("is-sing-form", "is-sing-lifted");
-          placeSingItems(performance.now());
-          if (!singularity.raf) singularity.raf = requestAnimationFrame(singFrame);
-        });
+        singularity.phaseT0 = singularity.t0;
+        placeGatherTips(0);
+        if (!singularity.raf) singularity.raf = requestAnimationFrame(singFrame);
       }
 
       function showTip(anchor) {
@@ -5799,6 +5918,7 @@
       window.addEventListener(
         "resize",
         () => {
+          if (singularity.busy) return;
           open.forEach((o) => placeBubble(o.bubble, o.anchor, o.depth));
         },
         { passive: true }

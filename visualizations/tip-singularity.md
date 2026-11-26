@@ -1,6 +1,6 @@
 # Tip-nest singularity gag
 
-Easter egg when glossary tips nest **4 deep** (depths `0…3`). A black hole forms on the deepest tip; page + tip copy lifts into **word ghosts** (same idea as the lens gag) and slowly drifts into the singularity. When leftovers finish collapsing: flash + sparkles, **5s** black void, then the page fades back.
+Easter egg when glossary tips nest **4 deep** (depths `0…3`). Open tip bubbles slowly converge on their shared midpoint; only then does a black hole form there. Page + tip copy lifts into **word ghosts** and drifts into the hole. Finish: flash + sparkles, **5s** black void, page fades back.
 
 Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag ([lens.md](./lens.md)); exits lens first if active.
 
@@ -8,46 +8,44 @@ Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag (
 
 | Condition | Result |
 |-----------|--------|
-| `showTip` opens a bubble with `depth >= 3` | `triggerTipSingularity(bubble)` |
+| `showTip` opens a bubble with `depth >= 3` | `triggerTipSingularity()` |
 | Already mid-singularity (`singularity.busy`) | Tips ignored |
-| `prefers-reduced-motion` | Skip ghosts; black void → restore after 5s |
-
-Depth is 0 for a page tip; each nest inside a `.tip-bubble` adds 1. Four open tips in a chain → boom.
+| `prefers-reduced-motion` | Skip animation; black void → restore after 5s |
 
 ## Timeline (motion on)
 
-1. **Form + lift** (~2.2s) — BH appears on the tip; ghosts built from `.wrap` + `#tip-layer`; real text/media go transparent (`is-sing-form`, `is-sing-lifted`).
-2. **Pull** (~14s) — RAF drifts ghosts toward the fixed singularity; near words fall in first; BH grows from pull + feed-on-eat (ease-in so it starts gentle).
-3. **Finish** (~2.2s) — Remaining glyphs yank in; BH collapses (`is-sing-collapse`).
-4. **Flash / sparkle** — white flash + outward sparks; tips cleared; ghosts destroyed.
-5. **Void** — full black (`is-sing-void`) for `SING_VOID_MS` (5000).
-6. **Return** — void fades, page opacity restores; `finishSingularity()` cleans classes.
+1. **Gather** (~7.8s) — No BH yet. All open `.tip-bubble`s ease toward the average of their centers (`is-sing-gather`), gently shrinking.
+2. **Birth** (~2s) — BH appears at that midpoint (`is-sing-form`); tip bubbles squeeze into the seed and fade.
+3. **Pull** (~14s) — Word/block ghosts from `.wrap` (+ leftover tip media) lift (`is-sing-lifted`) and fall into the fixed BH (ease-in pull + feed-on-eat).
+4. **Finish** (~2.2s) — Remaining glyphs yank in; BH collapses.
+5. **Flash / sparkle / void / return** — same as before (5s void).
+
+BH never follows the cursor; anchor is `--sing-px/py` from the tip midpoint.
 
 ## DOM / CSS
 
 | Id / class | Role |
 |------------|------|
 | `#tip-singularity` | Fixed overlay root (`z-index` 12000). |
-| `#tip-sing-ghost` | Word/block ghosts (reuses `.bh-ghost-word` / `.bh-ghost-block`). |
-| `#tip-sing-bh` | Stationary tip BH (photon ring + horizon); scale driven in JS. |
-| `#tip-sing-sparks` | Sparkle dots at flash. |
-| `#tip-sing-flash` / `#tip-sing-void` | Flash + black hold. |
-| `html.is-singularity.is-sing-lifted` | Page/tip copy → transparent; media opacity 0; ghosts visible. |
-| `--sing-px` / `--sing-py` | BH + spark anchor. |
+| `#tip-sing-ghost` | Word/block ghosts after birth. |
+| `#tip-sing-bh` | BH at tip midpoint (hidden until birth). |
+| `html.is-sing-gather` | Tip converge; BH still hidden. |
+| `html.is-sing-form` | BH visible / growing. |
+| `html.is-sing-lifted` | Page/tip copy transparent; ghosts move. |
 
 ## Knobs
 
 | Constant | Meaning |
 |----------|---------|
 | `SING_TRIGGER_DEPTH` | `3` → 4th tip |
-| `SING_FORM_MS` | BH form / soft start (~2200) |
-| `SING_PULL_MS` | Main ghost-pull duration (~14000) |
-| `SING_FINISH_MS` | Final yank into the hole (~2200) |
-| `SING_VOID_MS` | Black-screen hold (5000) |
-
-Ghost builder shares `appendGhostWordsFrom(..., { items })` with the lens gag.
+| `SING_GATHER_MS` | Tip converge (~7800) |
+| `SING_BIRTH_MS` | BH form after gather (~2000) |
+| `SING_PULL_MS` | Page ghost-pull (~14000) |
+| `SING_FINISH_MS` | Final yank (~2200) |
+| `SING_VOID_MS` | Black hold (5000) |
 
 ## Changelog
 
-- **2026-11-26** — Word-ghost pull (lens-style), trigger at 4 deep, much slower form/pull/finish.
-- **2026-11-26** — Initial: 6-deep tip nest → CSS scale swallow, flash/sparkle, 5s void.
+- **2026-11-26** — Tips gather to midpoint first; BH forms only after converge (not on cursor/tip).
+- **2026-11-26** — Word-ghost pull, trigger at 4 deep, slower timing.
+- **2026-11-26** — Initial CSS scale swallow at 6 deep.
