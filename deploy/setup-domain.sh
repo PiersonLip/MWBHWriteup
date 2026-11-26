@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Install nginx + Let's Encrypt for arxiv261007152.piersonl.com
+# Install nginx + Let's Encrypt for milkywaybhs.piersonl.com
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 REMOTE_HOST="${REMOTE_HOST:-rack}"
-SITE_NAME="arxiv261007152.piersonl.com"
+SITE_NAME="milkywaybhs.piersonl.com"
 
 chmod +x "$ROOT/deploy/setup-domain.sh" "$ROOT/deploy/deploy.sh"
 
@@ -22,16 +22,16 @@ fi
 '"
 
 scp "$ROOT/deploy/nginx.http-bootstrap.conf" \
-  "${REMOTE_HOST}:/tmp/nginx-arxiv.http-bootstrap.conf"
-scp "$ROOT/deploy/nginx.arxiv261007152.piersonl.com.conf" \
-  "${REMOTE_HOST}:/tmp/nginx-arxiv.piersonl.com.conf"
+  "${REMOTE_HOST}:/tmp/nginx-milkywaybhs.http-bootstrap.conf"
+scp "$ROOT/deploy/nginx.milkywaybhs.piersonl.com.conf" \
+  "${REMOTE_HOST}:/tmp/nginx-milkywaybhs.piersonl.com.conf"
 
 ssh "$REMOTE_HOST" "bash -c '
 set -euo pipefail
 SITE_NAME=${SITE_NAME}
 
-sudo mkdir -p /var/www/html /var/www/arxiv261007152
-sudo cp /tmp/nginx-arxiv.http-bootstrap.conf /etc/nginx/sites-available/\${SITE_NAME}
+sudo mkdir -p /var/www/html /var/www/milkywaybhs
+sudo cp /tmp/nginx-milkywaybhs.http-bootstrap.conf /etc/nginx/sites-available/\${SITE_NAME}
 sudo ln -sfn /etc/nginx/sites-available/\${SITE_NAME} /etc/nginx/sites-enabled/\${SITE_NAME}
 sudo nginx -t
 sudo systemctl reload nginx
@@ -41,7 +41,7 @@ sudo certbot certonly --webroot -w /var/www/html \
   --non-interactive --agree-tos --keep-until-expiring \
   -m piersonlipschultz@gmail.com
 
-sudo cp /tmp/nginx-arxiv.piersonl.com.conf /etc/nginx/sites-available/\${SITE_NAME}
+sudo cp /tmp/nginx-milkywaybhs.piersonl.com.conf /etc/nginx/sites-available/\${SITE_NAME}
 sudo ln -sfn /etc/nginx/sites-available/\${SITE_NAME} /etc/nginx/sites-enabled/\${SITE_NAME}
 sudo nginx -t
 sudo systemctl reload nginx

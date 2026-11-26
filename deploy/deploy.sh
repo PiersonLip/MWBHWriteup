@@ -3,8 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 REMOTE_HOST="${REMOTE_HOST:-rack}"
-REMOTE_DIR="${REMOTE_DIR:-/var/www/arxiv261007152}"
-SITE_NAME="arxiv261007152.piersonl.com"
+REMOTE_DIR="${REMOTE_DIR:-/var/www/milkywaybhs}"
+SITE_NAME="milkywaybhs.piersonl.com"
 
 cd "$ROOT"
 chmod +x deploy/deploy.sh deploy/setup-domain.sh

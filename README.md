@@ -11,14 +11,14 @@ python3 -m http.server 8765
 
 ### Deploy (VPS `rack`)
 
-Live: https://arxiv261007152.piersonl.com/
+Live: https://milkywaybhs.piersonl.com/
 
 ```bash
 ./deploy/setup-domain.sh   # once (nginx + TLS)
 ./deploy/deploy.sh         # after content changes
 ```
 
-Files land in `/var/www/arxiv261007152` on `rack`.
+Files land in `/var/www/milkywaybhs` on `rack`.
 
 ### Edit copy in Obsidian
 
