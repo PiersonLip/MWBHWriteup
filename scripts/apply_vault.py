@@ -17,6 +17,7 @@ from content_lib import (  # noqa: E402
     apply_deep_notes,
     apply_flow_path_details,
     apply_hero_footer,
+    apply_vault_glossary_json,
     parse_chapter_markdown,
     parse_flow_paths_markdown,
     parse_home_markdown,
@@ -71,6 +72,13 @@ def main() -> None:
         print(f"Applied flow path blurbs ({len(paths)} channels) from {FLOW_PATHS_NOTE.name}")
     else:
         print(f"skip flow paths: missing {FLOW_PATHS_NOTE}", file=sys.stderr)
+
+    try:
+        new_html = apply_vault_glossary_json(new_html)
+        print("Applied nested glossary tip seeds (VAULT_GLOSSARY)")
+    except ValueError as e:
+        print(f"ERROR glossary seeds: {e}", file=sys.stderr)
+        sys.exit(1)
 
     INDEX.write_text(new_html, encoding="utf-8")
     print(f"Wrote {INDEX}")

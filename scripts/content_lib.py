@@ -1245,3 +1245,46 @@ def apply_flow_path_details(html: str, details: dict) -> str:
     if not n:
         return html
     return html[:a] + "".join(out) + html[b:]
+
+
+VAULT_GLOSSARY_RE = re.compile(
+    r"(const VAULT_GLOSSARY\s*=\s*)/\*VAULT_GLOSSARY\*/[\s\S]*?/\*END_VAULT_GLOSSARY\*/(\s*;)",
+    re.M,
+)
+
+
+def build_vault_glossary_payload() -> dict:
+    """All glossary notes keyed for nested tip seeding (tip/effect/image/viz/deep)."""
+    gloss = load_glossary(force=True)
+    payload: dict = {}
+    for key, entry in gloss.items():
+        item = {"tip": entry.get("tip") or ""}
+        if entry.get("effect"):
+            item["effect"] = entry["effect"]
+        if entry.get("image"):
+            item["image"] = entry["image"]
+        if entry.get("viz"):
+            item["viz"] = entry["viz"]
+        if entry.get("deep"):
+            item["deep"] = entry["deep"]
+        payload[key] = item
+    return payload
+
+
+def apply_vault_glossary_json(html: str) -> str:
+    """Inject vault glossary tip text into the VAULT_GLOSSARY JS object."""
+    import json
+
+    payload = build_vault_glossary_payload()
+    body = json.dumps(payload, ensure_ascii=False, indent=2)
+
+    def repl(m: re.Match) -> str:
+        return f"{m.group(1)}/*VAULT_GLOSSARY*/{body}/*END_VAULT_GLOSSARY*/{m.group(2)}"
+
+    new_html, n = VAULT_GLOSSARY_RE.subn(repl, html, count=1)
+    if n == 0:
+        raise ValueError(
+            "VAULT_GLOSSARY marker not found in index.html — expected "
+            "const VAULT_GLOSSARY = /*VAULT_GLOSSARY*/{...}/*END_VAULT_GLOSSARY*/;"
+        )
+    return new_html

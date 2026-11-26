@@ -2135,7 +2135,7 @@
       </div>
 
       <div class="callout">
-        <strong>The grand idea:</strong> model the black holes that we would see today, trace them back to how they formed, vary the physics to see what works best, then predict what Gaia and Roman might actually see.
+        <strong>The big idea:</strong> model the black holes that we would see today, trace them back to how they formed, vary the physics to see what works best, then predict what Gaia and Roman might actually see.
       </div>
 
       <section class="footnotes" id="footnotes-why">
@@ -2169,7 +2169,7 @@
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">Core collapse</span></strong>
-          <span>How the <span class="tip" tabindex="0" data-tip="Whats left behind when a star dies. In high mass stellar evolution, this typicall a black hole or neutron star.">remnant</span> mass is calculated when the iron core collapses.</span>
+          <span>How the <span class="tip" tabindex="0" data-tip="Whats left behind when a star dies. For high mass stars, this typically results in a black hole or neutron star. In low mass stars this results in a white dwarf.">remnant</span> mass is calculated when the iron core collapses.</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">Natal Kicks</span></strong>
@@ -2484,7 +2484,7 @@
       <section class="footnotes" id="footnotes-galaxy">
         <h3>Notes</h3>
         <ol>
-          <li id="fn-galaxy-1" value="1" data-fn-id="1"><span class="fn-text">To model the Milky Way we split it into three components; these are different from the standard <span class="tip tip-viz" tabindex="0" data-tip="The classic stellar structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo." data-viz="mw-components">3 components of the Milky Way</span> (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exclude the halo, as while there <em>are</em> stars there, they form an incredibly small fraction of the whole population.</span> <a href="#fnref-galaxy-1" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-galaxy-1" value="1" data-fn-id="1"><span class="fn-text">To model the Milky Way we split it into three components; these are different from the standard <span class="tip tip-viz" tabindex="0" data-tip="The structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo." data-viz="mw-components">3 components of the Milky Way</span> (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exclude the halo, as while there <em>are</em> stars there, they form an incredibly small fraction of the whole population.</span> <a href="#fnref-galaxy-1" class="fn-back" title="Back to text">↩</a></li>
           <li id="fn-galaxy-2" value="2" data-fn-id="2"><span class="fn-text">Meaning one of the stars in the binary goes supernova.</span> <a href="#fnref-galaxy-2" class="fn-back" title="Back to text">↩</a></li>
         </ol>
       </section>
@@ -3662,6 +3662,292 @@
       gwTipState.raf = requestAnimationFrame(loop);
     }
 
+    // Nested tip text/effects/images/viz — filled by scripts/apply_vault.py from vault/Glossary
+    const VAULT_GLOSSARY = /*VAULT_GLOSSARY*/{
+  "bulge, disk, halo": {
+    "tip": "The structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo.",
+    "viz": "mw-components"
+  },
+  "three components of the milky way": {
+    "tip": "The structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo.",
+    "viz": "mw-components"
+  },
+  "3 components of the milky way": {
+    "tip": "The structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo.",
+    "viz": "mw-components"
+  },
+  "astronomical unit": {
+    "tip": "Astronomical unit. The average distance from the Sun to the Earth (~150 million km)."
+  },
+  "au": {
+    "tip": "Astronomical unit. The average distance from the Sun to the Earth (~150 million km)."
+  },
+  "astronomical units": {
+    "tip": "Astronomical unit. The average distance from the Sun to the Earth (~150 million km)."
+  },
+  "bh+ns": {
+    "tip": "A binary consisting of a black hole and a nuetron star."
+  },
+  "bh+wd": {
+    "tip": "A binary consiting of a black hole and white dwarf"
+  },
+  "bh-bh": {
+    "tip": "binary black hole system. I.e. two black holes orbiting each other."
+  },
+  "blaauw effect": {
+    "tip": "Losing large quantities of mass can dramatically shift the center of mass of a binary, widening or unbinding its orbit. Named after Adriaan Blaauw."
+  },
+  "dco": {
+    "tip": "Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational-wave emission can drive them to merge."
+  },
+  "detached": {
+    "tip": "Not transfering mass through Roche-lobe overflow currently."
+  },
+  "esa": {
+    "tip": "European Space Agency. Europe's NASA equivalent."
+  },
+  "gaia dr4": {
+    "tip": "An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars."
+  },
+  "gaia": {
+    "tip": "ESA's space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion."
+  },
+  "gravitational wave": {
+    "tip": "Ripples in spacetime from accelerating masses. In this visualization it shows a close binary with two black holes.",
+    "viz": "gw"
+  },
+  "gravitational-wave": {
+    "tip": "Ripples in spacetime from accelerating masses. In this visualization it shows a close binary with two black holes.",
+    "viz": "gw"
+  },
+  "gravitational waves": {
+    "tip": "Ripples in spacetime from accelerating masses. In this visualization it shows a close binary with two black holes.",
+    "viz": "gw"
+  },
+  "imf": {
+    "tip": "Initial mass function. How common stars of different birth masses are. Heavier stars are rarer."
+  },
+  "ligo/virgo/kagra": {
+    "tip": "Gravitational-wave detectors. They catch black hole mergers outside our Galaxy."
+  },
+  "ligo-virgo-kagra": {
+    "tip": "Gravitational-wave detectors. They catch black hole mergers outside our Galaxy."
+  },
+  "mesa": {
+    "tip": "Modules for Experiments in Stellar Astrophysics. A highly accurate simulation code which simulates the evolution of single or binary stars."
+  },
+  "m☉": {
+    "tip": "Solar masses. E.g. 2 M☉ is twice the mass of the Sun."
+  },
+  "solar mass": {
+    "tip": "Solar masses. E.g. 2 M☉ is twice the mass of the Sun."
+  },
+  "msun": {
+    "tip": "Solar masses. E.g. 2 M☉ is twice the mass of the Sun."
+  },
+  "solar masses": {
+    "tip": "Solar masses. E.g. 2 M☉ is twice the mass of the Sun."
+  },
+  "neutron star": {
+    "tip": "The ultra-dense, collapsed core remnant of a massive star that exploded as a supernova."
+  },
+  "ns": {
+    "tip": "The ultra-dense, collapsed core remnant of a massive star that exploded as a supernova."
+  },
+  "neutron stars": {
+    "tip": "The ultra-dense, collapsed core remnant of a massive star that exploded as a supernova."
+  },
+  "nancy grace roman": {
+    "tip": "First female executive at NASA. Served as NASA's first chief of astronomy. Considered the \"Mother of Hubble.\"",
+    "image": "assets/nancy-grace-roman.jpg"
+  },
+  "nancy roman": {
+    "tip": "First female executive at NASA. Served as NASA's first chief of astronomy. Considered the \"Mother of Hubble.\"",
+    "image": "assets/nancy-grace-roman.jpg"
+  },
+  "posydon": {
+    "tip": "Population Synthesis with Detailed binary-evolution simulatiONs — a binary population synthesis code that runs MESA grids at large scale. Made by a collaborative team of astrophysicists and computer scientists."
+  },
+  "pierson lipschultz": {
+    "tip": "That's me! :) Thanks for checking this out, if you're curious about other stuff I'm up to check out [piersonl.com](https://www.piersonl.com/)."
+  },
+  "pierson": {
+    "tip": "That's me! :) Thanks for checking this out, if you're curious about other stuff I'm up to check out [piersonl.com](https://www.piersonl.com/)."
+  },
+  "roche-lobe overflow": {
+    "tip": "When a star expands past the potential which it can fill without dumping mass onto its companion (its Roche-lobe). This causes gas to be transferred from one star to the other."
+  },
+  "rlof": {
+    "tip": "When a star expands past the potential which it can fill without dumping mass onto its companion (its Roche-lobe). This causes gas to be transferred from one star to the other."
+  },
+  "rlo": {
+    "tip": "When a star expands past the potential which it can fill without dumping mass onto its companion (its Roche-lobe). This causes gas to be transferred from one star to the other."
+  },
+  "roche-lobe": {
+    "tip": "The radius around a star in a binary where it can hold onto its own mass. Past this radius, mass will no longer be bound to that star.",
+    "image": "assets/roche-lobe.svg"
+  },
+  "roman": {
+    "tip": "NASA's Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing."
+  },
+  "winds": {
+    "tip": "Material which is passivly ejected from the outer atmosphere of a star into the surrounding area."
+  },
+  "wolf-rayet": {
+    "tip": "Hot, helium-rich stars that have already lost their hydrogen envelopes. These stars have incredibly strong winds. They also produce incredibly pretty nebulae."
+  },
+  "wr": {
+    "tip": "Hot, helium-rich stars that have already lost their hydrogen envelopes. These stars have incredibly strong winds. They also produce incredibly pretty nebulae."
+  },
+  "x-ray binaries": {
+    "tip": "A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays.",
+    "image": "assets/xrb.jpg"
+  },
+  "xrb": {
+    "tip": "A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays.",
+    "image": "assets/xrb.jpg"
+  },
+  "xrbs": {
+    "tip": "A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays.",
+    "image": "assets/xrb.jpg"
+  },
+  "x-ray binary": {
+    "tip": "A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays.",
+    "image": "assets/xrb.jpg"
+  },
+  "zams": {
+    "tip": "Zero-age main sequence. The initial common birth-state of a star, when it first begins hydrogen fusion in its core."
+  },
+  "binary systems": {
+    "tip": "Two stars locked orbiting each other.",
+    "deep": "binary-stars"
+  },
+  "binary stars": {
+    "tip": "Two stars locked orbiting each other.",
+    "deep": "binary-stars"
+  },
+  "binaries": {
+    "tip": "Two stars locked orbiting each other.",
+    "deep": "binary-stars"
+  },
+  "binary star": {
+    "tip": "Two stars locked orbiting each other.",
+    "deep": "binary-stars"
+  },
+  "black hole": {
+    "tip": "An incredibly dense remnant of a massive star formed in a supernova. Also does weird things with light."
+  },
+  "black holes": {
+    "tip": "An incredibly dense remnant of a massive star formed in a supernova. Also does weird things with light."
+  },
+  "bh": {
+    "tip": "An incredibly dense remnant of a massive star formed in a supernova. Also does weird things with light."
+  },
+  "bhs": {
+    "tip": "An incredibly dense remnant of a massive star formed in a supernova. Also does weird things with light."
+  },
+  "ce": {
+    "tip": "A phase of binary star evolution where both stars share one mutual envelope. The friction caused by the cores of the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.",
+    "viz": "common-envelope"
+  },
+  "common envelope": {
+    "tip": "A phase of binary star evolution where both stars share one mutual envelope. The friction caused by the cores of the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers.",
+    "viz": "common-envelope"
+  },
+  "compact object": {
+    "tip": "A neutron star or black hole."
+  },
+  "core collapse": {
+    "tip": "The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing."
+  },
+  "disrupted": {
+    "tip": "When a kick and/or sudden mass loss unbinds a binary, causing the individual stars to no longer orbit each other."
+  },
+  "disruption": {
+    "tip": "When a kick and/or sudden mass loss unbinds a binary, causing the individual stars to no longer orbit each other."
+  },
+  "eccentric": {
+    "tip": "How stretched from a circle an orbit is where e = 0 is a perfect circle. Any bound orbit sits between 0 and 1.",
+    "viz": "eccentricity"
+  },
+  "eccentricity": {
+    "tip": "How stretched from a circle an orbit is where e = 0 is a perfect circle. Any bound orbit sits between 0 and 1.",
+    "viz": "eccentricity"
+  },
+  "eccentricities": {
+    "tip": "How stretched from a circle an orbit is where e = 0 is a perfect circle. Any bound orbit sits between 0 and 1.",
+    "viz": "eccentricity"
+  },
+  "envelope": {
+    "tip": "The outer shell of a star. Specifically the gas layers outside the core, where fusion is not occurring. In giants this envelope can be particularly huge when compared to the dense core.",
+    "viz": "envelope"
+  },
+  "everything heavier than helium": {
+    "tip": "",
+    "image": "assets/astronomer-periodic-table.png"
+  },
+  "fallback": {
+    "tip": "Material that falls back onto the newborn compact object. More fallback means a weaker kick."
+  },
+  "gala": {
+    "tip": "A Python package for Galactic dynamics. We use it to integrate orbits in a Milky Way potential."
+  },
+  "incredibly pretty nebulae": {
+    "tip": "Crescent Nebula (NGC 6888) — a Wolf-Rayet star's winds sculpting the gas around it.",
+    "image": "assets/crescent-nebula.jpg"
+  },
+  "mass transfer": {
+    "tip": "A process in binary systems where one star transfers its mass to its binary companion. This commonly happens through Roche-lobe overflow or strong Winds."
+  },
+  "metallicity": {
+    "tip": "How metal-rich a star is (in astronomy, “metals” means everything heavier than helium). For example, a star that has a large quanity of gold inside itself would be considered more metal rich then a star which is only Hydrogen and Helium. More metals means stronger stellar winds."
+  },
+  "microlens": {
+    "tip": "When a massive object briefly bends and brightens light from a background star. The light curve can reveal the lens mass even if the lens is dark."
+  },
+  "natal kicks": {
+    "tip": "An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova."
+  },
+  "natal kick": {
+    "tip": "An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova."
+  },
+  "pair-instability gap": {
+    "tip": "A predicted range of BH masses where the star blows itself apart before it can make a remnant."
+  },
+  "period": {
+    "tip": "Orbital period. How long it takes for a orbit to return to the same position. For example, the Earth has a period of 365 days."
+  },
+  "population synthesis": {
+    "tip": "The process of simulating an entire population (i.e. large and diverse quanity) of stars."
+  },
+  "remnant": {
+    "tip": "Whats left behind when a star dies. For high mass stars, this typically results in a black hole or neutron star. In low mass stars this results in a white dwarf."
+  },
+  "smt": {
+    "tip": "Mass transfer that is in a state of equilibrium, leading to more long-term transfer of mass instead of a merger."
+  },
+  "stable mass transfer": {
+    "tip": "Mass transfer that is in a state of equilibrium, leading to more long-term transfer of mass instead of a merger."
+  },
+  "sunsets of tatooine": {
+    "tip": "",
+    "image": "assets/tatooine-binary-sunset.jpg"
+  },
+  "supernova": {
+    "tip": "The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole."
+  },
+  "sn": {
+    "tip": "The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole."
+  },
+  "supernovae": {
+    "tip": "The abrupt, violent end of the lives of massive stars. Commonly leaves behind a neutron star or black hole."
+  },
+  "weird things with light": {
+    "tip": "Light follows bent spacetime. Near a black hole those bends get extreme — lensing, rings, and a point of no return.",
+    "effect": "lens"
+  }
+}/*END_VAULT_GLOSSARY*/;
+
     // ═══════════════════════════════════════════
     (function initNestedTips() {
       const TIP_ANCHOR = ".tip[data-tip], .tip[data-image], .tip.tip-image, .fn-ref";
@@ -3686,83 +3972,33 @@
         if (el.dataset.viz) tipViz.set(key, el.dataset.viz);
         if (el.dataset.deep) tipDeep.set(key, el.dataset.deep);
       });
+      // Vault glossary wins for nested tip text / media (apply_vault keeps this fresh)
+      Object.keys(VAULT_GLOSSARY || {}).forEach((k) => {
+        const e = VAULT_GLOSSARY[k] || {};
+        if (Object.prototype.hasOwnProperty.call(e, "tip")) glossary.set(k, e.tip || "");
+        if (e.effect) tipEffects.set(k, e.effect);
+        if (e.image) tipImages.set(k, e.image);
+        if (e.viz) tipViz.set(k, e.viz);
+        if (e.deep) tipDeep.set(k, e.deep);
+      });
       // Rich deep-note aliases (avoid nesting mid-phrase e.g. "binary star evolution")
       ["binary stars", "binary star", "binary systems", "binaries"].forEach((k) => {
         tipDeep.set(k, "binary-stars");
       });
-      // Nested-only gag term (linked from the black holes tip text)
-      glossary.set(
-        "weird things with light",
-        "Light follows bent spacetime. Near a black hole those bends get extreme — lensing, rings, and a point of no return."
-      );
-      tipEffects.set("weird things with light", "lens");
-      // Nested image tip inside Wolf-Rayet
-      glossary.set(
-        "incredibly pretty nebulae",
-        "Crescent Nebula (NGC 6888) — a Wolf-Rayet star's winds sculpting the gas around it."
-      );
-      tipImages.set("incredibly pretty nebulae", "assets/crescent-nebula.jpg");
-      tipImages.set("x-ray binaries", "assets/xrb.jpg");
-      // Nested gag image tip inside metallicity (image only — no caption)
-      glossary.set("everything heavier than helium", "");
-      tipImages.set("everything heavier than helium", "assets/astronomer-periodic-table.png");
-      // Nested-only glossary tips (not chapter wikilinks; seeded from vault)
-      if (!glossary.has("envelope")) {
-        glossary.set(
-          "envelope",
-          "The outer shell of a star. Specifically the gas layers outside the core, where fusion is not occurring. In giants this envelope can be particularly huge when compared to the dense core."
-        );
-      }
-      if (!glossary.has("esa")) {
-        glossary.set("esa", "European Space Agency — Europe's NASA equivalent.");
-      }
-      if (!glossary.has("roche-lobe")) {
-        glossary.set(
-          "roche-lobe",
-          "The radius around a star in a binary where it can hold onto its own mass. Past this radius, mass will no longer be bound to that star."
-        );
-      }
-      tipImages.set("roche-lobe", "assets/roche-lobe.svg");
-      tipImages.set("roche lobe", "assets/roche-lobe.svg");
-      // Nested from mass-transfer tip (Winds is vault-only; never an on-page .tip)
-      if (!glossary.has("winds")) {
-        glossary.set(
-          "winds",
-          "Material which is ejected from the outer atmosphere of a star into the surrounding area."
-        );
-      }
-      // Nested from Roman tip (portrait tip; vault-only)
-      if (!glossary.has("nancy grace roman")) {
-        glossary.set(
-          "nancy grace roman",
-          'First female executive at NASA. Served as NASA\'s first chief of astronomy. Considered the "Mother of Hubble."'
-        );
-      }
-      tipImages.set("nancy grace roman", "assets/nancy-grace-roman.jpg");
-      tipImages.set("nancy roman", "assets/nancy-grace-roman.jpg");
-      // Nested image-only tip inside binary-stars deep note
-      glossary.set("sunsets of tatooine", "");
-      tipImages.set("sunsets of tatooine", "assets/tatooine-binary-sunset.jpg");
-      // Nested / inline GW viz tip (Gravitational-wave only — not LIGO/Virgo/KAGRA)
-      // Tip text comes from the vault / data-tip; only wire the canvas here.
+      // Alias / canvas wiring that may not be unique frontmatter on every note
+      tipImages.set("roche lobe", tipImages.get("roche-lobe") || "assets/roche-lobe.svg");
+      tipImages.set("nancy roman", tipImages.get("nancy grace roman") || "assets/nancy-grace-roman.jpg");
       ["gravitational-wave", "gravitational wave", "gravitational waves"].forEach((k) => {
         tipViz.set(k, "gw");
       });
-      tipViz.set("envelope", "envelope");
+      tipViz.set("envelope", tipViz.get("envelope") || "envelope");
       ["common envelope", "common-envelope", "ce"].forEach((k) => tipViz.set(k, "common-envelope"));
       ["eccentricity", "eccentricities", "eccentric"].forEach((k) => tipViz.set(k, "eccentricity"));
-      // Nested from galaxy footnote (standard MW structure tip)
-      if (!glossary.has("3 components of the milky way")) {
-        glossary.set(
-          "3 components of the milky way",
-          "The classic stellar structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo."
-        );
-      }
       [
         "3 components of the milky way",
         "three components of the milky way",
         "bulge, disk, halo",
-      ].forEach((k) => tipViz.set(k, "mw-components"));
+      ].forEach((k) => tipViz.set(k, tipViz.get(k) || "mw-components"));
 
       if (!glossary.size && !document.querySelector(".fn-ref")) return;
 
@@ -5861,19 +6097,19 @@
     // ═══════════════════════════════════════════
     const channels = [
       { id: "merger", name: "Stellar mergers", pct: 42, color: "#1f4f9c", colorDark: "#5a8fd4", group: "isolated",
-        detail: "Two normal stars merge (often after a failed common envolope), then the leftover collapses to a black hole. This is the most Biggest isolated channel." },
+        detail: "Two normal stars merge (typically after a failed common envolope), then the leftover collapses to a black hole. This is the most common channel for isolated black holes." },
       { id: "disrupt", name: "Disrupted binaries", pct: 27, color: "#c2472a", colorDark: "#e07058", group: "isolated",
-        detail: "The binary comes unbound at the first or second collapse when the kick and/or mass loss push the energy positive." },
+        detail: "The binary comes unbound at the first or second collapse when the kick and/or mass loss is violent enough to disrupt the system." },
       { id: "single", name: "Initially single", pct: 4, color: "#5b7a9a", colorDark: "#7a94b0", group: "isolated",
-        detail: "Born without a companion under the Moe+17 mass-dependent binary fraction. Mostly low-mass BHs." },
+        detail: "Born without a companion and never has a binary partner. Often low-mass black holes." },
       { id: "bhstar-m", name: "BH+star mergers", pct: 4, color: "#8a6b3d", colorDark: "#c4a06a", group: "isolated",
-        detail: "The BH survives the kick, then later merges with its companion after unstable MT or a failed CE." },
+        detail: "The black hole survives its formation kicks, then later merges with its companion after unstable mass transfer or a failed common envelope." },
       { id: "dco-m", name: "DCO mergers", pct: 1, color: "#6e7686", colorDark: "#9aa3b2", group: "isolated",
-        detail: "Rare double-compact mergers within 10 Gyr. Among the channels that can reach ≳30–50 M☉ remnants at solar Z." },
+        detail: "Rare double-compact object mergers. This can be two black holes merging, two neutron stars merging, or one of each." },
       { id: "bhbh", name: "Detached BH-BH", pct: 19, color: "#141820", colorDark: "#c5ccd8", group: "binary",
-        detail: "Dominant surviving binary class: stable-MT (broad, lower-mass) plus the wind-driven ~13 M☉ channel." },
+        detail: "This is the most common binary configuration for a black hole to be found in. These consist of two black holes orbiting each other with a large seperation between them." },
       { id: "otherbin", name: "BH + other", pct: 3, color: "#3d7a5c", colorDark: "#5cb88a", group: "binary",
-        detail: "BH+WD, BH+NS, and BH+star combined. Rare, but basically the main current observational windows." },
+        detail: "Meaning BH+white dwarf, BH+NS, and BH+star. These (while quite rare) are the current main way of observing black holes." },
     ];
     function channelColor(c) {
       return themeIsDark() ? (c.colorDark || c.color) : c.color;

@@ -50,6 +50,7 @@ python3 scripts/export_to_vault.py
 | `figures/flow-paths` | flowchart path detail blurbs (`#flow`) |
 | `00 Home` hero/footer | header + footer |
 | `[[Glossary note]]` | hover tip from that note’s body |
+| `Glossary/*.md` (all notes) | nested tip seeds (`VAULT_GLOSSARY` in `index.html`) |
 | `[^id]` + `[^id]: …` | chapter footnotes (also `^[inline note]`) |
 
 ## Footnotes
