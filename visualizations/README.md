@@ -11,7 +11,7 @@ Living docs for every interactive figure in `index.html`.
 | [galaxy.md](./galaxy.md) | `#gal-figure` / `#galaxy` | Galactic seeding |
 | [micro.md](./micro.md) | `#micro` | Observational links |
 | [lens.md](./lens.md) | `data-effect="lens"` (page overlay) | Glossary gag (“weird things with light”) |
-| [tip-singularity.md](./tip-singularity.md) | 4-deep tip nest (page overlay) | Glossary gag (tip recursion) |
+| [tip-singularity.md](./tip-singularity.md) | 5-deep tip nest (page overlay) | Glossary gag (tip recursion) |
 
 ## Agent rule
 
@@ -28,7 +28,7 @@ Related: rich glossary deep-dive for **binary stars** — [binary-stars.md](./bi
 
 Related: BH lens easter egg — [lens.md](./lens.md) (`effect: lens` on glossary note **weird things with light**).
 
-Related: tip-nest singularity — [tip-singularity.md](./tip-singularity.md) (4 nested tips → word-ghost swallow).
+Related: tip-nest singularity — [tip-singularity.md](./tip-singularity.md) (5 nested tips → word-ghost swallow).
 
 Related: tip canvases — [gw-tip.md](./gw-tip.md) (`viz: gw`), [envelope-tip.md](./envelope-tip.md) (`viz: envelope`), [common-envelope-tip.md](./common-envelope-tip.md) (`viz: common-envelope`), [mw-components-tip.md](./mw-components-tip.md) (`viz: mw-components`), [eccentricity-tip.md](./eccentricity-tip.md) (`viz: eccentricity`).
 

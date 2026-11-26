@@ -49,7 +49,7 @@ Two themes via `data-theme` on `<html>` + CSS variables. Light = former slate; d
 | Galactic seeding `#galaxy` | [galaxy.md](visualizations/galaxy.md) | Active |
 | Microlensing `#micro` | [micro.md](visualizations/micro.md) | Active (3D+2D stacked) |
 | BH lens gag (`data-effect="lens"`) | [lens.md](visualizations/lens.md) | Active (glossary easter egg) |
-| Tip-nest singularity (4 deep) | [tip-singularity.md](visualizations/tip-singularity.md) | Active (glossary easter egg) |
+| Tip-nest singularity (5 deep) | [tip-singularity.md](visualizations/tip-singularity.md) | Active (glossary easter egg) |
 | Fiducial demographics `#demo` | — | **Removed** (flowchart replaces it) |
 
 ## Paper concepts covered
@@ -93,7 +93,7 @@ See [visualizations/lens.md](visualizations/lens.md) for full detail.
 
 See [visualizations/tip-singularity.md](visualizations/tip-singularity.md).
 
-- Open glossary tips **4 deep** → tips slowly converge to their midpoint, then a BH forms there; page lifts into word ghosts and falls in, then flash/sparkle, **3s** void, page fades back.
+- Open glossary tips **5 deep** → tips converge to midpoint (stay visible), BH forms, strong ghost-pull swallows the page, BH shrinks to a point + twinkle (no explode), **3s** void, page fades back.
 - Separate overlay from the lens gag; exits lens first if both would conflict.
 
 ## Writing / UX conventions
