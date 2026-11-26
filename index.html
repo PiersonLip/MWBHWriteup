@@ -4418,6 +4418,11 @@
         return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
       }
 
+      function smootherstep(t) {
+        const x = Math.min(1, Math.max(0, t));
+        return x * x * x * (x * (x * 6 - 15) + 10);
+      }
+
       function destroyGhost() {
         const ghost = document.getElementById("bh-ghost");
         if (ghost) ghost.innerHTML = "";
@@ -5519,29 +5524,27 @@
           }
           const ux = dx / dist;
           const uy = dy / dist;
-          // Near-field gravity: close words get yanked hard, far words only drift
-          const nearR = 160;
-          const farR = 780;
-          let prox = 1;
-          if (dist > farR) prox = 0.1;
-          else if (dist > nearR) {
-            const t = (dist - nearR) / (farR - nearR);
-            prox = 0.1 + 0.9 * (1 - t) * (1 - t);
-          }
-          const base = yanking
-            ? 0.45 + 0.5 * easeInOut(yankU)
-            : Math.min(0.95, Math.pow(Math.max(0, pull), 0.65) * 0.95);
-          const strength = base * prox;
+          // Soft distance falloff — near words feel it first, far words catch up as pull grows
+          const prox = 0.12 + 0.88 / (1 + Math.pow(dist / 300, 1.45));
+          // Gravity strength ramps smoothly with pull (higher peak than before)
+          const grav = yanking
+            ? 0.55 + 0.45 * smootherstep(yankU)
+            : 0.06 + 0.94 * smootherstep(pull);
+          const strength = Math.min(1, grav * (0.35 + 0.65 * prox));
           const travel = dist * strength;
-          const turbAmp = yanking ? 0.08 : 0.2;
-          const turbX = Math.sin(now * 0.0011 + w.seed) * w.amp * turbAmp * pull;
-          const turbY = Math.cos(now * 0.0009 + w.phase) * w.amp * turbAmp * pull;
-          const swirl = Math.sin(now * 0.0007 + w.seed * 1.7) * (2.5 + 10 * pull) * (yanking ? 0.35 : 1);
+          const turbAmp = yanking ? 0.06 : 0.16 * (0.35 + 0.65 * pull);
+          const turbX = Math.sin(now * 0.0011 + w.seed) * w.amp * turbAmp;
+          const turbY = Math.cos(now * 0.0009 + w.phase) * w.amp * turbAmp;
+          const swirl =
+            Math.sin(now * 0.0007 + w.seed * 1.7) *
+            (1.5 + 9 * grav) *
+            prox *
+            (yanking ? 0.3 : 1);
           const x = w.x0 + ux * travel + turbX + (-uy) * swirl;
           const y = w.y0 + uy * travel + turbY + ux * swirl;
           const facing = (Math.atan2(dy, dx) * 180) / Math.PI;
-          const rot = facing * strength * 0.32 + Math.sin(now * 0.0012 + w.seed) * 2 * pull;
-          const s = Math.max(0.12, 1 - 0.65 * strength);
+          const rot = facing * strength * 0.28 + Math.sin(now * 0.0012 + w.seed) * 1.6 * grav;
+          const s = Math.max(0.1, 1 - 0.7 * strength);
           w.el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${s})`;
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
@@ -5659,12 +5662,13 @@
         } else if (singularity.phase === "birth") {
           const u = Math.min(1, (now - singularity.phaseT0) / SING_BIRTH_MS);
           // Weak pull from the first frame the BH exists
-          singularity.pull = 0.03 + 0.11 * easeInOut(u);
+          singularity.pull = 0.02 + 0.12 * smootherstep(u);
           placeSingItems(now);
           if (u >= 1) beginSingPull();
         } else if (singularity.phase === "pull") {
           const u = Math.min(1, (now - singularity.phaseT0) / SING_PULL_MS);
-          singularity.pull = 0.14 + 0.86 * Math.pow(u, 0.7); // continue from birth into ~8s engulf
+          // Smooth, fuller gravity ramp across the ~8s engulf
+          singularity.pull = 0.14 + 0.86 * smootherstep(u);
           placeSingItems(now);
           if (allSingEaten()) {
             beginSingShrink();
