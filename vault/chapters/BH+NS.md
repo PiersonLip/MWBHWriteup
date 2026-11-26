@@ -1,0 +1,1 @@
+A binary consisting of a black hole and a nuetron star.

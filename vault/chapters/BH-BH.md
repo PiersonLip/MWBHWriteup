@@ -1,0 +1,1 @@
+binary black hole system. I.e. two black holes orbiting each other.
