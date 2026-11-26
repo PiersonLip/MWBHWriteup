@@ -47,6 +47,7 @@ python3 scripts/export_to_vault.py
 | `:::stats` | census stat row |
 | `:::eq` | equation line |
 | `:::figure` cap/title/hint | figure caption, h3, hint only |
+| `figures/flow-paths` | flowchart path detail blurbs (`#flow`) |
 | `00 Home` hero/footer | header + footer |
 | `[[Glossary note]]` | hover tip from that note’s body |
 | `[^id]` + `[^id]: …` | chapter footnotes (also `^[inline note]`) |

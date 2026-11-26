@@ -11,11 +11,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from content_lib import (  # noqa: E402
     ARTICLE_RE,
     CHAPTERS_DIR,
+    FLOW_PATHS_NOTE,
     INDEX,
     VAULT,
     apply_deep_notes,
+    apply_flow_path_details,
     apply_hero_footer,
     parse_chapter_markdown,
+    parse_flow_paths_markdown,
     parse_home_markdown,
     rebuild_article_inner,
 )
@@ -61,6 +64,13 @@ def main() -> None:
 
     new_html = apply_deep_notes(new_html)
     print("Applied deep notes from glossary")
+
+    if FLOW_PATHS_NOTE.exists():
+        paths = parse_flow_paths_markdown(FLOW_PATHS_NOTE.read_text(encoding="utf-8"))
+        new_html = apply_flow_path_details(new_html, paths)
+        print(f"Applied flow path blurbs ({len(paths)} channels) from {FLOW_PATHS_NOTE.name}")
+    else:
+        print(f"skip flow paths: missing {FLOW_PATHS_NOTE}", file=sys.stderr)
 
     INDEX.write_text(new_html, encoding="utf-8")
     print(f"Wrote {INDEX}")

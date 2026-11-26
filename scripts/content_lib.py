@@ -1088,3 +1088,160 @@ def apply_hero_footer(html: str, hero: dict, footer: str) -> str:
         count=1,
     )
     return html
+
+
+FIGURES_DIR = VAULT / "figures"
+FLOW_PATHS_NOTE = FIGURES_DIR / "flow-paths.md"
+
+# Channel ids used by the #flow flowchart detail panel
+FLOW_PATH_IDS = (
+    "merger",
+    "disrupt",
+    "single",
+    "bhstar-m",
+    "dco-m",
+    "bhbh",
+    "otherbin",
+)
+
+FLOW_PATH_TITLES = {
+    "merger": "Stellar mergers",
+    "disrupt": "Disrupted binaries",
+    "single": "Initially single",
+    "bhstar-m": "BH+star mergers",
+    "dco-m": "DCO mergers",
+    "bhbh": "Detached BH-BH",
+    "otherbin": "BH + other",
+}
+
+CHANNEL_DETAIL_RE = re.compile(
+    r'id:\s*"(?P<id>[^"]+)"[\s\S]*?detail:\s*"(?P<detail>(?:\\.|[^"\\])*)"',
+    re.M,
+)
+
+
+def _js_unescape(s: str) -> str:
+    return (
+        s.replace("\\n", "\n")
+        .replace('\\"', '"')
+        .replace("\\\\", "\\")
+    )
+
+
+def _js_escape(s: str) -> str:
+    return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+
+def _channels_array_span(html: str):
+    """Return (start, end) indices of the `const channels = [ ... ];` block, or None."""
+    m = re.search(r"const channels\s*=\s*\[", html)
+    if not m:
+        return None
+    start = m.start()
+    i = m.end() - 1  # at '['
+    depth = 0
+    for j in range(i, len(html)):
+        ch = html[j]
+        if ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth -= 1
+            if depth == 0:
+                # include trailing ];
+                end = j + 1
+                if end < len(html) and html[end] == ";":
+                    end += 1
+                return start, end
+    return None
+
+
+def extract_flow_path_details(html: str) -> dict:
+    """Pull channel id → detail blurb from the JS `channels` array."""
+    span = _channels_array_span(html)
+    if not span:
+        return {}
+    chunk = html[span[0] : span[1]]
+    out = {}
+    for m in CHANNEL_DETAIL_RE.finditer(chunk):
+        cid = m.group("id")
+        if cid in FLOW_PATH_IDS:
+            out[cid] = _js_unescape(m.group("detail")).strip()
+    return out
+
+
+def parse_flow_paths_markdown(text: str) -> dict:
+    """Parse vault/figures/flow-paths.md → {channel_id: detail}."""
+    details = {}
+    # Headings: "## single" or "## single · Initially single"
+    parts = re.split(r"^##\s+(\S+)(?:\s*[·—-]\s*.+)?\s*$", text, flags=re.M)
+    for i in range(1, len(parts), 2):
+        cid = parts[i].strip()
+        body = parts[i + 1].strip() if i + 1 < len(parts) else ""
+        if not body:
+            continue
+        paras = [p.strip() for p in re.split(r"\n\s*\n", body) if p.strip()]
+        # Skip a sole italic title line (*Stellar mergers*)
+        while paras and re.fullmatch(r"\*[^*]+\*", paras[0]):
+            paras = paras[1:]
+        if not paras:
+            continue
+        para = paras[0]
+        para = WIKILINK_RE.sub(
+            lambda m: ((m.group(2) if m.group(2) is not None else m.group(1)) or "").strip(),
+            para,
+        )
+        para = re.sub(r"\*\*(.+?)\*\*", r"\1", para)
+        para = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"\1", para)
+        para = re.sub(r"\s+", " ", para).strip()
+        if para:
+            details[cid] = para
+    return details
+
+
+def flow_paths_to_markdown(details: dict) -> str:
+    lines = [
+        "---",
+        "figure: flow",
+        "---",
+        "",
+        "# Flowchart path blurbs",
+        "",
+        "These show in the **How do Galactic black holes form?** detail panel when you click a path.",
+        "Edit the paragraph under each heading, then run `python3 scripts/apply_vault.py`.",
+        "",
+    ]
+    for cid in FLOW_PATH_IDS:
+        title = FLOW_PATH_TITLES.get(cid, cid)
+        lines.append(f"## {cid} · {title}")
+        lines.append("")
+        lines.append(details.get(cid, "").strip() or "_TODO: path blurb_")
+        lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def apply_flow_path_details(html: str, details: dict) -> str:
+    """Patch `detail: "..."` strings in the JS channels array."""
+    if not details:
+        return html
+    span = _channels_array_span(html)
+    if not span:
+        return html
+    a, b = span
+    chunk = html[a:b]
+    out = []
+    last = 0
+    n = 0
+    for m in CHANNEL_DETAIL_RE.finditer(chunk):
+        cid = m.group("id")
+        out.append(chunk[last : m.start("detail")])
+        if cid in details:
+            out.append(_js_escape(details[cid]))
+            n += 1
+        else:
+            out.append(m.group("detail"))
+        out.append('"')
+        last = m.end()
+    out.append(chunk[last:])
+    if not n:
+        return html
+    return html[:a] + "".join(out) + html[b:]

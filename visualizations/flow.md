@@ -22,9 +22,12 @@ Map how present-day Galactic BHs get to each demographic channel (mergers, disru
 
 - Old `#demo` demographics stack was removed; do not reintroduce without updating this doc + MEMORY.
 - Vault: `vault/chapters/03 census.md` figure block `id: flow` (cap/title/hint only).
+- Path detail blurbs (`channels[].detail`): edit `vault/figures/flow-paths.md`, then `python3 scripts/apply_vault.py`.
+- Column label under the third hub column is **Fate** (not “Binary fate”).
 
 ## Changelog
 
 - 2026-11-23: `#demo` bar chart removed; flowchart is sole demographics interactive.
 - 2026-11-24: Single-star path inserts **Supernova** between Born single and Initially single.
 - 2026-11-24: Today endpoint boxes get a light/dark rim so borders read like the hub steps.
+- 2026-11-26: Renamed column label to Fate; path blurbs editable via `vault/figures/flow-paths.md`.

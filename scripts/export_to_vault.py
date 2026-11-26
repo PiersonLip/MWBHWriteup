@@ -11,10 +11,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from content_lib import (  # noqa: E402
     ARTICLE_RE,
     CHAPTERS_DIR,
+    FIGURES_DIR,
+    FLOW_PATHS_NOTE,
     GLOSSARY_DIR,
     INDEX,
     VAULT,
     chapter_to_markdown,
+    extract_flow_path_details,
+    flow_paths_to_markdown,
     hero_to_markdown,
     load_glossary,
     parse_article_html,
@@ -117,6 +121,11 @@ def main() -> None:
         gloss_idx.append(f"- [[{n.stem}]]")
     gloss_idx.append("")
     (VAULT / "Glossary.md").write_text("\n".join(gloss_idx), encoding="utf-8")
+
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    flow_details = extract_flow_path_details(html)
+    FLOW_PATHS_NOTE.write_text(flow_paths_to_markdown(flow_details), encoding="utf-8")
+    print(f"Flow path blurbs → {FLOW_PATHS_NOTE} ({len(flow_details)} channels)")
 
     print(f"Exported {len(found)} chapters → {CHAPTERS_DIR}")
     print(f"Home → {VAULT / '00 Home.md'}")
