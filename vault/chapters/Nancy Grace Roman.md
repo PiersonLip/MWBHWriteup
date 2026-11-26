@@ -1,0 +1,1 @@
+Frst female executive at NASA. served as NASA's first chief of astronomy. Considered the "Mother of Hubble."
