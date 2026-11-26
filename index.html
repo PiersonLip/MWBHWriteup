@@ -1808,6 +1808,13 @@
         font-weight: 600;
         text-align: center;
         padding: 0.75rem 0.95rem;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* Keep the exit label readable — ghosted glyphs sit under this chrome on mobile */
+      html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint {
+        color: var(--ink) !important;
+        -webkit-text-fill-color: var(--ink) !important;
       }
     }
     /* Exit-button glyphs sit above the button chrome */
@@ -3823,14 +3830,18 @@
         clearFrom(0);
         const hint = document.getElementById("bh-lens-hint");
         if (hint) hint.setAttribute("aria-hidden", "false");
-        // After the exit button paints in, ghost its label so the BH can eat it
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => ghostifyExitHint());
-        });
+        // Desktop: ghost the label so the BH can eat it. Mobile: keep text
+        // visible — the floating glyphs sit under the button chrome.
+        if (!isTouchUi()) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => ghostifyExitHint());
+          });
+        }
       }
 
       function exitPinnedLens() {
-        if (!lens.pinned && !lens.on && !lens.exit) return;
+        if (lens.exit) return;
+        if (!lens.pinned && !lens.on) return;
         clearLensDwell();
         lens.pinned = false;
         setLensing(false);
@@ -3838,9 +3849,19 @@
 
       const lensHint = document.getElementById("bh-lens-hint");
       if (lensHint) {
-        lensHint.addEventListener("click", (e) => {
+        // pointerup is more reliable than click on iOS while touchmove is blocked
+        lensHint.addEventListener(
+          "pointerup",
+          (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            exitPinnedLens();
+          },
+          { passive: false }
+        );
+        lensHint.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter" && e.key !== " ") return;
           e.preventDefault();
-          e.stopPropagation();
           exitPinnedLens();
         });
       }
@@ -3893,6 +3914,8 @@
         "touchmove",
         (e) => {
           if (!lens.on && !lens.pinned && !lens.exit) return;
+          // Don't kill the exit control's tap gesture
+          if (e.target && e.target.closest && e.target.closest("#bh-lens-hint")) return;
           e.preventDefault();
         },
         { passive: false, capture: true }
