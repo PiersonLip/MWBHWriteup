@@ -2111,6 +2111,59 @@
       transform: translate(-50%, -50%) scale(1);
       pointer-events: auto;
     }
+    .bh-lens-rude.place-bl {
+      left: 1.15rem;
+      right: auto;
+      top: auto;
+      bottom: 1.35rem;
+      text-align: left;
+      transform: translate(0, 14px) scale(0.96);
+    }
+    .bh-lens-rude.place-bl.is-on {
+      transform: translate(0, 0) scale(1);
+    }
+    .bh-lens-rude.place-chained {
+      left: 50%;
+      top: 50%;
+      bottom: auto;
+      font-size: 1.65rem;
+      font-weight: 600;
+      padding: 0.95rem 1.35rem;
+      transform: translate(-50%, -40%) scale(0.96);
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+    }
+    .bh-lens-rude.place-chained.is-on {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    /* Ghosted rude copy lifts into #bh-ghost-ui (same trick as exit hint) */
+    html.bh-lens-lifted .bh-lens-rude.is-ghosted .bh-lens-rude-text {
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+    .bh-lens-chains {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5295;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+    }
+    .bh-lens-chains.is-on {
+      opacity: 1;
+    }
+    .bh-lens-chains line {
+      stroke: color-mix(in srgb, var(--ink-soft) 55%, transparent);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-dasharray: 5 7;
+    }
+    .bh-lens-chains circle {
+      fill: var(--panel);
+      stroke: color-mix(in srgb, var(--ink-soft) 65%, transparent);
+      stroke-width: 1.5;
+    }
     @media (prefers-reduced-motion: reduce) {
       html.is-lensing .wrap { pointer-events: auto; }
       html.is-lensing .wrap .prose,
@@ -3005,8 +3058,9 @@
     Back to normal
   </button>
   <div class="bh-ghost-ui" id="bh-ghost-ui" aria-hidden="true"></div>
+  <svg class="bh-lens-chains" id="bh-lens-chains" aria-hidden="true"></svg>
   <div class="bh-lens-rude" id="bh-lens-rude" role="status" aria-live="polite" aria-hidden="true">
-    well that was awfully rude
+    <span class="bh-lens-rude-text">well that was awfully rude</span>
   </div>
 
   <div class="tip-sing" id="tip-singularity" aria-hidden="true">
@@ -4717,6 +4771,8 @@
         scrollLocked: false,
         scrollY: 0,
         rudeShown: false,
+        rudeStage: -1,
+        rudeGen: 0,
         hintGhosted: false,
         raf: 0,
         t0: 0,
@@ -5202,24 +5258,145 @@
         }, touch ? 450 : 1200);
       }
 
+      // Escalating taunts after every page ghost is eaten; final :D is chained dead-center
+      const RUDE_CHAIN = [
+        { text: "well that was awfully rude", place: "center" },
+        { text: "C'mon...", place: "bl" },
+        { text: "Hey I'm trying to talk to you", place: "bl" },
+        { text: ":(", place: "bl" },
+        { text: ":((", place: "bl" },
+        { text: ":(((", place: "bl" },
+        { text: ":D", place: "chained" }, // locked in the center — not edible
+      ];
+
+      function clearRudeChains() {
+        const svg = document.getElementById("bh-lens-chains");
+        if (!svg) return;
+        svg.classList.remove("is-on");
+        svg.innerHTML = "";
+        svg.setAttribute("aria-hidden", "true");
+      }
+
+      function drawRudeChains() {
+        const svg = document.getElementById("bh-lens-chains");
+        const rude = document.getElementById("bh-lens-rude");
+        if (!svg || !rude) return;
+        const r = rude.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        // Attach near the box edges toward each corner
+        const anchors = [
+          { x: r.left + 8, y: r.top + 8, ox: 10, oy: 10 },
+          { x: r.right - 8, y: r.top + 8, ox: vw - 10, oy: 10 },
+          { x: r.left + 8, y: r.bottom - 8, ox: 10, oy: vh - 10 },
+          { x: r.right - 8, y: r.bottom - 8, ox: vw - 10, oy: vh - 10 },
+        ];
+        svg.setAttribute("viewBox", `0 0 ${vw} ${vh}`);
+        svg.setAttribute("width", String(vw));
+        svg.setAttribute("height", String(vh));
+        let html = "";
+        anchors.forEach((a) => {
+          html += `<line x1="${a.x}" y1="${a.y}" x2="${a.ox}" y2="${a.oy}" />`;
+          html += `<circle cx="${a.x}" cy="${a.y}" r="3.5" />`;
+          html += `<circle cx="${a.ox}" cy="${a.oy}" r="4.5" />`;
+        });
+        // Soft hub at popup center
+        html += `<circle cx="${cx}" cy="${cy}" r="2.5" />`;
+        svg.innerHTML = html;
+        svg.classList.add("is-on");
+        svg.setAttribute("aria-hidden", "false");
+      }
+
       function hideRudePopup() {
         lens.rudeShown = false;
+        lens.rudeStage = -1;
+        lens.rudeGen = 0;
+        clearRudeChains();
         const rude = document.getElementById("bh-lens-rude");
         if (rude) {
-          rude.classList.remove("is-on");
+          rude.classList.remove("is-on", "is-ghosted", "place-bl", "place-chained");
           rude.setAttribute("aria-hidden", "true");
+          const txt = rude.querySelector(".bh-lens-rude-text");
+          if (txt) txt.textContent = RUDE_CHAIN[0].text;
         }
       }
 
-      function maybeShowRudePopup() {
-        if (lens.rudeShown || !lens.items.length) return;
-        if (!lens.items.every((w) => w.eaten)) return;
-        lens.rudeShown = true;
+      function ghostifyRudePopup() {
         const rude = document.getElementById("bh-lens-rude");
-        if (rude) {
-          rude.classList.add("is-on");
-          rude.setAttribute("aria-hidden", "false");
+        const textEl = rude && rude.querySelector(".bh-lens-rude-text");
+        const ghostUi = document.getElementById("bh-ghost-ui");
+        if (!rude || !textEl || !ghostUi || !lens.on) return;
+        const frag = document.createDocumentFragment();
+        const before = lens.items.length;
+        const ink =
+          getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() ||
+          getComputedStyle(document.documentElement).getPropertyValue("--ink-soft").trim() ||
+          "#1a1f26";
+        appendGhostWordsFrom(textEl, frag, { forceColor: ink });
+        if (lens.items.length <= before) return;
+        for (let i = before; i < lens.items.length; i++) {
+          lens.items[i].fromRude = true;
+          lens.items[i].rudeGen = lens.rudeGen;
         }
+        ghostUi.appendChild(frag);
+        rude.classList.add("is-ghosted");
+      }
+
+      function showRudeStage(stage) {
+        if (stage < 0 || stage >= RUDE_CHAIN.length) return;
+        const step = RUDE_CHAIN[stage];
+        const rude = document.getElementById("bh-lens-rude");
+        if (!rude) return;
+        lens.rudeShown = true;
+        lens.rudeStage = stage;
+        lens.rudeGen += 1;
+        clearRudeChains();
+        rude.classList.remove("is-on", "is-ghosted", "place-bl", "place-chained");
+        const txt = rude.querySelector(".bh-lens-rude-text");
+        if (txt) txt.textContent = step.text;
+        if (step.place === "bl") rude.classList.add("place-bl");
+        if (step.place === "chained") rude.classList.add("place-chained");
+        rude.setAttribute("aria-hidden", "false");
+        // Force reflow so the enter transition runs each stage
+        void rude.offsetWidth;
+        rude.classList.add("is-on");
+        const edible = step.place !== "chained" && !lens.reduceMotion;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (step.place === "chained") drawRudeChains();
+            if (edible) ghostifyRudePopup();
+          });
+        });
+      }
+
+      window.addEventListener(
+        "resize",
+        () => {
+          const rude = document.getElementById("bh-lens-rude");
+          if (rude && rude.classList.contains("place-chained") && rude.classList.contains("is-on")) {
+            drawRudeChains();
+          }
+        },
+        { passive: true }
+      );
+
+      function maybeShowRudePopup() {
+        if (!lens.items.length || lens.reduceMotion) return;
+        // First taunt: every non-rude ghost has been swallowed
+        if (lens.rudeStage < 0) {
+          const pageItems = lens.items.filter((w) => !w.fromRude);
+          if (!pageItems.length || !pageItems.every((w) => w.eaten)) return;
+          showRudeStage(0);
+          return;
+        }
+        // Final chained :D — nowhere left to go
+        if (lens.rudeStage >= RUDE_CHAIN.length - 1) return;
+        const gen = lens.rudeGen;
+        const stageItems = lens.items.filter((w) => w.fromRude && w.rudeGen === gen);
+        if (!stageItems.length || !stageItems.every((w) => w.eaten)) return;
+        showRudeStage(lens.rudeStage + 1);
       }
 
       function pinLens(fromEl) {
