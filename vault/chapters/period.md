@@ -1,0 +1,1 @@
+Orbital period. How long it takes for a orbit to return to the same position. For example, the Earth has a period of 365 days.

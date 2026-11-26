@@ -1,0 +1,1 @@
+Whats left behind when a star dies. In high mass stellar evolution, this typicall a black hole or neutron star.
