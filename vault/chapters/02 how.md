@@ -19,8 +19,8 @@ With these systems there is still a large amount of physics we don't fully under
 :::timeline
 - **Initial binary properties**: Masses, [[period|periods]], mass ratios, and [[eccentricity|eccentricities]] drawn for the birth population.
 - **[[Core collapse]]**: How the [[remnant]] mass is calculated when the iron core collapses.
-- **[[natal kick|Natal Kicks]]**: Maxwellian scale, fallback, inverse-mass, or zero-kick prescriptions.
-- **[[common envelope|Common envelope]] efficiency**: How much orbital energy unbinds the shared envelope (α<sub>CE</sub>).
+- **[[natal kick|Natal Kicks]]**: Kick strength, [[fallback]] amount, edge cases.
+- **[[common envelope|Common envelope]] efficiency**: How much drag is caused by the cores orbiting through the shared envolope. 
 - **[[Metallicity]]**: The Z grid that sets wind strength and which evolutionary paths are available.
 :::
 
