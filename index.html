@@ -2050,8 +2050,8 @@
       transform: translateY(0);
       pointer-events: auto;
     }
-    /* Ghost words lift off the exit label; chrome stays. Label restores after it's eaten. */
-    html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint {
+    /* Only hide the exit label while its glyphs are ghosted (avoids double text) */
+    html.bh-lens-pinned.bh-lens-lifted .bh-lens-hint.is-ghosted {
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
     }
@@ -2243,10 +2243,12 @@
     .bh-lens-rude.place-chained.is-leaving-bottom {
       transform: translate(-50%, 100vh) scale(0.96);
     }
-    /* Ghosted rude copy lifts into #bh-ghost-ui (above this chrome) */
-    html.bh-lens-lifted .bh-lens-rude.is-ghosted .bh-lens-rude-text {
-      color: transparent;
-      -webkit-text-fill-color: transparent;
+    /* Ghosted / leaving rude copy stays invisible in the chrome (ghosts live in #bh-ghost-ui) */
+    html.bh-lens-lifted .bh-lens-rude.is-ghosted .bh-lens-rude-text,
+    html.bh-lens-lifted .bh-lens-rude[class*="is-leaving-"] .bh-lens-rude-text {
+      color: transparent !important;
+      -webkit-text-fill-color: transparent !important;
+      visibility: hidden;
     }
     .bh-lens-chains {
       position: fixed;
@@ -4923,7 +4925,7 @@
         lens.items = [];
         lens.hintGhosted = false;
         const hint = document.getElementById("bh-lens-hint");
-        if (hint) hint.classList.remove("is-label-restored");
+        if (hint) hint.classList.remove("is-label-restored", "is-ghosted");
       }
 
       function appendGhostWordsFrom(root, frag, { max = 520, forceColor = null, items = lens.items } = {}) {
@@ -5009,6 +5011,7 @@
         const hint = document.getElementById("bh-lens-hint");
         const ghostUi = document.getElementById("bh-ghost-ui");
         if (!hint || !ghostUi || !lens.on) return;
+        hint.classList.remove("is-label-restored");
         const frag = document.createDocumentFragment();
         const before = lens.items.length;
         // Sample color before transparent class fully wins
@@ -5018,6 +5021,7 @@
         appendGhostWordsFrom(hint, frag, { forceColor: ink });
         if (lens.items.length > before) {
           ghostUi.appendChild(frag);
+          hint.classList.add("is-ghosted");
           lens.hintGhosted = true;
         }
       }
@@ -5123,7 +5127,10 @@
         const hintItems = lens.items.filter((w) => w.fromHint);
         if (!hintItems.length || !hintItems.every((w) => w.eaten)) return;
         const hint = document.getElementById("bh-lens-hint");
-        if (hint) hint.classList.add("is-label-restored");
+        if (hint) {
+          hint.classList.remove("is-ghosted");
+          hint.classList.add("is-label-restored");
+        }
         lens.hintGhosted = false;
       }
 
@@ -5554,9 +5561,11 @@
         const next = lens.rudeStage + 1;
         lens.rudeAdvancing = true;
         clearRudeTimer();
-        // Empty chrome slides off the way it came in
+        // Empty chrome slides off the way it came in — keep label hidden (don't un-ghost)
         if (rude) {
-          rude.classList.remove("is-ghosted", ...RUDE_LEAVE_CLASSES);
+          rude.classList.remove(...RUDE_LEAVE_CLASSES);
+          const txt = rude.querySelector(".bh-lens-rude-text");
+          if (txt) txt.textContent = "";
           rude.classList.add(`is-leaving-${cur.from || "top"}`);
         }
         lens.rudeTimer = setTimeout(() => {
@@ -5584,7 +5593,8 @@
         if (!lens.items.length || lens.reduceMotion) return;
         // First taunt: every non-rude ghost has been swallowed
         if (lens.rudeStage < 0) {
-          const pageItems = lens.items.filter((w) => !w.fromRude);
+          // Page copy only — exit-hint glyphs are optional snacks
+          const pageItems = lens.items.filter((w) => !w.fromRude && !w.fromHint);
           if (!pageItems.length || !pageItems.every((w) => w.eaten)) return;
           showRudeStage(0);
           return;
@@ -5607,7 +5617,7 @@
         clearFrom(0);
         const hint = document.getElementById("bh-lens-hint");
         if (hint) {
-          hint.classList.remove("is-label-restored");
+          hint.classList.remove("is-label-restored", "is-ghosted");
           hint.setAttribute("aria-hidden", "false");
         }
         // Desktop: ghost the label so the BH can eat it; chrome stays; label restores after
