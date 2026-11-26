@@ -1,49 +1,53 @@
 # Tip-nest singularity gag
 
-Easter egg when glossary tips nest **6 deep** (depths `0…5`). A black hole forms on the deepest tip, pulls the tip stack and the whole page into a point, vanishes with a flash + sparkles, holds on a black void for **5 seconds**, then the page fades back.
+Easter egg when glossary tips nest **4 deep** (depths `0…3`). A black hole forms on the deepest tip; page + tip copy lifts into **word ghosts** (same idea as the lens gag) and slowly drifts into the singularity. When leftovers finish collapsing: flash + sparkles, **5s** black void, then the page fades back.
 
-Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag ([lens.md](./lens.md)).
+Lives in `initNestedTips` (`index.html`). Separate from the cursor BH lens gag ([lens.md](./lens.md)); exits lens first if active.
 
 ## Trigger
 
 | Condition | Result |
 |-----------|--------|
-| `showTip` opens a bubble with `depth >= 5` | `triggerTipSingularity(bubble)` |
+| `showTip` opens a bubble with `depth >= 3` | `triggerTipSingularity(bubble)` |
 | Already mid-singularity (`singularity.busy`) | Tips ignored |
-| `prefers-reduced-motion` | Skip pull/flash; black void → restore after 5s |
+| `prefers-reduced-motion` | Skip ghosts; black void → restore after 5s |
 
-Depth is 0 for a page tip; each nest inside a `.tip-bubble` adds 1. Six open tips in a chain → boom.
+Depth is 0 for a page tip; each nest inside a `.tip-bubble` adds 1. Four open tips in a chain → boom.
 
 ## Timeline (motion on)
 
-1. **Form** (~0.5s) — BH appears on the tip (`is-sing-form`).
-2. **Pull** (~1.9s) — `.wrap` + `#tip-layer` spiral/scale into `--sing-x/y`; BH grows (`is-sing-pull`).
-3. **Collapse** — BH shrinks to a point (`is-sing-collapse`); white flash + spark particles (`is-sing-flash`, `is-sing-spark`); tips cleared.
-4. **Void** — full black (`is-sing-void`) for `SING_VOID_MS` (5000).
-5. **Return** — void fades, page opacity restores (`is-sing-return` / `is-sing-return-show`); classes cleaned in `finishSingularity()`.
+1. **Form + lift** (~2.2s) — BH appears on the tip; ghosts built from `.wrap` + `#tip-layer`; real text/media go transparent (`is-sing-form`, `is-sing-lifted`).
+2. **Pull** (~14s) — RAF drifts ghosts toward the fixed singularity; near words fall in first; BH grows from pull + feed-on-eat (ease-in so it starts gentle).
+3. **Finish** (~2.2s) — Remaining glyphs yank in; BH collapses (`is-sing-collapse`).
+4. **Flash / sparkle** — white flash + outward sparks; tips cleared; ghosts destroyed.
+5. **Void** — full black (`is-sing-void`) for `SING_VOID_MS` (5000).
+6. **Return** — void fades, page opacity restores; `finishSingularity()` cleans classes.
 
 ## DOM / CSS
 
 | Id / class | Role |
 |------------|------|
 | `#tip-singularity` | Fixed overlay root (`z-index` 12000). |
-| `#tip-sing-bh` | Stationary tip BH (photon ring + horizon). |
-| `#tip-sing-sparks` | Sparkle dots flying outward at flash. |
-| `#tip-sing-flash` | Full-screen white flash. |
-| `#tip-sing-void` | Black hold screen. |
-| `html.is-singularity` (+ phase classes) | Orchestrates transforms / visibility. |
-| `--sing-x` / `--sing-y` | Transform origin (CSS px). |
+| `#tip-sing-ghost` | Word/block ghosts (reuses `.bh-ghost-word` / `.bh-ghost-block`). |
+| `#tip-sing-bh` | Stationary tip BH (photon ring + horizon); scale driven in JS. |
+| `#tip-sing-sparks` | Sparkle dots at flash. |
+| `#tip-sing-flash` / `#tip-sing-void` | Flash + black hold. |
+| `html.is-singularity.is-sing-lifted` | Page/tip copy → transparent; media opacity 0; ghosts visible. |
 | `--sing-px` / `--sing-py` | BH + spark anchor. |
 
 ## Knobs
 
 | Constant | Meaning |
 |----------|---------|
-| `SING_TRIGGER_DEPTH` | `5` → 6th tip |
+| `SING_TRIGGER_DEPTH` | `3` → 4th tip |
+| `SING_FORM_MS` | BH form / soft start (~2200) |
+| `SING_PULL_MS` | Main ghost-pull duration (~14000) |
+| `SING_FINISH_MS` | Final yank into the hole (~2200) |
 | `SING_VOID_MS` | Black-screen hold (5000) |
 
-If the cursor lens gag is active, singularity calls `exitPinnedLens()` first.
+Ghost builder shares `appendGhostWordsFrom(..., { items })` with the lens gag.
 
 ## Changelog
 
-- **2026-11-26** — Initial: 6-deep tip nest → BH swallow, flash/sparkle, 5s void, page restore.
+- **2026-11-26** — Word-ghost pull (lens-style), trigger at 4 deep, much slower form/pull/finish.
+- **2026-11-26** — Initial: 6-deep tip nest → CSS scale swallow, flash/sparkle, 5s void.
