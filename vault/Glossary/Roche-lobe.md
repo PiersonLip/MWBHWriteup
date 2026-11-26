@@ -1,5 +1,6 @@
 ---
 title: "Roche-lobe"
+image: assets/roche-lobe.svg
 ---
 
 # Roche-lobe

@@ -1190,6 +1190,12 @@
       height: auto;
       border-radius: 6px;
     }
+    /* Diagram SVGs (e.g. Roche lobe) are drawn for light paper */
+    .tip-bubble.tip-has-image img[src$=".svg"] {
+      background: #f4f6f9;
+      padding: 0.35rem;
+      box-sizing: border-box;
+    }
     .tip-bubble.tip-has-image:has(.tip-cap) img {
       margin-bottom: 0.35rem;
     }
@@ -1951,7 +1957,7 @@
 
       <div class="prose">
         <p>
-          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="An incredibly dense remnant of a massive star. Also does weird things with light.">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> and the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses." data-viz="gw">gravitational waves</span> by <span class="tip" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy.">LIGO/Virgo/KAGRA</span>.
+          The Milky Way has <strong>hundreds of millions</strong> of stellar-mass<sup class="fn-ref" id="fnref-why-1" data-fn-id="1"><a href="#fn-why-1">1</a></sup> <span class="tip" tabindex="0" data-tip="An incredibly dense remnant of a massive star formed in a supernova. Also does weird things with light.">black holes</span><sup class="fn-ref" id="fnref-why-census" data-fn-id="census"><a href="#fn-why-census">2</a></sup>. Yet almost none of them are visible. Until recently we were only aware of the bright ones sitting in <span class="tip tip-image" tabindex="0" data-tip="A binary where a black hole or neutron star steals gas from a companion. This stolen in-falling gas heats up and shines in X-rays." data-image="assets/xrb.jpg">X-ray binaries</span> and the ones that are detected via <span class="tip tip-viz" tabindex="0" data-tip="Ripples in spacetime from accelerating masses." data-viz="gw">gravitational waves</span> by <span class="tip" tabindex="0" data-tip="Gravitational-wave detectors. They catch black hole mergers outside our Galaxy.">LIGO/Virgo/KAGRA</span>.
         </p>
         <p>
           However, that is rapidly changing. So far <span class="tip" tabindex="0" data-tip="ESA&#x27;s space observatory that measures the precise positions and motions of stars. Great at finding quiet black holes tugging on a visible companion.">Gaia</span> has already confirmed three quiet black holes with bright companions and <span class="tip" tabindex="0" data-tip="An upcoming data-release from Gaia, estimated to be 400TB and containing data on at least 2 billion stars.">Gaia DR4</span> is expected to have dozens more measured BH binaries, <span class="tip" tabindex="0" data-tip="NASA&#x27;s Nancy Grace Roman Space Telescope. Expected to find large quantities of black holes through gravitational microlensing.">Roman</span> should detect hundreds more isolated<sup class="fn-ref" id="fnref-why-3" data-fn-id="3"><a href="#fn-why-3">3</a></sup> ones. Thus the question is quickly shifting from <em>"can we find them?"</em> to <em>"how did they get there?"</em>
@@ -1992,7 +1998,7 @@
       <div class="timeline">
         <div class="step">
           <strong>Initial binary properties</strong>
-          <span>Masses, periods, mass ratios, and <span class="tip tip-viz" tabindex="0" data-tip="How stretched from a circle an orbit is where e = 0 is a perfect circle. Any bound orbit sits between 0 and 1." data-viz="eccentricity">eccentricities</span> drawn for the birth population.</span>
+          <span>Masses, periods, mass ratios, and <span class="tip" tabindex="0" data-tip="How elliptical an orbit is.s">eccentricities</span> drawn for the birth population.</span>
         </div>
         <div class="step">
           <strong><span class="tip" tabindex="0" data-tip="The end of a massive star where the iron core collapses. This leaves a neutron star, a black hole, or sometimes nothing.">Core collapse</span></strong>
@@ -2340,7 +2346,7 @@
 <div class="figure" id="micro">
         <p class="figure-cap">Interactive · Single-lens microlensing (schematic)</p>
         <h3>How a dark lens brightens a background star</h3>
-        <p class="hint">Both views share the same event. Drag the 3D panel to orbit, pinch or scroll to zoom, or open fullscreen. Blue/red arcs are the lensed images.</p>
+        <p class="hint">Both views share the same event. Drag the 3D panel to orbit, scroll to zoom, or open fullscreen. Blue/red arcs are the lensed images.</p>
         <div class="micro-layout">
           <div class="controls">
             <div class="control">
@@ -3295,6 +3301,8 @@
           "The radius around a star in a binary where it can hold onto its own mass. Past this radius, mass will no longer be bound to that star."
         );
       }
+      tipImages.set("roche-lobe", "assets/roche-lobe.svg");
+      tipImages.set("roche lobe", "assets/roche-lobe.svg");
       // Nested / inline GW viz tip (Gravitational-wave only — not LIGO/Virgo/KAGRA)
       // Tip text comes from the vault / data-tip; only wire the canvas here.
       ["gravitational-wave", "gravitational wave", "gravitational waves"].forEach((k) => {
