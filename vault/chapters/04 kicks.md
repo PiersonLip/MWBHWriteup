@@ -21,6 +21,6 @@ title: Post-natal kick: bound or disrupted?
 hint: Shows the pre-supernova orbit, collapse of one component, and how the kick reshapes (or unbinds) the orbit.
 :::
 
-[^1]: Lower remnant mass means a larger kick velocity for the same impulse (as in the inverse-mass prescription).
+[^1]: Lower remnant mass means a larger kick velocity for the same kick strength.
 
 [^2]: When people typically think of supernovae, we naively generally think of a radially symmetric explosion coming from the star. However in reality these explosions are typically stronger in one direction, causing a kick from the "recoil" in the opposite direction.
