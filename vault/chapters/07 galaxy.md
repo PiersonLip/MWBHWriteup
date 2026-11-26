@@ -39,6 +39,6 @@ title: A disrupted binary's path through the Milky Way
 hint: Phases: birth → pre-supernova → kick → BH and companion paths.
 :::
 
-[^1]: To model the Milky Way we split it into three components; these are different from the standard 3 components of the MW (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exclude the halo, as while there *are* stars there, they form an incredibly small fraction of the whole population.
+[^1]: To model the Milky Way we split it into three components; these are different from the standard [[3 components of the Milky Way]] (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exclude the halo, as while there *are* stars there, they form an incredibly small fraction of the whole population.
 
 [^2]: Meaning one of the stars in the binary goes supernova.
