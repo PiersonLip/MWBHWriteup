@@ -1,7 +1,7 @@
 ---
 id: observe
 label: 06 · Observational properties
-title: What Gaia and Roman see
+title: What we actually see
 ---
 
 # What Gaia and Roman see
@@ -24,7 +24,7 @@ hint: Both views share the same event. Drag the 3D panel to orbit, scroll to zoo
 :::
 
 :::prose
-**Roman microlensing of BH-BH lenses.** Roman's bulge survey is built for this kind of event — including lenses that are themselves binaries. After parking populations in a Galactic model and doing a simple Einstein-radius cut, about **~10%** of bulge-pointed detached BH-BH systems land in the sweet spot for binary-lens signatures (0.7 < θ<sub>sep</sub>/θ̃<sub>E</sub> < 1.8). If you can get component masses, the low-mass stable-MT pile-up and the ~13 M☉ wind feature become real observational tests.
+**Roman sensitivity microlensing of BH-BH lenses.** Roman's bulge survey is built for this kind of event — including lenses that are themselves binaries. After parking populations in a Galactic model and doing a simple Einstein-radius cut, about **~10%** of bulge-pointed detached BH-BH systems land in the sweet spot for binary-lens signatures (0.7 < θ<sub>sep</sub>/θ̃<sub>E</sub> < 1.8). If you can get component masses, the low-mass stable-MT pile-up and the ~13 M☉ wind feature become real observational tests.
 
 These are intentionally rough links. Real survey forecasts need selection functions (gaiamock, PopSyCLE, and friends) on top of the kinematically evolved catalogs the paper already built.
 :::
