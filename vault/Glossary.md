@@ -39,6 +39,7 @@ Hover text on the site comes from the note body (after the title).
 - [[Wolf-Rayet]]
 - [[X-ray binaries]] — image tip (`assets/xrb.jpg`)
 - [[ZAMS]]
+- [[3 components of the Milky Way]] — tip canvas (`viz: mw-components`): bulge, disk, halo
 - [[envelope]] — tip canvas (`viz: envelope`)
 - [[eccentricity]] — tip canvas (`viz: eccentricity`): e=0 vs e=0.5 binary orbits
 - [[ESA]]

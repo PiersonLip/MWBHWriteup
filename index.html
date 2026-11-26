@@ -769,7 +769,8 @@
       .tip-bubble.tip-has-viz .tip-gw-viz,
       .tip-bubble.tip-has-viz .tip-ecc-viz,
       .tip-bubble.tip-has-viz .tip-env-viz,
-      .tip-bubble.tip-has-viz .tip-ce-viz {
+      .tip-bubble.tip-has-viz .tip-ce-viz,
+      .tip-bubble.tip-has-viz .tip-mw-viz {
         max-height: min(42vh, 280px);
       }
       .tip {
@@ -1426,7 +1427,8 @@
       padding: 0 0.15rem 0.12rem;
     }
     .tip-bubble.tip-has-viz .tip-env-viz,
-    .tip-bubble.tip-has-viz .tip-ce-viz {
+    .tip-bubble.tip-has-viz .tip-ce-viz,
+    .tip-bubble.tip-has-viz .tip-mw-viz {
       display: block;
       position: relative;
       width: 100%;
@@ -1442,6 +1444,13 @@
       width: 100%;
       height: auto;
       aspect-ratio: 1 / 1;
+      vertical-align: top;
+    }
+    .tip-bubble.tip-has-viz .tip-mw-viz canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 5 / 3;
       vertical-align: top;
     }
     .tip-bubble.tip-has-viz .tip-ecc-viz {
@@ -2205,7 +2214,7 @@
           For the formation of isolated black holes, <strong>stellar mergers</strong> are the most common (42% of all BHs): this happens stars drift closer and closer together until they merge into one (often after a failed <span class="tip tip-viz" tabindex="0" data-tip="A phase of binary star evolution where both stars share one mutual envelope. The friction caused by the cores of the stars orbiting through this envelope greatly reduces their orbits, often leading to mergers." data-viz="common-envelope">common envelope</span>), the merger product later collapsing into a black hole. <strong>Disrupted binaries</strong> come next (27%): these are black holes where a <span class="tip" tabindex="0" data-tip="An extra shove that a newborn neutron star or black hole can get from an asymmetric supernova.">natal kick</span> and/or sudden mass loss rips the binary apart, sending the black hole flying through our Milky Way. This can happen at the when either of the stars go supernova. Stars born single, BH+star mergers, and rare <span class="tip" tabindex="0" data-tip="Double compact object: BH-BH, BH-NS, NS-NS, or similar pairs. If they are tight enough, gravitational-wave emission can drive them to merge.">DCO</span> mergers make up the rest.
         </p>
         <p>
-          The binary systems that survive are unique in their own right. <span class="tip" tabindex="0" data-tip="Not transfering mass through Roche-lobe overflow currently.">Detached</span> <strong>BH-BH</strong> systems alone are ~19% of all BHs. BH+NS, BH+WD, and BH+star systems together are only a few percent, yet this few percent are really the only ones we've observed so far.
+          The binary systems that survive are unique in their own right. <span class="tip" tabindex="0" data-tip="Not transfering mass through Roche-lobe overflow currently.">Detached</span> <strong><span class="tip" tabindex="0" data-tip="binary black hole system. I.e. two black holes orbiting each other.">BH-BH</span></strong> systems alone are ~19% of all BHs. <span class="tip" tabindex="0" data-tip="A binary consisting of a black hole and a nuetron star.">BH+NS</span>, <span class="tip" tabindex="0" data-tip="A binary consiting of a black hole and white dwarf">BH+WD</span>, and BH+star systems together are only a few percent, yet this few percent are really the only ones we've observed so far.
         </p>
       </div>
 
@@ -2238,9 +2247,9 @@
       </div>
 
 <div class="figure">
-        <p class="figure-cap">Instantaneous post-SN 2-body orbit</p>
+        <p class="figure-cap">Post-supernova 2-body orbit</p>
         <h3>Post-natal kick: bound or disrupted?</h3>
-        <p class="hint">Shows the pre-supernova orbit, collapse of one component, and how the kick reshapes (or unbinds) the orbit.</p>
+        <p class="hint">Shows the pre-supernova orbit, the collapse of one component, and how the kick effects the orbit.</p>
         <div class="grid-2">
           <div class="controls">
             <div class="control">
@@ -2475,7 +2484,7 @@
       <section class="footnotes" id="footnotes-galaxy">
         <h3>Notes</h3>
         <ol>
-          <li id="fn-galaxy-1" value="1" data-fn-id="1"><span class="fn-text">To model the Milky Way we split it into three components; these are different from the standard 3 components of the Milky Way (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exclude the halo, as while there <em>are</em> stars there, they form an incredibly small fraction of the whole population.</span> <a href="#fnref-galaxy-1" class="fn-back" title="Back to text">↩</a></li>
+          <li id="fn-galaxy-1" value="1" data-fn-id="1"><span class="fn-text">To model the Milky Way we split it into three components; these are different from the standard <span class="tip tip-viz" tabindex="0" data-tip="The classic stellar structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo." data-viz="mw-components">3 components of the Milky Way</span> (bulge, disk, halo). Instead we model two types of disk (a high metallicity and low metallicity) and the bulge. We can largely exclude the halo, as while there <em>are</em> stars there, they form an incredibly small fraction of the whole population.</span> <a href="#fnref-galaxy-1" class="fn-back" title="Back to text">↩</a></li>
           <li id="fn-galaxy-2" value="2" data-fn-id="2"><span class="fn-text">Meaning one of the stars in the binary goes supernova.</span> <a href="#fnref-galaxy-2" class="fn-back" title="Back to text">↩</a></li>
         </ol>
       </section>
@@ -3117,6 +3126,143 @@
       ceTipState.raf = requestAnimationFrame(loop);
     }
 
+    // Tip viz: Milky Way bulge + disk + halo (edge-on schematic)
+    // ═══════════════════════════════════════════
+    const mwTipState = { raf: 0, last: 0, t: 0 };
+
+    function paintMwComponentsTip(canvas, t) {
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.clientWidth || 360;
+      const H = canvas.clientHeight || 216;
+      if (canvas.width !== Math.floor(W * dpr) || canvas.height !== Math.floor(H * dpr)) {
+        canvas.width = Math.floor(W * dpr);
+        canvas.height = Math.floor(H * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#0a0e16";
+      ctx.fillRect(0, 0, W, H);
+
+      const cx = W * 0.46;
+      const cy = H * 0.52;
+      const s = Math.min(W, H);
+      const pulse = 0.5 + 0.5 * Math.sin(t * 0.9);
+
+      // Halo — large sparse sphere
+      const rHalo = s * 0.46;
+      const halo = ctx.createRadialGradient(cx, cy, rHalo * 0.15, cx, cy, rHalo);
+      halo.addColorStop(0, `rgba(160, 185, 230, ${0.1 + 0.04 * pulse})`);
+      halo.addColorStop(0.55, `rgba(120, 145, 190, ${0.07 + 0.03 * pulse})`);
+      halo.addColorStop(1, "rgba(100, 120, 160, 0)");
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rHalo, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = `rgba(170, 195, 230, ${0.22 + 0.08 * pulse})`;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3.5, 3.5]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, rHalo * 0.92, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Disk — thin edge-on ellipse
+      const diskRx = s * 0.48;
+      const diskRy = s * 0.055;
+      ctx.save();
+      ctx.translate(cx, cy);
+      const diskGrad = ctx.createLinearGradient(-diskRx, 0, diskRx, 0);
+      diskGrad.addColorStop(0, "rgba(240, 200, 120, 0)");
+      diskGrad.addColorStop(0.18, "rgba(235, 185, 100, 0.55)");
+      diskGrad.addColorStop(0.5, "rgba(255, 220, 150, 0.9)");
+      diskGrad.addColorStop(0.82, "rgba(235, 185, 100, 0.55)");
+      diskGrad.addColorStop(1, "rgba(240, 200, 120, 0)");
+      ctx.fillStyle = diskGrad;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, diskRx, diskRy, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // thin dust lane
+      ctx.strokeStyle = "rgba(40, 28, 18, 0.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-diskRx * 0.92, 0);
+      ctx.lineTo(diskRx * 0.92, 0);
+      ctx.stroke();
+      ctx.restore();
+
+      // Bulge — central rounder component
+      const bulgeRx = s * 0.11;
+      const bulgeRy = s * 0.095;
+      const bulge = ctx.createRadialGradient(
+        cx - bulgeRx * 0.25,
+        cy - bulgeRy * 0.3,
+        0,
+        cx,
+        cy,
+        bulgeRx
+      );
+      bulge.addColorStop(0, "#ffe8b8");
+      bulge.addColorStop(0.4, "#f0c878");
+      bulge.addColorStop(0.85, "#c88840");
+      bulge.addColorStop(1, "#8a5528");
+      ctx.fillStyle = bulge;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, bulgeRx, bulgeRy, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Labels
+      ctx.font = '600 0.7rem "Fraunces", Georgia, serif';
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.lineWidth = 1;
+
+      ctx.fillStyle = "rgba(200, 215, 240, 0.95)";
+      ctx.strokeStyle = "rgba(170, 195, 230, 0.4)";
+      const haloLab = { x: cx + rHalo * 0.55, y: cy - rHalo * 0.72 };
+      ctx.beginPath();
+      ctx.moveTo(cx + rHalo * 0.35, cy - rHalo * 0.55);
+      ctx.lineTo(haloLab.x, haloLab.y);
+      ctx.stroke();
+      ctx.fillText("halo", haloLab.x + 5, haloLab.y);
+
+      ctx.fillStyle = "rgba(255, 230, 180, 0.95)";
+      ctx.strokeStyle = "rgba(240, 200, 120, 0.45)";
+      const diskLab = { x: cx + diskRx * 0.55, y: cy + s * 0.22 };
+      ctx.beginPath();
+      ctx.moveTo(cx + diskRx * 0.55, cy + diskRy * 1.2);
+      ctx.lineTo(diskLab.x, diskLab.y);
+      ctx.stroke();
+      ctx.fillText("disk", diskLab.x + 5, diskLab.y);
+
+      ctx.fillStyle = "rgba(255, 244, 220, 0.95)";
+      ctx.strokeStyle = "rgba(255, 220, 160, 0.45)";
+      const bulgeLab = { x: cx - bulgeRx * 3.2, y: cy - bulgeRy * 2.4 };
+      ctx.beginPath();
+      ctx.moveTo(cx - bulgeRx * 0.5, cy - bulgeRy * 0.7);
+      ctx.lineTo(bulgeLab.x + 28, bulgeLab.y);
+      ctx.stroke();
+      ctx.fillText("bulge", bulgeLab.x, bulgeLab.y);
+    }
+
+    function ensureMwTipAnim() {
+      if (mwTipState.raf) return;
+      mwTipState.last = performance.now();
+      const loop = (now) => {
+        const canvases = document.querySelectorAll(".mw-tip-canvas");
+        if (!canvases.length) {
+          mwTipState.raf = 0;
+          return;
+        }
+        const dt = Math.min(0.05, (now - (mwTipState.last || now)) / 1000);
+        mwTipState.last = now;
+        mwTipState.t += dt;
+        canvases.forEach((c) => paintMwComponentsTip(c, mwTipState.t));
+        mwTipState.raf = requestAnimationFrame(loop);
+      };
+      mwTipState.raf = requestAnimationFrame(loop);
+    }
+
     // ═══════════════════════════════════════════
     // Tip viz: eccentricity — circular vs e=0.5 binary
     // ═══════════════════════════════════════════
@@ -3605,6 +3751,18 @@
       tipViz.set("envelope", "envelope");
       ["common envelope", "common-envelope", "ce"].forEach((k) => tipViz.set(k, "common-envelope"));
       ["eccentricity", "eccentricities", "eccentric"].forEach((k) => tipViz.set(k, "eccentricity"));
+      // Nested from galaxy footnote (standard MW structure tip)
+      if (!glossary.has("3 components of the milky way")) {
+        glossary.set(
+          "3 components of the milky way",
+          "The classic stellar structure of the Milky Way: a central bulge, a thin rotating disk, and a sparse spherical halo."
+        );
+      }
+      [
+        "3 components of the milky way",
+        "three components of the milky way",
+        "bulge, disk, halo",
+      ].forEach((k) => tipViz.set(k, "mw-components"));
 
       if (!glossary.size && !document.querySelector(".fn-ref")) return;
 
@@ -4574,6 +4732,10 @@
           bubble.classList.add("tip-has-viz");
           html += `<div class="tip-ecc-viz"><canvas class="ecc-tip-canvas" width="420" height="236" aria-hidden="true"></canvas></div>`;
           html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
+        } else if (vizId === "mw-components") {
+          bubble.classList.add("tip-has-viz");
+          html += `<div class="tip-mw-viz"><canvas class="mw-tip-canvas" width="400" height="240" aria-hidden="true"></canvas></div>`;
+          html += `<span class="tip-cap">${linkify(tipText, skipKey)}</span>`;
         } else if (imgSrc) {
           bubble.classList.add("tip-has-image");
           html += `<img src="${escHtml(imgSrc)}" alt="" loading="eager" decoding="async"/>`;
@@ -4605,6 +4767,9 @@
         }
         if (vizId === "eccentricity" && typeof ensureEccTipAnim === "function") {
           requestAnimationFrame(() => ensureEccTipAnim());
+        }
+        if (vizId === "mw-components" && typeof ensureMwTipAnim === "function") {
+          requestAnimationFrame(() => ensureMwTipAnim());
         }
       }
 
@@ -5696,7 +5861,7 @@
     // ═══════════════════════════════════════════
     const channels = [
       { id: "merger", name: "Stellar mergers", pct: 42, color: "#1f4f9c", colorDark: "#5a8fd4", group: "isolated",
-        detail: "Two normal stars merge (often after a failed CE), then the leftover collapses to a BH. Biggest isolated channel." },
+        detail: "Two normal stars merge (often after a failed common envolope), then the leftover collapses to a black hole. This is the most Biggest isolated channel." },
       { id: "disrupt", name: "Disrupted binaries", pct: 27, color: "#c2472a", colorDark: "#e07058", group: "isolated",
         detail: "The binary comes unbound at the first or second collapse when the kick and/or mass loss push the energy positive." },
       { id: "single", name: "Initially single", pct: 4, color: "#5b7a9a", colorDark: "#7a94b0", group: "isolated",
