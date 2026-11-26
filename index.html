@@ -4373,6 +4373,7 @@
         items: [],
         tips: [], // { el, cx, cy, dx, dy }
         shrinkFrom: 1,
+        liveScale: 1,
         reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
       };
       const lens = {
@@ -5420,7 +5421,7 @@
       function singSwallow(w) {
         if (w.eaten) return;
         w.eaten = true;
-        singularity.feedTarget = Math.min(3.2, singularity.feedTarget + 0.018);
+        singularity.feedTarget = Math.min(1.2, singularity.feedTarget + 0.006);
         w.el.style.transition = "opacity 0.18s ease, transform 0.18s ease";
         w.el.style.opacity = "0";
         w.el.style.transform = `translate3d(${singularity.cx - (w.rw || 0)}px, ${singularity.cy - (w.rh || 0)}px, 0) scale(0.08)`;
@@ -5431,10 +5432,10 @@
       }
 
       function singScale() {
-        singularity.feed += (singularity.feedTarget - singularity.feed) * 0.1;
+        singularity.feed += (singularity.feedTarget - singularity.feed) * 0.08;
         if (singularity.phase === "birth") {
           const u = Math.min(1, (performance.now() - singularity.phaseT0) / SING_BIRTH_MS);
-          return 0.08 + easeInOut(u) * 1.05 + singularity.feed;
+          return 0.08 + easeInOut(u) * 0.95 + singularity.feed;
         }
         if (singularity.phase === "shrink") {
           const u = Math.min(1, (performance.now() - singularity.phaseT0) / SING_SHRINK_MS);
@@ -5442,7 +5443,8 @@
           const e = u * u;
           return Math.max(0.004, singularity.shrinkFrom * (1 - e));
         }
-        const base = 1.05 + easeInOut(Math.min(1, singularity.pull)) * 1.85;
+        // Milder growth with pull — avoid a late-stage size spike
+        const base = 0.95 + easeInOut(Math.min(1, singularity.pull)) * 0.75;
         return base + singularity.feed;
       }
 
@@ -5450,6 +5452,7 @@
         const bh = document.getElementById("tip-sing-bh");
         if (!bh) return;
         const scale = singScale();
+        singularity.liveScale = scale;
         bh.style.transform = `translate3d(${singularity.cx}px, ${singularity.cy}px, 0) scale(${scale})`;
         if (singularity.phase === "shrink") {
           const u = Math.min(1, (performance.now() - singularity.phaseT0) / SING_SHRINK_MS);
@@ -5476,14 +5479,15 @@
           return;
         }
 
-        const scale = singScale();
+        const scale = singularity.liveScale || singScale();
         const yanking = singularity.phase === "yank";
         const yankU = yanking
           ? Math.min(1, (now - singularity.phaseT0) / SING_YANK_MS)
           : 0;
-        const pull = yanking ? 1 : singularity.pull;
-        // Strong gravity: far words still feel it; yank finishes the job
-        const swallowR = Math.max(10, 70 * scale * (yanking ? 1.35 : 1.05));
+        const pull = yanking
+          ? singularity.pull + (1 - singularity.pull) * easeInOut(yankU)
+          : singularity.pull;
+        const swallowR = Math.max(8, 70 * scale * (yanking ? 1.05 : 0.9));
 
         for (const w of singularity.items) {
           if (w.eaten) continue;
@@ -5496,20 +5500,20 @@
           }
           const ux = dx / dist;
           const uy = dy / dist;
-          // Pull almost the full distance as pull→1 (much stronger than before)
+          // Weaker gravity — drift in, don't slam
           const strength = yanking
-            ? easeInOut(yankU)
-            : Math.min(1, Math.pow(pull, 0.55) * 1.05);
+            ? 0.25 + 0.55 * easeInOut(yankU)
+            : Math.min(0.62, Math.pow(Math.max(0, pull), 0.9) * 0.62);
           const travel = dist * strength;
-          const turbAmp = yanking ? 0.08 : 0.22;
+          const turbAmp = yanking ? 0.1 : 0.28;
           const turbX = Math.sin(now * 0.0011 + w.seed) * w.amp * turbAmp * pull;
           const turbY = Math.cos(now * 0.0009 + w.phase) * w.amp * turbAmp * pull;
-          const swirl = Math.sin(now * 0.0007 + w.seed * 1.7) * (3 + 14 * pull) * (yanking ? 0.4 : 1);
+          const swirl = Math.sin(now * 0.0007 + w.seed * 1.7) * (2 + 6 * pull) * (yanking ? 0.35 : 1);
           const x = w.x0 + ux * travel + turbX + (-uy) * swirl;
           const y = w.y0 + uy * travel + turbY + ux * swirl;
           const facing = (Math.atan2(dy, dx) * 180) / Math.PI;
-          const rot = facing * strength * 0.4 + Math.sin(now * 0.0012 + w.seed) * 2.5 * pull;
-          const s = Math.max(0.1, 1 - 0.7 * strength);
+          const rot = facing * strength * 0.28 + Math.sin(now * 0.0012 + w.seed) * 1.8 * pull;
+          const s = Math.max(0.2, 1 - 0.45 * strength);
           w.el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${s})`;
           const curCx = x + (w.rw || 0);
           const curCy = y + (w.rh || 0);
@@ -5560,7 +5564,7 @@
         if (!singularity.busy || singularity.phase === "yank" || singularity.phase === "shrink") return;
         singularity.phase = "yank";
         singularity.phaseT0 = performance.now();
-        singularity.pull = 1;
+        // Keep current pull — yank eases leftovers without a size jump
       }
 
       function beginSingShrink() {
@@ -5569,9 +5573,8 @@
         singularity.items.forEach((w) => {
           if (!w.eaten) singSwallow(w);
         });
-        singularity.pull = 1;
-        singularity.phase = "pull";
-        singularity.shrinkFrom = Math.max(1.2, singScale());
+        // Continue from the live size — don't force pull=1 (that caused a size jerk)
+        singularity.shrinkFrom = Math.max(0.4, singularity.liveScale || 1);
         singularity.phase = "shrink";
         singularity.phaseT0 = performance.now();
         const root = document.documentElement;
@@ -5698,6 +5701,7 @@
         singularity.pull = 0;
         singularity.feed = 0;
         singularity.feedTarget = 0;
+        singularity.liveScale = 1;
         clearSingTimers();
       }
 
@@ -5709,6 +5713,7 @@
         singularity.pull = 0;
         singularity.feed = 0;
         singularity.feedTarget = 0;
+        singularity.liveScale = 1;
         clearHide();
         clearSingTimers();
 
