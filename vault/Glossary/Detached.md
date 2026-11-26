@@ -4,4 +4,4 @@ title: "Detached"
 
 # Detached
 
-Not transferring mass right now. The two objects orbit quietly without an accretion disk.
+Not [[mass transfer|transfering mass]] through [[Roche-lobe overflow]] currently.
