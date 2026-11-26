@@ -26,7 +26,7 @@ Click no longer pins — focus is dwell-only on the lens tip itself (not the par
 | `#bh-lens-hint` | “Back to normal” — solid panel; text transparent when lifted so ghosts show. |
 | `#bh-lens-rude` | Escalating taunts once every page ghost is eaten (edible stages). |
 | `#bh-lens-chains` | Dashed restraints from the final center `:D` popup to the four corners. |
-| `html.is-lensing` | Cursor none (auto when pinned), scroll lock, tip-layer stacking. |
+| `html.is-lensing` | Cursor none (incl. when pinned; exit hint keeps `cursor: pointer`), scroll lock, tip-layer stacking. |
 | `html.bh-lens-lifted` | Page copy → transparent; chrome (buttons etc.) stays; ghosts visible. |
 | `html.bh-lens-pinned` | Focused mode; exit hint visible / clickable. |
 

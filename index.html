@@ -1902,8 +1902,12 @@
     @keyframes bh-spin {
       to { transform: rotate(360deg); }
     }
-    html.is-lensing {
+    html.is-lensing,
+    html.is-lensing.bh-lens-pinned,
+    html.bh-lens-pinned {
       cursor: none;
+    }
+    html.is-lensing {
       overflow: hidden;
       overscroll-behavior: none;
     }
@@ -1912,7 +1916,6 @@
       overscroll-behavior: none;
       touch-action: none;
     }
-    html.is-lensing.bh-lens-pinned { cursor: auto; }
     html.is-lensing .bh-core { opacity: 1; }
     /* Keep UI chrome; blank copy only after ghosts start moving (no start-frame jump) */
     html.is-lensing .wrap {
