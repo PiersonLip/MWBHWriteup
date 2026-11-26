@@ -5969,6 +5969,7 @@
       hoverGC: false,
       focus: null, // { type: 'gc'|'cluster', id, label }
       focusAnim: null,
+      gcVig: 0, // 0..1 vignette strength for GC zoom
       sgrT: 0,
       ptrDown: null,
     };
@@ -6253,6 +6254,8 @@
         from: galCamSnapshot(),
         to,
         after: focus,
+        vigFrom: gal.gcVig,
+        vigTo: focus.type === "gc" ? 1 : 0,
       };
       gal.focus = focus;
       galInteract();
@@ -6272,17 +6275,27 @@
           pitch: GAL_HOME.pitch,
         },
         after: null,
+        vigFrom: gal.gcVig,
+        vigTo: 0,
       };
       galInteract();
     }
 
     function stepGalFocusAnim(now) {
-      if (!gal.focusAnim) return;
+      if (!gal.focusAnim) {
+        gal.gcVig = gal.focus && gal.focus.type === "gc" ? 1 : 0;
+        return;
+      }
       const u = Math.min(1, (now - gal.focusAnim.t0) / gal.focusAnim.dur);
+      const e = u * u * (3 - 2 * u); // smoothstep with the camera zoom
       applyGalCam(lerpGalCam(gal.focusAnim.from, gal.focusAnim.to, u));
+      const vf = gal.focusAnim.vigFrom ?? 0;
+      const vt = gal.focusAnim.vigTo ?? 0;
+      gal.gcVig = vf + (vt - vf) * e;
       if (u >= 1) {
         gal.focus = gal.focusAnim.after;
         gal.focusAnim = null;
+        gal.gcVig = gal.focus && gal.focus.type === "gc" ? 1 : 0;
       }
     }
 
@@ -6309,12 +6322,15 @@
 
     function drawSgrFocus(ctx, w, h) {
       const t = gal.sgrT;
-      // Soft vignette so the GC zoom reads as a local scene
-      const vig = ctx.createRadialGradient(w * 0.5, h * 0.52, h * 0.08, w * 0.5, h * 0.52, h * 0.55);
-      vig.addColorStop(0, "rgba(10,12,18,0)");
-      vig.addColorStop(1, "rgba(8,10,16,0.35)");
-      ctx.fillStyle = vig;
-      ctx.fillRect(0, 0, w, h);
+      // Soft vignette so the GC zoom reads as a local scene (fades with focus anim)
+      const va = Math.max(0, Math.min(1, gal.gcVig));
+      if (va > 0.01) {
+        const vig = ctx.createRadialGradient(w * 0.5, h * 0.52, h * 0.08, w * 0.5, h * 0.52, h * 0.55);
+        vig.addColorStop(0, "rgba(10,12,18,0)");
+        vig.addColorStop(1, `rgba(8,10,16,${0.35 * va})`);
+        ctx.fillStyle = vig;
+        ctx.fillRect(0, 0, w, h);
+      }
 
       // Orbital trails
       for (const star of SGR_STARS) {
