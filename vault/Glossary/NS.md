@@ -1,8 +1,9 @@
 ---
-title: "neutron star"
+title: neutron star
 aliases:
   - NS
   - neutron stars
+  - neutron star
 ---
 
 # neutron star
