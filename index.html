@@ -6518,7 +6518,7 @@
       }
       const gcHit = Math.hypot(gal.mouseX - gc.X, gal.mouseY - gc.Y) < (gcFocused ? 28 : 16);
       gal.hoverGC = gcHit && !gal.hoverCluster;
-      if ((gal.hoverGC || gcFocused) && !gal.hoverCluster) {
+      if (gal.hoverGC && !gcFocused && !gal.hoverCluster) {
         const label = "Galactic center";
         const hint = "Sgr A*";
         ctx.font = "600 12px IBM Plex Mono";
