@@ -2202,42 +2202,40 @@
     .bh-lens-rude.place-chained.from-bottom.from-pending {
       transform: translate(-50%, 100vh) scale(0.96);
     }
-    /* Slide empty chrome back off-screen (reverse of enter) — must beat resting .is-on rules */
-    .bh-lens-rude.is-on.is-leaving-left {
-      opacity: 0;
-      transform: translate(calc(-100vw - 2rem), 0) scale(0.96);
+    /* Slide empty chrome back off-screen (reverse of enter). Stay opaque while sliding. */
+    .bh-lens-rude.is-on[class*="is-leaving-"] {
+      opacity: 1;
       pointer-events: none;
     }
-    .bh-lens-rude.place-center.is-on.is-leaving-left,
-    .bh-lens-rude.place-chained.is-on.is-leaving-left {
-      transform: translate(calc(-100vw - 2rem), -50%) scale(0.96);
+    /* Corner / edge resting poses use translate(0,0) — leave in the enter direction */
+    .bh-lens-rude.is-on.is-leaving-left {
+      transform: translate(calc(-100vw - 2rem), 0) scale(0.96) !important;
     }
     .bh-lens-rude.is-on.is-leaving-right {
-      opacity: 0;
-      transform: translate(calc(100vw + 2rem), 0) scale(0.96);
-      pointer-events: none;
+      transform: translate(calc(100vw + 2rem), 0) scale(0.96) !important;
+    }
+    .bh-lens-rude.is-on.is-leaving-top {
+      transform: translate(0, calc(-100vh - 2rem)) scale(0.96) !important;
+    }
+    .bh-lens-rude.is-on.is-leaving-bottom {
+      transform: translate(0, calc(100vh + 2rem)) scale(0.96) !important;
+    }
+    /* Centered poses keep the -50% centering while exiting */
+    .bh-lens-rude.place-center.is-on.is-leaving-left,
+    .bh-lens-rude.place-chained.is-on.is-leaving-left {
+      transform: translate(calc(-100vw - 2rem), -50%) scale(0.96) !important;
     }
     .bh-lens-rude.place-center.is-on.is-leaving-right,
     .bh-lens-rude.place-chained.is-on.is-leaving-right {
-      transform: translate(calc(100vw + 2rem), -50%) scale(0.96);
-    }
-    .bh-lens-rude.is-on.is-leaving-top {
-      opacity: 0;
-      transform: translate(0, calc(-100vh - 2rem)) scale(0.96);
-      pointer-events: none;
+      transform: translate(calc(100vw + 2rem), -50%) scale(0.96) !important;
     }
     .bh-lens-rude.place-center.is-on.is-leaving-top,
     .bh-lens-rude.place-chained.is-on.is-leaving-top {
-      transform: translate(-50%, calc(-100vh - 2rem)) scale(0.96);
-    }
-    .bh-lens-rude.is-on.is-leaving-bottom {
-      opacity: 0;
-      transform: translate(0, calc(100vh + 2rem)) scale(0.96);
-      pointer-events: none;
+      transform: translate(-50%, calc(-100vh - 2rem)) scale(0.96) !important;
     }
     .bh-lens-rude.place-center.is-on.is-leaving-bottom,
     .bh-lens-rude.place-chained.is-on.is-leaving-bottom {
-      transform: translate(-50%, calc(100vh + 2rem)) scale(0.96);
+      transform: translate(-50%, calc(100vh + 2rem)) scale(0.96) !important;
     }
     /* Ghosted / leaving rude copy stays invisible in the chrome (ghosts live in #bh-ghost-ui) */
     html.bh-lens-lifted .bh-lens-rude.is-ghosted .bh-lens-rude-text,
@@ -5025,9 +5023,10 @@
             lens.items[i].eatAfter = eatAfter;
           }
           ghostUi.appendChild(frag);
+          // Keep the label text in the DOM (transparent via .is-ghosted) so the button
+          // retains its full “Back to normal” size while looking blank
           hint.classList.add("is-ghosted");
-          // Clear DOM label so chrome stays blank after glyphs are eaten
-          hint.textContent = "";
+          hint.setAttribute("aria-label", "Back to normal");
           lens.hintGhosted = true;
         }
       }
@@ -5418,7 +5417,36 @@
         "place-chained",
       ];
       const RUDE_FROM_CLASSES = ["from-left", "from-right", "from-top", "from-bottom", "from-pending"];
-      const RUDE_SLIDE_MS = 560;
+      const RUDE_SLIDE_MS = 620;
+
+      function rudeRestTransform(place) {
+        return place === "center" || place === "chained"
+          ? "translate(-50%, -50%) scale(1)"
+          : "translate(0, 0) scale(1)";
+      }
+
+      function rudeOffTransform(place, dir) {
+        const centered = place === "center" || place === "chained";
+        if (dir === "left") {
+          return centered
+            ? "translate(calc(-100vw - 2rem), -50%) scale(0.96)"
+            : "translate(calc(-100vw - 2rem), 0) scale(0.96)";
+        }
+        if (dir === "right") {
+          return centered
+            ? "translate(calc(100vw + 2rem), -50%) scale(0.96)"
+            : "translate(calc(100vw + 2rem), 0) scale(0.96)";
+        }
+        if (dir === "bottom") {
+          return centered
+            ? "translate(-50%, calc(100vh + 2rem)) scale(0.96)"
+            : "translate(0, calc(100vh + 2rem)) scale(0.96)";
+        }
+        // top (default)
+        return centered
+          ? "translate(-50%, calc(-100vh - 2rem)) scale(0.96)"
+          : "translate(0, calc(-100vh - 2rem)) scale(0.96)";
+      }
 
       function clearRudeChains() {
         const svg = document.getElementById("bh-lens-chains");
@@ -5528,6 +5556,10 @@
         lens.rudeAdvancing = false;
         clearRudeTimer();
         clearRudeChains();
+        // Drop any leftover WAAPI / inline leave transform before entering
+        if (rude.getAnimations) rude.getAnimations().forEach((a) => a.cancel());
+        rude.style.transition = "none";
+        rude.style.transform = "";
         rude.classList.remove(
           "is-on",
           "is-ghosted",
@@ -5544,12 +5576,14 @@
               ? "place-center"
               : `place-${step.place}`;
         const fromClass = `from-${step.from || "top"}`;
+        // Start off-screen (invisible→on while still pending), then slide in
         rude.classList.add(placeClass, fromClass, "from-pending");
         rude.setAttribute("aria-hidden", "false");
         void rude.offsetWidth;
         rude.classList.add("is-on");
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
+            rude.style.transition = "";
             rude.classList.remove("from-pending");
           });
         });
@@ -5570,14 +5604,25 @@
         const next = lens.rudeStage + 1;
         lens.rudeAdvancing = true;
         clearRudeTimer();
-        // Empty chrome slides back off-screen (reverse of enter) — keep label hidden
+        const dir = cur.from || "top";
+        // JS-driven leave so every place/direction actually slides (no CSS specificity vanish)
         if (rude) {
-          rude.classList.remove(...RUDE_LEAVE_CLASSES);
           const txt = rude.querySelector(".bh-lens-rude-text");
           if (txt) txt.textContent = "";
-          // Force a resting frame, then leave so the transform transition actually runs
-          void rude.offsetWidth;
-          rude.classList.add(`is-leaving-${cur.from || "top"}`);
+          rude.classList.remove(...RUDE_LEAVE_CLASSES);
+          rude.classList.add(`is-leaving-${dir}`);
+          const rest = rudeRestTransform(cur.place);
+          const off = rudeOffTransform(cur.place, dir);
+          if (rude.getAnimations) rude.getAnimations().forEach((a) => a.cancel());
+          try {
+            rude.animate([{ transform: rest }, { transform: off }], {
+              duration: RUDE_SLIDE_MS,
+              easing: "cubic-bezier(0.22, 0.9, 0.28, 1)",
+              fill: "forwards",
+            });
+          } catch (_) {
+            rude.style.transform = off;
+          }
         }
         lens.rudeTimer = setTimeout(() => {
           lens.rudeTimer = 0;
