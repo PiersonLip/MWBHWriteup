@@ -18,7 +18,7 @@ And we can't answer that question just counting the remnants of stars. Most mass
 :::
 
 :::callout
-**The grand idea:** model the black holes that we would see today, trace them back to how they formed, vary the physics to see what works best, then predict what Gaia and Roman might actually see.
+**The big idea:** model the black holes that we would see today, trace them back to how they formed, vary the physics to see what works best, then predict what Gaia and Roman might actually see.
 :::
 
 [^census]: Order-of-magnitude census estimates put the number of stellar-mass black holes in the Milky Way around ~10⁸ (100 million).
