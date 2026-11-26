@@ -19,6 +19,7 @@ Two themes via `data-theme` on `<html>` + CSS variables. Light = former slate; d
 - Picker in the hero (`#theme-picker`); choice persists in `localStorage.siteTheme`.
 - Anti-FOUC snippet in `<head>` applies the saved theme before paint (migrates old `slate`/`parchment`/`cedar` → `light`, `observatory` → `dark`).
 - Viz canvases/SVGs follow theme via `--viz-*` CSS vars + `vizColors()` / `refreshThemeVisuals()` (kick, flow, channels, CE, galaxy, microlensing).
+- Easter: after 3 theme toggles, **Super dark** appears — 3s black veil (`#super-dark-veil`), not a saved theme.
 
 ## Content editing (Obsidian vault)
 
@@ -50,6 +51,7 @@ Two themes via `data-theme` on `<html>` + CSS variables. Light = former slate; d
 | Microlensing `#micro` | [micro.md](visualizations/micro.md) | Active (3D+2D stacked) |
 | BH lens gag (`data-effect="lens"`) | [lens.md](visualizations/lens.md) | Active (glossary easter egg) |
 | Tip-nest singularity (10 deep) | [tip-singularity.md](visualizations/tip-singularity.md) | Active (glossary easter egg) |
+| Small eggs (orbit / Sgr stare / super-dark / name confetti) | [easter-eggs.md](visualizations/easter-eggs.md) | Active |
 | Fiducial demographics `#demo` | — | **Removed** (flowchart replaces it) |
 
 ## Paper concepts covered

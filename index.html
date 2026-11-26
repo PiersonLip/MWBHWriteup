@@ -341,6 +341,67 @@
       background: var(--dot, var(--theme-dot));
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18);
     }
+    .theme-picker button[data-theme="super-dark"] {
+      display: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .theme-picker button[data-theme="super-dark"].is-revealed {
+      display: inline-flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .super-dark-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s ease;
+    }
+    .super-dark-veil.is-on {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .orbit-companion {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 7px;
+      height: 7px;
+      margin: -3.5px 0 0 -3.5px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff6d8 0%, #f0b35a 45%, #c45a20 100%);
+      box-shadow:
+        0 0 6px 1px rgba(255, 190, 100, 0.85),
+        0 0 14px 3px rgba(255, 150, 60, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 13000;
+      will-change: transform, opacity;
+    }
+    .orbit-companion.is-on { opacity: 1; }
+    .name-confetti {
+      position: fixed;
+      inset: 0;
+      z-index: 12500;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .name-confetti span {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 5px;
+      height: 5px;
+      margin: -2.5px 0 0 -2.5px;
+      background: #fff8e0;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
 
     nav.toc {
       display: flex; flex-wrap: wrap; gap: 0.4rem;
@@ -2437,6 +2498,7 @@
         <span class="theme-lbl">Theme</span>
         <button type="button" data-theme="light" class="active" style="--dot:#1f4f9c"><i></i>Light</button>
         <button type="button" data-theme="dark" style="--dot:#d4a84b"><i></i>Dark</button>
+        <button type="button" data-theme="super-dark" style="--dot:#0a0a0a" aria-hidden="true" tabindex="-1"><i></i>Super dark</button>
       </div>
       <nav class="toc">
         <a href="#why">Why this matters</a>
@@ -2937,6 +2999,9 @@
     <div class="tip-sing-flash" id="tip-sing-flash"></div>
     <div class="tip-sing-void" id="tip-sing-void"></div>
   </div>
+  <div class="orbit-companion" id="orbit-companion" aria-hidden="true"></div>
+  <div class="name-confetti" id="name-confetti" aria-hidden="true"></div>
+  <div class="super-dark-veil" id="super-dark-veil" aria-hidden="true"></div>
 
   <div class="mobile-notice" id="mobile-notice" hidden role="dialog" aria-modal="true" aria-labelledby="mobile-notice-title">
     <div class="mobile-notice-card">
@@ -3196,7 +3261,13 @@
       const VALID = ["light", "dark"];
       const root = document.documentElement;
       const picker = document.getElementById("theme-picker");
+      const veil = document.getElementById("super-dark-veil");
+      const superBtn = picker && picker.querySelector('button[data-theme="super-dark"]');
       let primed = false;
+      let toggleCount = 0;
+      let superBusy = false;
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
       const apply = (name, { animate = true } = {}) => {
         let theme = name;
         if (theme === "slate" || theme === "parchment" || theme === "cedar") theme = "light";
@@ -3207,6 +3278,7 @@
           try { localStorage.setItem("siteTheme", theme); } catch (_) { /* private mode */ }
           if (picker) {
             picker.querySelectorAll("button[data-theme]").forEach((b) => {
+              if (b.dataset.theme === "super-dark") return;
               b.classList.toggle("active", b.dataset.theme === theme);
             });
           }
@@ -3219,6 +3291,30 @@
         }
         primed = true;
       };
+
+      const revealSuperDark = () => {
+        if (!superBtn || superBtn.classList.contains("is-revealed")) return;
+        superBtn.classList.add("is-revealed");
+        superBtn.removeAttribute("aria-hidden");
+        superBtn.removeAttribute("tabindex");
+      };
+
+      const playSuperDark = () => {
+        if (superBusy || !veil) return;
+        superBusy = true;
+        veil.setAttribute("aria-hidden", "false");
+        requestAnimationFrame(() => veil.classList.add("is-on"));
+        const hold = reduceMotion ? 300 : 3000;
+        const fade = reduceMotion ? 0 : 700;
+        setTimeout(() => {
+          veil.classList.remove("is-on");
+          setTimeout(() => {
+            veil.setAttribute("aria-hidden", "true");
+            superBusy = false;
+          }, fade);
+        }, hold);
+      };
+
       apply(root.getAttribute("data-theme") || "light", { animate: false });
       // Enable CSS transitions after first paint so load isn't animated
       requestAnimationFrame(() => root.classList.add("theme-anim"));
@@ -3226,6 +3322,16 @@
       picker.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-theme]");
         if (!btn) return;
+        if (btn.dataset.theme === "super-dark") {
+          e.preventDefault();
+          playSuperDark();
+          return;
+        }
+        const cur = root.getAttribute("data-theme") || "light";
+        if (btn.dataset.theme && btn.dataset.theme !== cur) {
+          toggleCount += 1;
+          if (toggleCount >= 3) revealSuperDark();
+        }
         apply(btn.dataset.theme);
       });
     })();
@@ -5834,6 +5940,138 @@
         if (!singularity.raf) singularity.raf = requestAnimationFrame(singFrame);
       }
 
+      // ── Easter: orbital companion on binary / period tips ──
+      const ORBIT_TIP_KEYS = new Set([
+        "binary",
+        "binaries",
+        "binary stars",
+        "binary star",
+        "binary systems",
+        "period",
+        "periods",
+        "orbital period",
+      ]);
+      const orbitEgg = {
+        el: document.getElementById("orbit-companion"),
+        raf: 0,
+        dwell: 0,
+        t0: 0,
+        active: false,
+        anchor: null,
+        reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+      };
+      function stopOrbitCompanion() {
+        if (orbitEgg.dwell) {
+          clearTimeout(orbitEgg.dwell);
+          orbitEgg.dwell = 0;
+        }
+        orbitEgg.active = false;
+        orbitEgg.anchor = null;
+        if (orbitEgg.raf) {
+          cancelAnimationFrame(orbitEgg.raf);
+          orbitEgg.raf = 0;
+        }
+        if (orbitEgg.el) {
+          orbitEgg.el.classList.remove("is-on");
+          orbitEgg.el.style.opacity = "";
+          orbitEgg.el.style.transform = "";
+        }
+      }
+      function tickOrbitCompanion(now) {
+        if (!orbitEgg.active || !orbitEgg.el) return;
+        const elapsed = now - orbitEgg.t0;
+        const dur = 4200;
+        if (elapsed > dur) {
+          stopOrbitCompanion();
+          return;
+        }
+        let a = 1;
+        if (elapsed < 280) a = elapsed / 280;
+        else if (elapsed > dur - 520) a = (dur - elapsed) / 520;
+        const ang = elapsed * 0.0042;
+        const r = 18 + 2.2 * Math.sin(elapsed * 0.003);
+        const x = pointer.x + Math.cos(ang) * r;
+        const y = pointer.y + Math.sin(ang) * r;
+        orbitEgg.el.style.opacity = String(Math.max(0, Math.min(1, a)));
+        orbitEgg.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        orbitEgg.raf = requestAnimationFrame(tickOrbitCompanion);
+      }
+      function armOrbitCompanion(skipKey, anchor) {
+        if (orbitEgg.reduceMotion || !orbitEgg.el) return;
+        if (!ORBIT_TIP_KEYS.has(skipKey)) return;
+        if (orbitEgg.active && orbitEgg.anchor === anchor) return;
+        if (orbitEgg.dwell) clearTimeout(orbitEgg.dwell);
+        orbitEgg.dwell = setTimeout(() => {
+          orbitEgg.dwell = 0;
+          if (!open.some((o) => o.anchor === anchor)) return;
+          orbitEgg.active = true;
+          orbitEgg.anchor = anchor;
+          orbitEgg.t0 = performance.now();
+          orbitEgg.el.classList.add("is-on");
+          if (orbitEgg.raf) cancelAnimationFrame(orbitEgg.raf);
+          orbitEgg.raf = requestAnimationFrame(tickOrbitCompanion);
+        }, 600);
+      }
+
+      // ── Easter: star confetti on 3rd Pierson byline hover ──
+      const NAME_TIP_KEYS = new Set(["pierson", "pierson lipschultz"]);
+      const nameEgg = {
+        el: document.getElementById("name-confetti"),
+        count: 0,
+        fired: false,
+        reduceMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+      };
+      function burstNameConfetti(anchor) {
+        if (nameEgg.reduceMotion || !nameEgg.el || nameEgg.fired) return;
+        nameEgg.fired = true;
+        const rect = anchor.getBoundingClientRect();
+        const cx = rect.left + rect.width * 0.5;
+        const cy = rect.top + rect.height * 0.4;
+        const colors = ["#fff8e0", "#ffe08a", "#ffc14d", "#f0b35a"];
+        const n = 4;
+        nameEgg.el.innerHTML = "";
+        for (let i = 0; i < n; i++) {
+          const s = document.createElement("span");
+          const ang =
+            -Math.PI * 0.72 +
+            (Math.PI * 0.44 * i) / Math.max(1, n - 1) +
+            (Math.random() - 0.5) * 0.22;
+          const dist = 34 + Math.random() * 40;
+          const dx = Math.cos(ang) * dist;
+          const dy = Math.sin(ang) * dist - 10;
+          const rot = (Math.random() - 0.5) * 70;
+          const size = 4 + Math.random() * 3;
+          s.style.width = `${size}px`;
+          s.style.height = `${size}px`;
+          s.style.marginLeft = `${-size / 2}px`;
+          s.style.marginTop = `${-size / 2}px`;
+          s.style.background = colors[i % colors.length];
+          s.style.transform = `translate3d(${cx}px, ${cy}px, 0) scale(0.35)`;
+          s.style.opacity = "0";
+          nameEgg.el.appendChild(s);
+          requestAnimationFrame(() => {
+            s.style.transition =
+              "transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.75s ease";
+            s.style.transform = `translate3d(${cx + dx}px, ${cy + dy}px, 0) rotate(${rot}deg) scale(1)`;
+            s.style.opacity = "1";
+            setTimeout(() => {
+              s.style.transition = "opacity 0.45s ease, transform 0.45s ease";
+              s.style.opacity = "0";
+              s.style.transform = `translate3d(${cx + dx}px, ${cy + dy + 16}px, 0) rotate(${rot}deg) scale(0.55)`;
+            }, 720);
+          });
+        }
+        setTimeout(() => {
+          if (nameEgg.el) nameEgg.el.innerHTML = "";
+        }, 1400);
+      }
+      function maybeNameConfetti(skipKey, anchor) {
+        if (!NAME_TIP_KEYS.has(skipKey)) return;
+        if (depthOf(anchor) !== 0) return;
+        nameEgg.count += 1;
+        if (nameEgg.count >= 3) burstNameConfetti(anchor);
+      }
+
       function showTip(anchor) {
         if (singularity.busy) return;
         const tipText = tipTextFor(anchor);
@@ -5946,6 +6184,8 @@
         if (depth >= SING_TRIGGER_DEPTH) {
           requestAnimationFrame(() => triggerTipSingularity(bubble));
         }
+        armOrbitCompanion(skipKey, anchor);
+        maybeNameConfetti(skipKey, anchor);
       }
 
       // Rich tips: maximize icon opens the focus panel; click/keyboard on .tip-deep does too
@@ -7589,6 +7829,9 @@
       focusAnim: null,
       gcVig: 0, // 0..1 vignette strength for GC zoom
       sgrT: 0,
+      sgrStareT0: 0, // when GC focus became steady
+      sgrStareShown: false,
+      sgrStareMsgT0: 0,
       ptrDown: null,
     };
 
@@ -7881,6 +8124,9 @@
 
     function exitGalFocus() {
       if (!gal.focus && !gal.focusAnim) return;
+      gal.sgrStareT0 = 0;
+      gal.sgrStareShown = false;
+      gal.sgrStareMsgT0 = 0;
       gal.focusAnim = {
         t0: performance.now(),
         dur: 900,
@@ -8266,6 +8512,23 @@
         ? `focus: ${gal.focus.label} · drag to orbit`
         : "drag to rotate · pinch or scroll to zoom · R to restart";
       ctx.fillText(hud, 14, 22);
+
+      // Sgr A* stare easter egg — linger on the GC zoom
+      if (gal.sgrStareShown && gal.sgrStareMsgT0) {
+        const age = (performance.now() - gal.sgrStareMsgT0) / 1000;
+        let a = 0;
+        if (age < 0.45) a = age / 0.45;
+        else if (age < 3.2) a = 1;
+        else if (age < 4.4) a = 1 - (age - 3.2) / 1.2;
+        if (a > 0.02) {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, a)) * 0.92;
+          ctx.fillStyle = "rgba(232, 220, 180, 0.95)";
+          ctx.font = "500 12px Schibsted Grotesk";
+          ctx.fillText("still watching?", 14, 42);
+          ctx.restore();
+        }
+      }
 
       // Cursor affordance
       canvas.style.cursor =
@@ -9567,6 +9830,17 @@
       stepGalFocusAnim(now);
       if (gal.focus && gal.focus.type === "gc") {
         gal.sgrT += dt * 0.55; // S-star orbital clock
+        if (!gal.focusAnim && gal.gcVig > 0.95) {
+          if (!gal.sgrStareT0) gal.sgrStareT0 = now;
+          else if (!gal.sgrStareShown && now - gal.sgrStareT0 > 9000) {
+            gal.sgrStareShown = true;
+            gal.sgrStareMsgT0 = now;
+          }
+        } else {
+          gal.sgrStareT0 = 0;
+        }
+      } else {
+        gal.sgrStareT0 = 0;
       }
       if (gal.playing) {
         gal.progress = Math.min(1, gal.progress + dt * 0.06);

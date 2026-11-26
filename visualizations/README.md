@@ -12,6 +12,7 @@ Living docs for every interactive figure in `index.html`.
 | [micro.md](./micro.md) | `#micro` | Observational links |
 | [lens.md](./lens.md) | `data-effect="lens"` (page overlay) | Glossary gag (“weird things with light”) |
 | [tip-singularity.md](./tip-singularity.md) | 10-deep tip nest (page overlay) | Glossary gag (tip recursion) |
+| [easter-eggs.md](./easter-eggs.md) | orbit / Sgr stare / super-dark / name confetti | Small gags |
 
 ## Agent rule
 
@@ -30,8 +31,10 @@ Related: BH lens easter egg — [lens.md](./lens.md) (`effect: lens` on glossary
 
 Related: tip-nest singularity — [tip-singularity.md](./tip-singularity.md) (10 nested tips → word-ghost swallow).
 
+Related: small easter eggs — [easter-eggs.md](./easter-eggs.md) (orbital cursor, Sgr stare, super-dark veil, name confetti).
+
 Related: tip canvases — [gw-tip.md](./gw-tip.md) (`viz: gw`), [envelope-tip.md](./envelope-tip.md) (`viz: envelope`), [common-envelope-tip.md](./common-envelope-tip.md) (`viz: common-envelope`), [mw-components-tip.md](./mw-components-tip.md) (`viz: mw-components`), [eccentricity-tip.md](./eccentricity-tip.md) (`viz: eccentricity`).
 
 ## Page themes
 
-Site themes are `light` and `dark` (`data-theme` + CSS vars). See root `MEMORY.md`. Dark also recolors viz backgrounds/palettes through `--viz-*` and `vizColors()`; theme switches call `refreshThemeVisuals()`.
+Site themes are `light` and `dark` (`data-theme` + CSS vars). See root `MEMORY.md`. Dark also recolors viz backgrounds/palettes through `--viz-*` and `vizColors()`; theme switches call `refreshThemeVisuals()`. After three theme toggles in a session, a one-shot **Super dark** picker option fades the page to black for 3s (not a persisted theme).
