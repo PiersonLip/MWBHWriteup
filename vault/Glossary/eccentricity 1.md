@@ -1,1 +1,0 @@
-How elliptical an orbit is.s 

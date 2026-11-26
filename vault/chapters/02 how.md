@@ -17,7 +17,7 @@ With these systems there is still a large amount of physics we don't fully under
 :::
 
 :::timeline
-- **Initial binary properties**: Masses, periods, mass ratios, and [[eccentricity 1|eccentricities]] drawn for the birth population.
+- **Initial binary properties**: Masses, periods, mass ratios, and [[eccentricity|eccentricities]] drawn for the birth population.
 - **[[Core collapse]]**: How the remnant mass is assigned when the iron core collapses.
 - **[[natal kick|Natal Kicks]]**: Maxwellian scale, fallback, inverse-mass, or zero-kick prescriptions.
 - **[[common envelope|Common envelope]] efficiency**: How much orbital energy unbinds the shared envelope (α<sub>CE</sub>).
